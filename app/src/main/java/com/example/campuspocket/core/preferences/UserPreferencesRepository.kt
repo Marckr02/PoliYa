@@ -49,6 +49,10 @@ object PreferenceKeys {
 
     // Búsqueda global (v7 B4): consultas recientes, de la más nueva a la más vieja.
     val RECENT_SEARCHES = stringPreferencesKey("recent_searches")
+
+    // Crashlytics opt-in (v7 D12)
+    const val CRASHLYTICS_PREFS = "crashlytics_prefs"
+    const val CRASHLYTICS_OPT_IN = "crashlytics_opt_in"
 }
 
 private const val RECENT_SEARCH_SEPARATOR = "\u001F"

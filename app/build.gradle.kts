@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.crashlytics.gradle.plugin)
+    alias(libs.plugins.googleServices)
 }
 
 // Leer versión desde version.properties (SemVer 0.x, versionado en Git)
@@ -175,6 +177,11 @@ dependencies {
 
     // PDF
     implementation(libs.pdfbox.android)
+
+    // Firebase Crashlytics (opt-in)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.crashlytics)
+    implementation(libs.crashlytics.ktx)
 
     // Pruebas unitarias (JVM)
     testImplementation(libs.junit)
