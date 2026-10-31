@@ -295,13 +295,20 @@ fun <T> SegmentedControl(
     labelProvider: @Composable (T) -> String,
     modifier: Modifier = Modifier
 ) {
-    PillSegmentedControl(
-        options = options,
-        selected = selected,
-        onSelect = onSelect,
-        label = labelProvider,
-        modifier = modifier
-    )
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        options.forEach { option ->
+            CampusChip(
+                label = labelProvider(option),
+                selected = option == selected,
+                onClick = { onSelect(option) },
+                role = Role.RadioButton,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
 }
 
 internal val Priority.resourceString: Int
@@ -889,13 +896,20 @@ fun TransactionTypeSelector(
         TransactionType.TRANSFER,
         TransactionType.REFUND
     )
-    PillSegmentedControl(
-        options = types,
-        selected = selectedType,
-        onSelect = onTypeChange,
-        label = { stringResource(transactionTypeLabelRes(it)) },
-        modifier = modifier
-    )
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        types.forEach { type ->
+            CampusChip(
+                label = stringResource(transactionTypeLabelRes(type)),
+                selected = type == selectedType,
+                onClick = { onTypeChange(type) },
+                role = Role.RadioButton,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
 }
 
 internal fun transactionTypeLabelRes(type: TransactionType): Int = when (type) {

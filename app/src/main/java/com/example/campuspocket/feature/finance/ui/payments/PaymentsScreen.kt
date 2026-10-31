@@ -40,12 +40,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.components.BentoCard
+import com.example.campuspocket.core.designsystem.components.UnderlinedTabRow
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.EmptyPaymentsState
 import com.example.campuspocket.core.designsystem.components.ShimmerList
-import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.navigation.LocalSnackbarHost
 import com.example.campuspocket.core.navigation.showUndoSnackbar
@@ -318,7 +318,7 @@ private fun PaymentsViewSelector(
     view: PaymentsView,
     onSelect: (PaymentsView) -> Unit
 ) {
-    PillSegmentedControl(
+    UnderlinedTabRow(
         options = PaymentsView.entries,
         selected = view,
         onSelect = onSelect,

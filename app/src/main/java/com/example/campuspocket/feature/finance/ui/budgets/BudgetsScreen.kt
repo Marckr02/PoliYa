@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,7 +52,6 @@ import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.EmptyState
 import com.example.campuspocket.core.designsystem.components.ShimmerCard
-import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
 import com.example.campuspocket.core.util.Money
 import com.example.campuspocket.feature.finance.domain.GetMonthSummary
 import com.example.campuspocket.feature.finance.ui.summary.BudgetPaceCard
@@ -127,18 +127,18 @@ fun LazyListScope.budgetItems(
                 .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            PillSegmentedControl(
-                options = listOf(false, true),
-                selected = state.semesterMode,
-                onSelect = { semester ->
-                    if (state.semesterMode != semester) viewModel.toggleSemesterMode()
-                },
-                label = { semester ->
-                    stringResource(
+            listOf(false, true).forEach { semester ->
+                CampusChip(
+                    label = stringResource(
                         if (semester) R.string.budget_semester else R.string.budget_month
-                    )
-                }
-            )
+                    ),
+                    selected = state.semesterMode == semester,
+                    onClick = {
+                        if (state.semesterMode != semester) viewModel.toggleSemesterMode()
+                    },
+                    role = Role.RadioButton
+                )
+            }
         }
     }
 

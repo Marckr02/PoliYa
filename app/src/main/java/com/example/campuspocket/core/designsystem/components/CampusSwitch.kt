@@ -75,7 +75,7 @@ fun CampusSwitch(
                 .size(width = 45.dp, height = 26.dp)
                 .clip(CircleShape)
                 .background(track)
-                .border(1.dp, if (checked) ext.ink else ext.controlLine, CircleShape)
+                .border(1.dp, if (checked) ext.inkIndicator else ext.controlLine, CircleShape)
                 .padding(3.dp),
             contentAlignment = Alignment.CenterStart
         ) {

@@ -13,7 +13,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -89,15 +89,11 @@ fun CampusSnackbar(data: SnackbarData) {
             modifier = Modifier.weight(1f)
         )
         data.visuals.actionLabel?.let { label ->
-            TextButton(onClick = { data.performAction() }) {
-                Text(
-                    text = label,
-                    color = ext.lime,
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                )
-            }
+            CampusTextButton(
+                text = label,
+                onClick = { data.performAction() },
+                contentColor = ext.lime
+            )
         }
     }
 }

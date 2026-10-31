@@ -70,6 +70,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.PillShape
+import com.example.campuspocket.core.designsystem.CampusNoteBody
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusSelectItem
@@ -191,7 +192,7 @@ fun NoteEditorScreen(
                 leading = {
                     Icon(
                         painter = painterResource(R.drawable.ic_link),
-                        contentDescription = null,
+                        contentDescription = null, // decorativo: el chip tiene etiqueta
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(16.dp)
                     )
@@ -204,7 +205,7 @@ fun NoteEditorScreen(
                 leading = {
                     Icon(
                         painter = painterResource(R.drawable.ic_folder),
-                        contentDescription = null,
+                        contentDescription = null, // decorativo: el chip tiene etiqueta
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(16.dp)
                     )
@@ -384,7 +385,7 @@ private fun SaveStatus(isSaving: Boolean, lastSavedAt: Long) {
         } else {
             Icon(
                 imageVector = Icons.Filled.Check,
-                contentDescription = null,
+                contentDescription = null, // decorativo: el texto contiguo describe el estado
                 tint = ext.ink,
                 modifier = Modifier.size(16.dp)
             )
@@ -497,10 +498,7 @@ private fun NotePaperPreviewBox(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    val isDark = isSystemInDarkTheme()
-    val paperBg = if (isDark) Color(0xFF24231D) else Color(0xFFFFFAF0)
-    val borderColor = if (isDark) Color(0xFF4A4739) else Color(0xFFE1D6BC)
-    val lineStroke = if (isDark) Color(0xFFDFF36D).copy(alpha = 0.09f) else Color(0xFF103C3B).copy(alpha = 0.09f)
+    val ext = MaterialTheme.extended
     val density = LocalDensity.current
     val lineStepPx = with(density) { 23.dp.toPx() }
 
@@ -508,14 +506,14 @@ private fun NotePaperPreviewBox(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(4.dp))
-            .border(1.dp, borderColor, RoundedCornerShape(4.dp))
-            .background(paperBg)
+            .border(1.dp, ext.notePaperBorder, RoundedCornerShape(4.dp))
+            .background(ext.notePaperBg)
             .drawBehind {
                 val numLines = (size.height / lineStepPx).toInt()
                 for (i in 1..numLines) {
                     val y = i * lineStepPx
                     drawLine(
-                        color = lineStroke,
+                        color = ext.notePaperLine.copy(alpha = 0.09f),
                         start = Offset(0f, y),
                         end = Offset(size.width, y),
                         strokeWidth = 1.dp.toPx()
@@ -537,26 +535,22 @@ private fun NoteContentField(
     placeholder: String,
     modifier: Modifier = Modifier
 ) {
-    val isDark = isSystemInDarkTheme()
-    val paperBg = if (isDark) Color(0xFF24231D) else Color(0xFFFFFAF0)
-    val borderColor = if (isDark) Color(0xFF4A4739) else Color(0xFFE1D6BC)
-    val lineStroke = if (isDark) Color(0xFFDFF36D).copy(alpha = 0.09f) else Color(0xFF103C3B).copy(alpha = 0.09f)
+    val ext = MaterialTheme.extended
     val density = LocalDensity.current
     val lineStepPx = with(density) { 23.dp.toPx() }
-    val textColor = if (isDark) Color(0xFFF1EAD5) else Color(0xFF243B3F)
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(4.dp))
-            .border(1.dp, borderColor, RoundedCornerShape(4.dp))
-            .background(paperBg)
+            .border(1.dp, ext.notePaperBorder, RoundedCornerShape(4.dp))
+            .background(ext.notePaperBg)
             .drawBehind {
                 val numLines = (size.height / lineStepPx).toInt()
                 for (i in 1..numLines) {
                     val y = i * lineStepPx
                     drawLine(
-                        color = lineStroke,
+                        color = ext.notePaperLine.copy(alpha = 0.09f),
                         start = Offset(0f, y),
                         end = Offset(size.width, y),
                         strokeWidth = 1.dp.toPx()
@@ -568,23 +562,16 @@ private fun NoteContentField(
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
-            textStyle = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 23.sp,
-                color = textColor,
-                fontWeight = FontWeight.Medium
-            ),
-            cursorBrush = SolidColor(MaterialTheme.extended.accent),
+            textStyle = CampusNoteBody.copy(color = ext.notePaperText),
+            cursorBrush = SolidColor(ext.accent),
             modifier = Modifier.fillMaxSize(),
             decorationBox = { innerTextField ->
                 Box {
                     if (value.text.isEmpty()) {
                         Text(
                             text = placeholder,
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                lineHeight = 23.sp,
-                                color = textColor.copy(alpha = 0.5f),
+                            style = CampusNoteBody.copy(
+                                color = ext.notePaperText.copy(alpha = 0.5f),
                                 fontWeight = FontWeight.Normal
                             )
                         )

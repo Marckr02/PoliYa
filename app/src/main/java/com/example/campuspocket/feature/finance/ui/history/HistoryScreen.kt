@@ -27,7 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -265,7 +265,8 @@ private fun HistoryControls(
         DatePickerDialog(
             onDismissRequest = { showDateRange = false },
             confirmButton = {
-                TextButton(
+                CampusTextButton(
+                    text = stringResource(R.string.ok),
                     onClick = {
                         viewModel.setDateRange(
                             pickerState.selectedStartDateMillis?.let {
@@ -277,12 +278,13 @@ private fun HistoryControls(
                         )
                         showDateRange = false
                     }
-                ) { Text(stringResource(R.string.ok)) }
+                )
             },
             dismissButton = {
-                TextButton(onClick = { showDateRange = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+                CampusTextButton(
+                    text = stringResource(R.string.cancel),
+                    onClick = { showDateRange = false }
+                )
             },
             properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {

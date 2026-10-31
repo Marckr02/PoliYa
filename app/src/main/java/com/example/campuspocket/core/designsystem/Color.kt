@@ -98,8 +98,16 @@ internal object CampusPalette {
         val Cream = Color(0xFFFFFAF0)
         val OnCream = Color(0xFF103C3B)
         val ControlLine = Color(0xFF7D8984)
-        val GaugeFillDark = Color(0xFFDCEBDD)
+        val GaugeFill = Color(0xFFDCEBDD)
         val Scrim = Color(0x9E042229)
+        // v9 1.1: color de contenido sobre Ink y de indicador activo
+        val InkContent = Color(0xFF103C3B)
+        val InkIndicator = Color(0xFF103C3B)
+        // v9 3.x: papel de notas (NoteEditorScreen)
+        val NotePaperBg = Color(0xFFFFFAF0)
+        val NotePaperBorder = Color(0xFFE1D6BC)
+        val NotePaperLine = Color(0xFF103C3B)
+        val NotePaperText = Color(0xFF243B3F)
     }
 
     object Dark {
@@ -179,8 +187,16 @@ internal object CampusPalette {
         val Cream = Color(0xFF24231D)
         val OnCream = Color(0xFFF0F2E8)
         val ControlLine = Color(0xFF718782)
-        val GaugeFillDark = Color(0xFF83DBA6)
+        val GaugeFill = Color(0xFF83DBA6)
         val Scrim = Color(0x9E042229)
+        // v9 1.1: color de contenido sobre Ink y de indicador activo
+        val InkContent = Color(0xFFF4F7EE)
+        val InkIndicator = Color(0xFFDFF36D)
+        // v9 3.x: papel de notas (NoteEditorScreen)
+        val NotePaperBg = Color(0xFF24231D)
+        val NotePaperBorder = Color(0xFF4A4739)
+        val NotePaperLine = Color(0xFFDFF36D)
+        val NotePaperText = Color(0xFFF1EAD5)
     }
 }
 
@@ -242,8 +258,16 @@ data class CampusExtendedColors(
     val cream: Color,
     val onCream: Color,
     val controlLine: Color,
-    val gaugeFillDark: Color,
-    val scrim: Color
+    val gaugeFill: Color,
+    val scrim: Color,
+    // v9 1.1
+    val inkContent: Color,
+    val inkIndicator: Color,
+    // v9 3.x: papel de notas
+    val notePaperBg: Color,
+    val notePaperBorder: Color,
+    val notePaperLine: Color,
+    val notePaperText: Color
 )
 
 internal val LightExtendedColors = CampusExtendedColors(
@@ -299,8 +323,16 @@ internal val LightExtendedColors = CampusExtendedColors(
     cream = CampusPalette.Light.Cream,
     onCream = CampusPalette.Light.OnCream,
     controlLine = CampusPalette.Light.ControlLine,
-    gaugeFillDark = CampusPalette.Light.GaugeFillDark,
-    scrim = CampusPalette.Light.Scrim
+    gaugeFill = CampusPalette.Light.GaugeFill,
+    scrim = CampusPalette.Light.Scrim,
+    // v9 1.1
+    inkContent = CampusPalette.Light.InkContent,
+    inkIndicator = CampusPalette.Light.InkIndicator,
+    // v9 3.x: papel de notas
+    notePaperBg = CampusPalette.Light.NotePaperBg,
+    notePaperBorder = CampusPalette.Light.NotePaperBorder,
+    notePaperLine = CampusPalette.Light.NotePaperLine,
+    notePaperText = CampusPalette.Light.NotePaperText
 )
 
 internal val DarkExtendedColors = CampusExtendedColors(
@@ -356,8 +388,16 @@ internal val DarkExtendedColors = CampusExtendedColors(
     cream = CampusPalette.Dark.Cream,
     onCream = CampusPalette.Dark.OnCream,
     controlLine = CampusPalette.Dark.ControlLine,
-    gaugeFillDark = CampusPalette.Dark.GaugeFillDark,
-    scrim = CampusPalette.Dark.Scrim
+    gaugeFill = CampusPalette.Dark.GaugeFill,
+    scrim = CampusPalette.Dark.Scrim,
+    // v9 1.1
+    inkContent = CampusPalette.Dark.InkContent,
+    inkIndicator = CampusPalette.Dark.InkIndicator,
+    // v9 3.x: papel de notas
+    notePaperBg = CampusPalette.Dark.NotePaperBg,
+    notePaperBorder = CampusPalette.Dark.NotePaperBorder,
+    notePaperLine = CampusPalette.Dark.NotePaperLine,
+    notePaperText = CampusPalette.Dark.NotePaperText
 )
 
 internal val LocalCampusExtendedColors = compositionLocalOf { LightExtendedColors }

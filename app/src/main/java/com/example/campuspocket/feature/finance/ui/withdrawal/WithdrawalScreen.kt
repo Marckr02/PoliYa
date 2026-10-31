@@ -239,7 +239,7 @@ private fun SavingsAccountDropdown(
             }
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowDown,
-                contentDescription = null,
+                contentDescription = null, // decorativo: el texto contiguo describe la acción
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
@@ -327,7 +327,7 @@ private fun CashDestinationCard(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_wallet),
-                        contentDescription = null,
+                        contentDescription = null, // decorativo: el texto contiguo describe la cuenta
                         tint = MaterialTheme.extended.onLavender
                     )
                 }
@@ -473,7 +473,7 @@ private fun WithdrawalAmountChip(
             if (selected) {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = null,
+                    contentDescription = null, // decorativo: el chip tiene etiqueta
                     tint = ext.ink,
                     modifier = Modifier.size(16.dp)
                 )

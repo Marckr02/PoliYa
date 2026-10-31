@@ -2,6 +2,8 @@ package com.example.campuspocket.core.designsystem.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +59,7 @@ fun PaceGauge(
     percentLabel: String,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    fillColor: Color = MaterialTheme.extended.gaugeFillDark,
+    fillColor: Color = MaterialTheme.extended.gaugeFill,
     diameter: Dp = 248.dp,
     strokeWidth: Dp = 14.dp,
     showCenterText: Boolean = true,

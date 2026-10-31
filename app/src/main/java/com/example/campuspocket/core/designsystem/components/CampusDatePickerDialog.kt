@@ -11,7 +11,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,20 +59,20 @@ fun CampusDatePickerDialog(
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(
+            CampusTextButton(
+                text = stringResource(R.string.ok),
                 onClick = {
                     pickerState.selectedDateMillis?.let { millis ->
                         onConfirm(fromDatePickerMillis(millis))
                     } ?: onDismiss()
                 }
-            ) {
-                Text(stringResource(R.string.ok))
-            }
+            )
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
-            }
+            CampusTextButton(
+                text = stringResource(R.string.cancel),
+                onClick = onDismiss
+            )
         },
         properties = DialogProperties(usePlatformDefaultWidth = false),
         modifier = modifier

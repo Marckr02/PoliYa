@@ -103,7 +103,7 @@ fun ContextualActionButton(
             }
             .drawBehind {
                 drawRoundRect(
-                    color = ext.ink,
+                    color = ext.inkIndicator,
                     topLeft = Offset(shadowShift.toPx(), shadowShift.toPx()),
                     size = size,
                     cornerRadius = CornerRadius(7.dp.toPx())
@@ -115,7 +115,7 @@ fun ContextualActionButton(
                 .heightIn(min = 54.dp)
                 .clip(ShapeControl)
                 .background(ext.lime)
-                .border(1.dp, ext.ink, ShapeControl)
+                .border(1.dp, ext.inkIndicator, ShapeControl)
                 .animateContentSize(tween(duration))
                 .combinedClickable(
                     interactionSource = interaction,

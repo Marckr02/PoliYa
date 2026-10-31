@@ -743,7 +743,7 @@ private fun FinanceSummaryCard(
             )
             val gaugeFill = when {
                 pace.isBudgetExhausted || pace.isOver -> ext.danger
-                androidx.compose.foundation.isSystemInDarkTheme() -> ext.gaugeFillDark
+                androidx.compose.foundation.isSystemInDarkTheme() -> ext.gaugeFill
                 else -> ext.mint
             }
             PaceGauge(

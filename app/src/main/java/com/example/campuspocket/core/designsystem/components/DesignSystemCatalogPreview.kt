@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.campuspocket.core.designsystem.CampusTheme
@@ -90,12 +91,20 @@ private fun CatalogContent() {
                 onSelect = {},
                 label = { it }
             )
-            PillSegmentedControl(
-                options = listOf("Gasto", "Ingreso", "Transferencia"),
-                selected = "Gasto",
-                onSelect = {},
-                label = { it }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf("Gasto", "Ingreso", "Transferencia").forEach { label ->
+                    CampusChip(
+                        label = label,
+                        selected = label == "Gasto",
+                        onClick = {},
+                        role = Role.RadioButton,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
 
             SectionLabel("Tarjetas y controles")
             BentoCard(contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)) {

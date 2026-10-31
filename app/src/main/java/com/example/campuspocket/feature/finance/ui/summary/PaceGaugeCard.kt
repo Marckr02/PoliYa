@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.campuspocket.R
@@ -63,8 +64,8 @@ internal fun PaceGaugeCard(
     val exhausted = pace.isBudgetExhausted
     val over = pace.isOver
     val fillColor = when {
-        exhausted || over -> ext.danger
-        dark -> ext.gaugeFillDark
+        exhausted || over -> ext.dangerSoft
+        dark -> ext.gaugeFill
         else -> ext.mint
     }
     val percent = formatGaugePercent(pace.realPct.toFloat())
@@ -106,7 +107,9 @@ internal fun PaceGaugeCard(
                 ),
                 style = CampusOverline,
                 color = ext.lime,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { heading() }
             )
             CampusTextButton(
                 text = stringResource(R.string.budget_total_edit),

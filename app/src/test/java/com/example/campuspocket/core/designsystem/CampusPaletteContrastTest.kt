@@ -47,7 +47,12 @@ class CampusPaletteContrastTest {
                 Pair("OnError/Error", p.OnError, p.Error),
                 Pair("OnErrorContainer/ErrorContainer", p.OnErrorContainer, p.ErrorContainer),
                 Pair("OnCream/Cream", p.OnCream, p.Cream),
-                Pair("OnDock/Dock", p.OnDock, p.Dock)
+                Pair("OnDock/Dock", p.OnDock, p.Dock),
+                // v9 1.1: new tokens
+                Pair("InkContent/Background", p.InkContent, p.Background),
+                Pair("InkContent/Surface", p.InkContent, p.Surface),
+                Pair("InkIndicator/Background", p.InkIndicator, p.Background),
+                Pair("InkIndicator/Surface", p.InkIndicator, p.Surface)
             ),
             4.5f
         )
@@ -78,7 +83,12 @@ class CampusPaletteContrastTest {
                 Pair("OnError/Error", p.OnError, p.Error),
                 Pair("OnErrorContainer/ErrorContainer", p.OnErrorContainer, p.ErrorContainer),
                 Pair("OnCream/Cream", p.OnCream, p.Cream),
-                Pair("OnDock/Dock", p.OnDock, p.Dock)
+                Pair("OnDock/Dock", p.OnDock, p.Dock),
+                // v9 1.1: new tokens
+                Pair("InkContent/Background", p.InkContent, p.Background),
+                Pair("InkContent/Surface", p.InkContent, p.Surface),
+                Pair("InkIndicator/Background", p.InkIndicator, p.Background),
+                Pair("InkIndicator/Surface", p.InkIndicator, p.Surface)
             ),
             4.5f
         )
@@ -106,6 +116,27 @@ class CampusPaletteContrastTest {
                 Pair(
                     "ControlLine/Surface dark",
                     CampusPalette.Dark.ControlLine,
+                    CampusPalette.Dark.Surface
+                ),
+                // v9 1.1: indicator borders
+                Pair(
+                    "InkIndicator/Background",
+                    CampusPalette.Light.InkIndicator,
+                    CampusPalette.Light.Background
+                ),
+                Pair(
+                    "InkIndicator/Surface",
+                    CampusPalette.Light.InkIndicator,
+                    CampusPalette.Light.Surface
+                ),
+                Pair(
+                    "InkIndicator/Background dark",
+                    CampusPalette.Dark.InkIndicator,
+                    CampusPalette.Dark.Background
+                ),
+                Pair(
+                    "InkIndicator/Surface dark",
+                    CampusPalette.Dark.InkIndicator,
                     CampusPalette.Dark.Surface
                 )
             ),

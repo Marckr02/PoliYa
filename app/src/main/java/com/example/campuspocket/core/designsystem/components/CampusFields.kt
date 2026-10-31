@@ -3,6 +3,8 @@ package com.example.campuspocket.core.designsystem.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import com.example.campuspocket.core.designsystem.LocalMotion
+import com.example.campuspocket.core.designsystem.MotionTokens
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

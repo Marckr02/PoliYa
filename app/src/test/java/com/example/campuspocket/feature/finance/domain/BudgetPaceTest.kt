@@ -153,4 +153,66 @@ class BudgetPaceTest {
         assertEquals(233L, BudgetPace.estimatedClosingCents(100, 3, 7))
         assertEquals(0L, BudgetPace.perDayCents(100, 100, 10))
     }
+
+    @Test
+    fun `v8 caso de aceptacion - presupuesto 500 gastado 342,50 dia 29 de 31`() {
+        // Caso de prueba obligatorio del prototipo v8 (§7):
+        // presupuesto $500, gastado $342.50, día 29 de 31
+        // → gastado 68.5 %, esperado 93.5 % ($467.74), por día $52.50, cierre $366.10
+        val pace = BudgetPace.compute(
+            today = day(2026, 10, 29),
+            budgetCents = 50_000,
+            spentCents = 34_250
+        )!!
+
+        assertEquals(BigDecimal("68.5"), pace.realPct)
+        assertEquals(BigDecimal("93.5"), pace.expectedPct)
+        assertEquals(5_250L, pace.perDayCents) // $52.50
+        assertEquals(36_612L, pace.estimatedClosingCents) // $366.12
+        assertEquals(46_774L, pace.expectedCents) // $467.74
+        assertEquals(31, pace.daysInMonth)
+        assertEquals(29, pace.day)
+        assertEquals(3, pace.daysRemaining) // 31 - 29 + 1 = 3
+    }
+
+    @Test
+    fun `dia 1-2 sin cierre fiable, dia 3 en adelante sí`() {
+        val dia1 = BudgetPace.compute(day(2026, 10, 1), 20_000, 1_000)!!
+        val dia2 = BudgetPace.compute(day(2026, 10, 2), 20_000, 1_000)!!
+        val dia3 = BudgetPace.compute(day(2026, 10, 3), 20_000, 1_000)!!
+
+        assertFalse(dia1.hasEnoughDataForClosing)
+        assertFalse(dia2.hasEnoughDataForClosing)
+        assertTrue(dia3.hasEnoughDataForClosing)
+    }
+
+    @Test
+    fun `meses de 28 29 30 y 31 dias el ultimo dia da 100 por ciento esperado`() {
+        listOf(
+            day(2026, 2, 28),   // 28 días
+            day(2028, 2, 29),   // 29 días (bisiesto)
+            day(2026, 4, 30),   // 30 días
+            day(2026, 5, 31)    // 31 días
+        ).forEach { lastDay ->
+            val pace = BudgetPace.compute(lastDay, 90_000, 45_000)!!
+            assertEquals(
+                "Esperado incorrecto para ${lastDay.monthValue}/${lastDay.lengthOfMonth()}",
+                BigDecimal("100.0"),
+                pace.expectedPct
+            )
+            assertEquals(90_000L, pace.expectedCents)
+        }
+    }
+
+    @Test
+    fun `gasto igual o superior al presupuesto por dia es cero`() {
+        val justo = BudgetPace.compute(day(2026, 10, 20), 20_000, 20_000)!!
+        val excedido = BudgetPace.compute(day(2026, 10, 20), 20_000, 25_000)!!
+
+        assertEquals(0L, justo.perDayCents)
+        assertEquals(0L, excedido.perDayCents)
+        assertTrue(justo.isBudgetExhausted)
+        assertTrue(excedido.isBudgetExhausted)
+        assertTrue(excedido.isClosingOverBudget)
+    }
 }

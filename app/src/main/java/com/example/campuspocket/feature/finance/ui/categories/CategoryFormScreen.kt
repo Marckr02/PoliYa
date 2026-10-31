@@ -38,13 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.CampusOverline
 import com.example.campuspocket.core.designsystem.ColorPalette
+import java.util.Locale
 import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
+import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.feature.finance.data.CategoryKind
 
@@ -98,23 +100,28 @@ fun CategoryFormScreen(
 
             Column {
                 Text(
-                    text = stringResource(R.string.category_kind),
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = stringResource(R.string.category_kind).uppercase(Locale.getDefault()),
+                    style = com.example.campuspocket.core.designsystem.CampusOverline,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                PillSegmentedControl(
-                    options = CategoryKind.entries,
-                    selected = state.kind,
-                    onSelect = viewModel::onKindChange,
-                    label = { kind ->
-                        stringResource(
-                            when (kind) {
-                                CategoryKind.EXPENSE -> R.string.category_kind_expense
-                                CategoryKind.INCOME -> R.string.category_kind_income
-                            }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CategoryKind.entries.forEach { kind ->
+                        CampusChip(
+                            label = stringResource(
+                                when (kind) {
+                                    CategoryKind.EXPENSE -> R.string.category_kind_expense
+                                    CategoryKind.INCOME -> R.string.category_kind_income
+                                }
+                            ),
+                            selected = state.kind == kind,
+                            onClick = { viewModel.onKindChange(kind) },
+                            role = Role.RadioButton
                         )
                     }
-                )
+                }
             }
 
             Text(

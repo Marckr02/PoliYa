@@ -48,7 +48,7 @@ fun CampusBottomSheet(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val ext = MaterialTheme.extended
-    val lineColor = ext.ink
+    val lineColor = ext.inkIndicator
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,

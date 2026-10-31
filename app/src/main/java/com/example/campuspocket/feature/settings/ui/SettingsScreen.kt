@@ -266,7 +266,7 @@ fun SettingsScreen(
                     ) {
                         Icon(
                             painter = painterResource(module.iconRes()),
-                            contentDescription = null,
+                            contentDescription = null, // decorativo: la etiqueta contigua describe el módulo
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(24.dp)
                         )
@@ -501,7 +501,7 @@ fun SettingsScreen(
                     Text(stringResource(R.string.settings_whats_new), style = MaterialTheme.typography.bodyMedium)
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
-                        contentDescription = null,
+                        contentDescription = null, // decorativo: la fila ya tiene etiqueta
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )

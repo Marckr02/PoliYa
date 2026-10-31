@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDatePickerDialog
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusSelectField
@@ -44,7 +46,6 @@ import com.example.campuspocket.core.designsystem.components.CampusSelectItem
 import com.example.campuspocket.core.designsystem.components.CampusSwitch
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
 import com.example.campuspocket.core.designsystem.components.campusDatePickerColors
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.core.util.Money
@@ -183,25 +184,31 @@ fun PaymentFormScreen(
                 }
             }
 
+            val selectedFrequency = Frequency.entries.firstOrNull { it.name == state.frequency }
+    ?: Frequency.MONTHLY
+
             // Frecuencia
             Column {
-                Text(stringResource(R.string.scheduled_payment_frequency), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                val selectedFrequency = Frequency.entries.firstOrNull { it.name == state.frequency }
-                    ?: Frequency.MONTHLY
-                PillSegmentedControl(
-                    options = Frequency.entries.toList(),
-                    selected = selectedFrequency,
-                    onSelect = { viewModel.onFrequencyChange(it.name) },
-                    label = { frequency ->
-                        stringResource(
-                            when (frequency) {
-                                Frequency.WEEKLY -> R.string.scheduled_payment_frequency_weekly
-                                Frequency.MONTHLY -> R.string.scheduled_payment_frequency_monthly
-                                Frequency.YEARLY -> R.string.scheduled_payment_frequency_yearly
-                            }
+                Text(stringResource(R.string.scheduled_payment_frequency).uppercase(Locale.getDefault()), style = com.example.campuspocket.core.designsystem.CampusOverline, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Frequency.entries.toList().forEach { frequency ->
+                        CampusChip(
+                            label = stringResource(
+                                when (frequency) {
+                                    Frequency.WEEKLY -> R.string.scheduled_payment_frequency_weekly
+                                    Frequency.MONTHLY -> R.string.scheduled_payment_frequency_monthly
+                                    Frequency.YEARLY -> R.string.scheduled_payment_frequency_yearly
+                                }
+                            ),
+                            selected = selectedFrequency == frequency,
+                            onClick = { viewModel.onFrequencyChange(frequency.name) },
+                            role = Role.RadioButton
                         )
                     }
-                )
+                }
             }
 
             // Próxima fecha de pago

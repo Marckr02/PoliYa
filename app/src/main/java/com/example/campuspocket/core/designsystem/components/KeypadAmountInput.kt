@@ -252,7 +252,7 @@ private fun KeypadKey(
         label = "keypadContainer"
     )
     val content by animateColorAsState(
-        targetValue = if (pressed) ext.ink else contentColor,
+        targetValue = if (pressed) ext.inkContent else contentColor,
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "keypadContent"
     )
@@ -314,8 +314,8 @@ private fun SaveKeypadKey(
         label = "saveKeyScale"
     )
     val container = if (enabled) ext.lime else ext.track
-    val content = if (enabled) ext.ink else ext.inkMuted
-    val border = if (enabled) ext.ink else ext.controlLine
+    val content = if (enabled) ext.inkContent else ext.inkMuted
+    val border = if (enabled) ext.inkIndicator else ext.controlLine
     Box(
         modifier = modifier
             .graphicsLayer {
