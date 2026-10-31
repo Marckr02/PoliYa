@@ -216,6 +216,11 @@ class NoteEditorViewModel @Inject constructor(
         _uiState.update { it.copy(isSaving = false) }
     }
 
+    /** Dispara el guardado final en segundo plano sin bloquear el hilo principal. */
+    fun flushAsync() {
+        viewModelScope.launch { flush() }
+    }
+
     private fun markEdited() {
         val state = _uiState.value
         edits.value = Pair(state.title, state.content)

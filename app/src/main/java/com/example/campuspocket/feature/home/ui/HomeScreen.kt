@@ -588,7 +588,7 @@ private fun NextClassCard(
                         else -> nextClass.startLabel
                     },
                     style = MaterialTheme.typography.labelMedium,
-                    color = ext.onInk,
+                    color = ext.onLime,
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(ext.lime)

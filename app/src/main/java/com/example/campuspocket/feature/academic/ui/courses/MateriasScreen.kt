@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -38,12 +39,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.CampusTheme
-import com.example.campuspocket.core.designsystem.components.CampusButton
-import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusDialog
+import com.example.campuspocket.core.designsystem.components.CampusTopBar
 import com.example.campuspocket.core.designsystem.components.EmptyCoursesState
+import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.designsystem.components.ShimmerList
+import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.feature.academic.domain.model.Course
 import com.example.campuspocket.feature.academic.ui.TimeText
 import com.example.campuspocket.feature.academic.ui.shortLabelRes
@@ -53,44 +55,42 @@ fun MateriasScreen(
     onAddCourse: () -> Unit,
     onOpenCourse: (Long) -> Unit,
     onImport: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CoursesViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var pendingDelete by remember { mutableStateOf<Course?>(null) }
+    val ext = MaterialTheme.extended
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.fillMaxSize()
     ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(R.string.academic_courses),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface
+        CampusTopBar(
+            title = stringResource(R.string.academic_courses),
+            onBack = onBack,
+            actions = {
+                RoundIconButton(
+                    iconRes = R.drawable.ic_link,
+                    contentDescription = stringResource(R.string.import_pdf_title),
+                    onClick = onImport
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CampusButton(
-                        style = CampusButtonStyle.SECONDARY,
-                        text = stringResource(R.string.import_pdf_title),
-                        onClick = onImport
-                    )
-                    CampusButton(
-                        style = CampusButtonStyle.PRIMARY,
-                        text = stringResource(R.string.course_new),
-                        onClick = onAddCourse
-                    )
-                }
+                RoundIconButton(
+                    icon = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.course_new),
+                    onClick = onAddCourse,
+                    containerColor = ext.accent,
+                    contentColor = ext.onAccent
+                )
             }
+        )
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             when {
                 state.isLoading -> {
                     ShimmerList(modifier = Modifier.weight(1f))
@@ -119,6 +119,7 @@ fun MateriasScreen(
                 }
             }
         }
+    }
 
     pendingDelete?.let { course ->
         CampusDialog(
@@ -273,4 +274,4 @@ private fun CourseCard(
                 }
             }
         }
-}
+    }

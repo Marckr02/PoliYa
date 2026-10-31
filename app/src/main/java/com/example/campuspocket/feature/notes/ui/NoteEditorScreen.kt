@@ -104,10 +104,10 @@ fun NoteEditorScreen(
     val selectedCourse = courses.firstOrNull { it.id == state.courseId }
     val selectedFolder = folders.firstOrNull { it.id == state.folderId }
 
-    // Guardado al salir.
+    // Guardado asíncrono al salir (sin bloquear el hilo principal).
     DisposableEffect(Unit) {
         onDispose {
-            kotlinx.coroutines.runBlocking { viewModel.flush() }
+            viewModel.flushAsync()
         }
     }
 

@@ -784,6 +784,7 @@ private fun NavGraphBuilder.academicGraph(
         }
         composable(AcademicDestinations.MATERIAS) {
             MateriasScreen(
+                onBack = { navController.popBackStack() },
                 onOpenCourse = { courseId ->
                     navController.navigate(AcademicDestinations.courseDetail(courseId))
                 },

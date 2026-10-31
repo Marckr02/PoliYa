@@ -157,18 +157,9 @@ fun TransactionFormScreen(
         onDiscard = onDone
     )
 
-    // Guardar y volver: deja ver el snackbar con Deshacer unos segundos.
+    // Guardar y volver: se cierra inmediatamente sin congelar la pantalla.
     LaunchedEffect(state.saved) {
-        if (!state.saved) return@LaunchedEffect
-        if (!state.isEditing) {
-            val undone = snackbarHost.showUndoSnackbar(
-                message = savedMessage,
-                actionLabel = undoLabel,
-                timeoutMillis = 2_000L
-            )
-            if (undone) viewModel.deleteLastTransaction()
-        }
-        onDone()
+        if (state.saved) onDone()
     }
 
     LaunchedEffect(state.deleted) {

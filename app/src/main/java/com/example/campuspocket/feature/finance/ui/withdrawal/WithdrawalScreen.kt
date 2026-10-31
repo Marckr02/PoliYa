@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -182,16 +183,10 @@ fun WithdrawalScreen(
         }
     }
 
-    state.savedAmountCents?.let { amount ->
-        CampusDialog(
-            onDismissRequest = onDone,
-            title = stringResource(R.string.withdrawal_success_title),
-            message = stringResource(R.string.withdrawal_success, formatMoneyOrHidden(amount)),
-            icon = Icons.Filled.CheckCircle,
-            confirmText = stringResource(R.string.ok),
-            onConfirm = onDone,
-            showDismiss = false
-        )
+    LaunchedEffect(state.savedAmountCents) {
+        if (state.savedAmountCents != null) {
+            onDone()
+        }
     }
 }
 
