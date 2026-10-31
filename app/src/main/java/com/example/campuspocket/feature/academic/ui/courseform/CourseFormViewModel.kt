@@ -44,6 +44,7 @@ data class CourseFormUiState(
     @StringRes val sectionError: Int? = null,
     @StringRes val sessionsError: Int? = null,
     val isEditing: Boolean = false,
+    val notFound: Boolean = false,
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
     val saved: Boolean = false,
@@ -71,7 +72,7 @@ class CourseFormViewModel @Inject constructor(
                 val course = courseRepository.getCourse(courseId)
                 _uiState.update {
                     if (course == null) {
-                        it.copy(isLoading = false)
+                        it.copy(notFound = true, isLoading = false)
                     } else {
                         it.copy(
                             code = course.code,

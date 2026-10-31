@@ -67,15 +67,15 @@ import com.example.campuspocket.core.designsystem.MotionTokens
 import com.example.campuspocket.core.designsystem.PillShape
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
+import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.BudgetProgressBar
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
 import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import com.example.campuspocket.core.designsystem.components.CategoryExpenseChart
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.EmptyState
 import com.example.campuspocket.core.designsystem.components.MonthlyOverviewCard
-import com.example.campuspocket.core.designsystem.components.PrimaryPillButton
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.feature.finance.domain.GetMonthSummary
 import com.example.campuspocket.feature.finance.domain.MonthPace
 import kotlinx.coroutines.delay
@@ -103,7 +103,7 @@ fun SummaryScreen(
             onBack = onBack
         )
         if (state.isLoading) {
-            LoadingShimmer(modifier = Modifier.fillMaxSize())
+            ShimmerList(modifier = Modifier.fillMaxSize(), rows = 6)
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -216,11 +216,11 @@ fun SummaryScreen(
 
                 if (state.topCategories.isEmpty()) {
                     item(key = "empty_categories") {
-                        EmptyStateCard(
+                        EmptyState(
                             modifier = Modifier.fillMaxWidth(),
                             title = stringResource(R.string.empty_budgets),
                             message = stringResource(R.string.empty_budgets),
-                            icon = painterResource(R.drawable.ic_wallet)
+                            iconRes = R.drawable.ic_wallet
                         )
                     }
                 } else {
@@ -546,7 +546,7 @@ internal fun BudgetPaceSuggestionCard(onDefineBudget: () -> Unit, modifier: Modi
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(12.dp))
-        PrimaryPillButton(
+        CampusButton(
             text = stringResource(R.string.finance_pace_create_budget),
             onClick = onDefineBudget,
             modifier = Modifier.align(Alignment.Start)

@@ -1,6 +1,7 @@
 package com.example.campuspocket.core.preferences
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -9,9 +10,12 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.campuspocket.core.util.LogUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -55,7 +59,7 @@ object PreferenceKeys {
     const val CRASHLYTICS_OPT_IN = "crashlytics_opt_in"
 }
 
-private const val RECENT_SEARCH_SEPARATOR = "\u001F"
+private const val RECENT_SEARCH_SEPARATOR = "\n"
 private const val MAX_RECENT_SEARCHES = 5
 
 private fun String?.decodeRecentSearches(): List<String> =
@@ -205,12 +209,23 @@ class UserPreferencesRepository @Inject constructor(
         set(PreferenceKeys.ONBOARDING_COMPLETED, true)
     }
 
-    /** Escritura tolerante a fallos: no rompe la UI si el disco falla. */
-    private suspend fun editOrLog(block: androidx.datastore.preferences.core.MutablePreferences.() -> Unit) {
-        try {
-            dataStore.edit(block)
-        } catch (e: IOException) {
-            LogUtil.e("No se pudieron guardar las preferencias", e, tag = "Prefs")
+    /** Escritura en DataStore con reintento para bloqueos temporales de archivo en Windows. */
+    private suspend fun editOrLog(block: MutablePreferences.() -> Unit) {
+        var attempts = 0
+        while (true) {
+            try {
+                dataStore.edit(block)
+                return
+            } catch (e: IOException) {
+                attempts++
+                if (attempts >= 10) {
+                    LogUtil.e("No se pudieron guardar las preferencias tras $attempts intentos", e, tag = "Prefs")
+                    return
+                }
+                withContext(Dispatchers.IO) {
+                    Thread.sleep(50)
+                }
+            }
         }
     }
 }

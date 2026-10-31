@@ -59,6 +59,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.CampusOverline
 import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.CampusCheckbox
@@ -71,8 +72,6 @@ import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
 import com.example.campuspocket.core.designsystem.components.campusDatePickerColors
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
-import com.example.campuspocket.core.designsystem.components.SegmentedControl
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.feature.academic.domain.model.Priority
@@ -81,6 +80,7 @@ import com.example.campuspocket.feature.academic.ui.TimePickerDialog
 import com.example.campuspocket.feature.academic.ui.TimeText
 import java.time.LocalDate
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.campuspocket.core.designsystem.components.FormNotFoundState
 
 private val Priority.resourceString: Int
     get() = when (this) {
@@ -225,13 +225,15 @@ private fun TaskFormContent(
                                 R.string.task_mark_pending
                             }
                         ),
-                        onClick = { onToggleCompleted(state.completedAt == null) },
-                        containerColor = MaterialTheme.extended.accent,
-                        contentColor = MaterialTheme.extended.onAccent
+                        onClick = { onToggleCompleted(state.completedAt == null) }
                     )
                 }
             }
         )
+        if (state.notFound) {
+            FormNotFoundState(onBack = onBack)
+            return@Column
+        }
         if (!state.isLoaded) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -278,10 +280,10 @@ private fun TaskFormContent(
             Column {
                 Text(
                     text = stringResource(R.string.task_due_date),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = CampusOverline,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                SecondaryPillButton(
+                CampusButton(style = CampusButtonStyle.SECONDARY, 
                     text = java.time.format.DateTimeFormatter.ofPattern(
                         "EEE d 'de' MMM 'de' yyyy",
                         java.util.Locale.forLanguageTag("es")
@@ -293,10 +295,10 @@ private fun TaskFormContent(
             Column {
                 Text(
                     text = stringResource(R.string.task_due_time),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = CampusOverline,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                SecondaryPillButton(
+                CampusButton(style = CampusButtonStyle.SECONDARY, 
                     text = TimeText.format(state.time),
                     onClick = { showTimePicker = true },
                     modifier = Modifier.fillMaxWidth()
@@ -306,15 +308,21 @@ private fun TaskFormContent(
             Column {
                 Text(
                     text = stringResource(R.string.task_priority),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = CampusOverline,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                SegmentedControl(
-                    options = listOf(Priority.LOW, Priority.MEDIUM, Priority.HIGH),
-                    selected = state.priority,
-                    onSelect = onPriorityChange,
-                    labelProvider = { stringResource(it.resourceString) }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(Priority.LOW, Priority.MEDIUM, Priority.HIGH).forEach { priority ->
+                        CampusChip(
+                            label = stringResource(priority.resourceString),
+                            selected = state.priority == priority,
+                            onClick = { onPriorityChange(priority) }
+                        )
+                    }
+                }
             }
 
             // Subtareas (v5 §3.3): título, check de 20 dp y filas de 48 dp.
@@ -364,7 +372,7 @@ private fun TaskFormContent(
                         )
                         IconButton(
                             onClick = { onRemoveSubtask(index) },
-                            modifier = Modifier.size(44.dp)
+                            modifier = Modifier.size(48.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Close,
@@ -392,12 +400,12 @@ private fun TaskFormContent(
                     trailingIcon = {
                         IconButton(
                             onClick = onAddSubtask,
-                            modifier = Modifier.size(44.dp)
+                            modifier = Modifier.size(48.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Add,
                                 contentDescription = stringResource(R.string.task_subtask_add_action),
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     },
@@ -428,8 +436,8 @@ private fun TaskFormContent(
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     text = stringResource(R.string.task_repeat_label),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = CampusOverline,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -455,7 +463,7 @@ private fun TaskFormContent(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    SecondaryPillButton(
+                    CampusButton(style = CampusButtonStyle.SECONDARY, 
                         text = java.time.format.DateTimeFormatter.ofPattern(
                             "d MMM yyyy",
                             java.util.Locale.forLanguageTag("es")
@@ -476,8 +484,8 @@ private fun TaskFormContent(
             Column {
                 Text(
                     text = stringResource(R.string.task_reminders),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = CampusOverline,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),

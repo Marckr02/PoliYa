@@ -43,12 +43,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.ContrastUtil
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
+import com.example.campuspocket.core.designsystem.components.FormNotFoundState
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.feature.academic.domain.model.SchoolDays
 import com.example.campuspocket.feature.academic.ui.TimeField
@@ -116,6 +117,10 @@ private fun CourseFormContent(
                 )
             }
         )
+        if (state.notFound) {
+            FormNotFoundState(onBack = onBack)
+            return
+        }
         if (state.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -158,16 +163,16 @@ private fun CourseFormContent(
                 errorRes = null
             )
 
-            // Selector de color para la materia
+            // Selector de color para la materia (colores Campus)
             val paletteColors = listOf(
-                0xFF4C8DFF.toInt(),
-                0xFF22C55E.toInt(),
-                0xFFEAB308.toInt(),
-                0xFFEF4444.toInt(),
-                0xFFA855F7.toInt(),
-                0xFFEC4899.toInt(),
-                0xFF06B6D4.toInt(),
-                0xFFF97316.toInt()
+                0xFF103C3B.toInt(),  // Primary - azul/verde oscuro
+                0xFFDCEBDD.toInt(),  // Mint - menta/verde
+                0xFFF1C75B.toInt(),  // Accent - ámbar/amarillo
+                0xFFA93A3D.toInt(),  // Danger - rojo
+                0xFFE9E1F4.toInt(),  // Lavender - lavanda
+                0xFFF3DED0.toInt(),  // Peach - durazno/rosa
+                0xFFDCE9EB.toInt(),  // Sky - cielo/cian
+                0xFFDFF36D.toInt()   // Lime - lima/naranja
             )
             val paletteColorNames = listOf(
                 R.string.color_blue_short,
@@ -255,7 +260,7 @@ private fun CourseFormContent(
                 )
             }
 
-            SecondaryPillButton(
+            CampusButton(style = CampusButtonStyle.SECONDARY, 
                 text = stringResource(R.string.course_add_session),
                 onClick = onAddSession,
                 modifier = Modifier.fillMaxWidth()

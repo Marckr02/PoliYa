@@ -43,10 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusDialog
-import com.example.campuspocket.core.designsystem.components.DangerPillButton
-import com.example.campuspocket.core.designsystem.components.PriorityBadge
+import com.example.campuspocket.core.designsystem.components.PriorityTag
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.feature.academic.domain.model.ClassSession
@@ -119,9 +120,7 @@ private fun CourseDetailContent(
             RoundIconButton(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.back),
-                onClick = onBack,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                onClick = onBack
             )
             Spacer(Modifier.width(8.dp))
             Text(
@@ -136,9 +135,7 @@ private fun CourseDetailContent(
                 RoundIconButton(
                     icon = Icons.Filled.Edit,
                     contentDescription = stringResource(R.string.edit),
-                    onClick = { onEditCourse(id) },
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
+                    onClick = { onEditCourse(id) }
                 )
             }
         }
@@ -228,7 +225,7 @@ private fun CourseDetailContent(
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
-                                    PriorityBadge(priority = task.priority)
+                                    PriorityTag(priority = task.priority)
                                 }
                             }
                         }
@@ -278,7 +275,7 @@ private fun CourseDetailContent(
                         }
                     }
 
-                    DangerPillButton(
+                    CampusButton(style = CampusButtonStyle.DESTRUCTIVE, 
                         text = stringResource(R.string.delete),
                         onClick = onDeleteRequest,
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp)

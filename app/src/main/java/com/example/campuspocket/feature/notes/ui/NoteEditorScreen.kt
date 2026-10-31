@@ -44,9 +44,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -61,6 +70,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.PillShape
+import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusSelectItem
 import com.example.campuspocket.core.designsystem.components.CampusTextField
@@ -112,9 +122,7 @@ fun NoteEditorScreen(
             RoundIconButton(
                 icon = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.back),
-                onClick = onDone,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                onClick = onDone
             )
             Spacer(Modifier.width(8.dp))
             CampusTextField(
@@ -128,9 +136,7 @@ fun NoteEditorScreen(
             RoundIconButton(
                 iconRes = R.drawable.ic_share,
                 contentDescription = stringResource(R.string.note_share),
-                onClick = { showShare = true },
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                onClick = { showShare = true }
             )
             IconButton(onClick = { viewModel.togglePin() }) {
                 Icon(
@@ -178,17 +184,31 @@ fun NoteEditorScreen(
                 .padding(horizontal = 20.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            NoteLinkChip(
+            CampusChip(
                 label = selectedCourse?.name ?: stringResource(R.string.note_link_course),
-                iconRes = R.drawable.ic_link,
-                hasValue = selectedCourse != null,
-                onClick = { showCoursePicker = true }
+                selected = selectedCourse != null,
+                onClick = { showCoursePicker = true },
+                leading = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_link),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             )
-            NoteLinkChip(
+            CampusChip(
                 label = selectedFolder?.name ?: stringResource(R.string.notes_add_folder),
-                iconRes = R.drawable.ic_folder,
-                hasValue = selectedFolder != null,
-                onClick = { showFolderPicker = true }
+                selected = selectedFolder != null,
+                onClick = { showFolderPicker = true },
+                leading = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_folder),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             )
         }
 
@@ -204,7 +224,7 @@ fun NoteEditorScreen(
         )
 
         if (showPreview) {
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
+            NotePaperPreviewBox(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 MarkdownPreview(
                     markdown = state.content,
                     onToggleCheckbox = { rawStart ->
@@ -346,62 +366,34 @@ private fun SaveStatus(isSaving: Boolean, lastSavedAt: Long) {
     Row(
         modifier = Modifier
             .padding(horizontal = 4.dp)
+            .heightIn(min = 48.dp)
+            .clip(PillShape)
+            .background(ext.mint)
+            .border(1.dp, ext.ink, PillShape)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .semantics { liveRegion = LiveRegionMode.Polite },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         if (isSaving) {
             Text(
                 text = stringResource(R.string.note_saving_status),
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = ext.onMint
             )
         } else {
             Icon(
                 imageVector = Icons.Filled.Check,
-                contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                tint = ext.onMint,
-                modifier = Modifier.size(12.dp)
+                contentDescription = null,
+                tint = ext.ink,
+                modifier = Modifier.size(16.dp)
             )
             Text(
                 text = stringResource(R.string.note_saved_status),
                 style = MaterialTheme.typography.labelSmall,
-                color = ext.onMint
+                color = ext.ink
             )
         }
-    }
-}
-
-@Composable
-private fun NoteLinkChip(
-    label: String,
-    iconRes: Int,
-    hasValue: Boolean,
-    onClick: () -> Unit
-) {
-    val ext = MaterialTheme.extended
-    Row(
-        modifier = Modifier
-            .heightIn(min = 44.dp)
-            .clip(PillShape)
-            .background(if (hasValue) ext.cream else ext.track)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-            tint = if (hasValue) ext.onCream else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(16.dp)
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = if (hasValue) ext.onCream else MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1
-        )
     }
 }
 
@@ -499,7 +491,45 @@ private fun safeFileName(title: String): String =
         .ifBlank { "nota" }
         .take(60)
 
-/** Campo de contenido sin contorno, con fondo pista y soporte de selección. */
+/** Contenedor de vista previa con fondo de papel con líneas de 23 dp. */
+@Composable
+private fun NotePaperPreviewBox(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    val isDark = isSystemInDarkTheme()
+    val paperBg = if (isDark) Color(0xFF24231D) else Color(0xFFFFFAF0)
+    val borderColor = if (isDark) Color(0xFF4A4739) else Color(0xFFE1D6BC)
+    val lineStroke = if (isDark) Color(0xFFDFF36D).copy(alpha = 0.09f) else Color(0xFF103C3B).copy(alpha = 0.09f)
+    val density = LocalDensity.current
+    val lineStepPx = with(density) { 23.dp.toPx() }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(4.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(4.dp))
+            .background(paperBg)
+            .drawBehind {
+                val numLines = (size.height / lineStepPx).toInt()
+                for (i in 1..numLines) {
+                    val y = i * lineStepPx
+                    drawLine(
+                        color = lineStroke,
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }
+            }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        content()
+    }
+}
+
+/** Campo de contenido con efecto de papel con líneas guía cada 23 dp e interlineado exacto de 23 sp. */
 @Composable
 private fun NoteContentField(
     value: TextFieldValue,
@@ -507,31 +537,63 @@ private fun NoteContentField(
     placeholder: String,
     modifier: Modifier = Modifier
 ) {
-    val ext = MaterialTheme.extended
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.onSurface
-        ),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+    val isDark = isSystemInDarkTheme()
+    val paperBg = if (isDark) Color(0xFF24231D) else Color(0xFFFFFAF0)
+    val borderColor = if (isDark) Color(0xFF4A4739) else Color(0xFFE1D6BC)
+    val lineStroke = if (isDark) Color(0xFFDFF36D).copy(alpha = 0.09f) else Color(0xFF103C3B).copy(alpha = 0.09f)
+    val density = LocalDensity.current
+    val lineStepPx = with(density) { 23.dp.toPx() }
+    val textColor = if (isDark) Color(0xFFF1EAD5) else Color(0xFF243B3F)
+
+    Box(
         modifier = modifier
-            .clip(MaterialTheme.shapes.small)
-            .background(ext.track)
-            .padding(16.dp),
-        decorationBox = { innerTextField ->
-            Box {
-                if (value.text.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(4.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(4.dp))
+            .background(paperBg)
+            .drawBehind {
+                val numLines = (size.height / lineStepPx).toInt()
+                for (i in 1..numLines) {
+                    val y = i * lineStepPx
+                    drawLine(
+                        color = lineStroke,
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = 1.dp.toPx()
                     )
                 }
-                innerTextField()
             }
-        }
-    )
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            textStyle = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 23.sp,
+                color = textColor,
+                fontWeight = FontWeight.Medium
+            ),
+            cursorBrush = SolidColor(MaterialTheme.extended.accent),
+            modifier = Modifier.fillMaxSize(),
+            decorationBox = { innerTextField ->
+                Box {
+                    if (value.text.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 23.sp,
+                                color = textColor.copy(alpha = 0.5f),
+                                fontWeight = FontWeight.Normal
+                            )
+                        )
+                    }
+                    innerTextField()
+                }
+            }
+        )
+    }
 }
 
 @Composable

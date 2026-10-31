@@ -39,12 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.AccountsCarousel
 import com.example.campuspocket.core.designsystem.components.BentoCard
-import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
-import com.example.campuspocket.core.designsystem.components.PrimaryPillButton
+import com.example.campuspocket.core.designsystem.components.CampusDivider
 import com.example.campuspocket.core.designsystem.components.PrivacyToggleButton
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
+import com.example.campuspocket.core.designsystem.components.UnderlinedTabRow
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.feature.finance.data.TransactionType
 import com.example.campuspocket.feature.finance.ui.accounts.AccountsViewModel
@@ -57,8 +58,8 @@ import com.example.campuspocket.feature.finance.ui.payments.PaymentsViewModel
 import com.example.campuspocket.feature.finance.ui.payments.paymentItems
 import com.example.campuspocket.feature.finance.ui.payments.rememberPaymentDeletionHandler
 import com.example.campuspocket.feature.finance.ui.summary.BudgetInsightsRow
-import com.example.campuspocket.feature.finance.ui.summary.BudgetPaceCard
 import com.example.campuspocket.feature.finance.ui.summary.BudgetPaceSuggestionCard
+import com.example.campuspocket.feature.finance.ui.summary.PaceGaugeCard
 import com.example.campuspocket.feature.finance.ui.summary.SummaryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
@@ -156,28 +157,28 @@ fun FinanceHomeScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item(key = "cabecera") {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.finance_title),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.weight(1f)
-                )
-                PrivacyToggleButton(onToggle = onTogglePrivacy)
-                Spacer(Modifier.width(4.dp))
-                RoundIconButton(
-                    icon = Icons.Filled.DateRange,
-                    contentDescription = stringResource(R.string.finance_open_calendar),
-                    onClick = onOpenCalendar,
-                    size = 48.dp,
-                    containerColor = ext.track,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                )
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.finance_title),
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
+                    PrivacyToggleButton(onToggle = onTogglePrivacy)
+                    Spacer(Modifier.width(4.dp))
+                    RoundIconButton(
+                        icon = Icons.Filled.DateRange,
+                        contentDescription = stringResource(R.string.finance_open_calendar),
+                        onClick = onOpenCalendar
+                    )
+                }
+                CampusDivider()
             }
         }
 
@@ -189,7 +190,7 @@ fun FinanceHomeScreen(
                         onDefineBudget = { selectTab(FinanceTab.BUDGETS) }
                     )
                 } else {
-                    BudgetPaceCard(
+                    PaceGaugeCard(
                         pace = pace,
                         onEditBudget = { selectTab(FinanceTab.BUDGETS) }
                     )
@@ -224,10 +225,7 @@ fun FinanceHomeScreen(
                     RoundIconButton(
                         icon = Icons.Filled.Add,
                         contentDescription = stringResource(R.string.finance_add_account),
-                        onClick = onAddAccount,
-                        size = 48.dp,
-                        containerColor = ext.track,
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                        onClick = onAddAccount
                     )
                 }
                 Spacer(Modifier.height(8.dp))
@@ -243,7 +241,7 @@ fun FinanceHomeScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(10.dp))
-                        PrimaryPillButton(
+                        CampusButton(
                             text = stringResource(R.string.finance_add_account),
                             onClick = onAddAccount
                         )
@@ -272,7 +270,7 @@ fun FinanceHomeScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
-                PillSegmentedControl(
+                UnderlinedTabRow(
                     options = FinanceTab.entries,
                     selected = currentTab,
                     onSelect = { selected -> selectTab(selected) },

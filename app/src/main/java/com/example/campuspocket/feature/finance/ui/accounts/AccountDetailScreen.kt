@@ -34,9 +34,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.MoneyText
+import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusDialog
-import com.example.campuspocket.core.designsystem.components.DangerPillButton
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.feature.finance.data.TransactionType
 import com.example.campuspocket.feature.finance.domain.model.Transaction
@@ -157,7 +158,7 @@ fun AccountDetailScreen(
                         }
                     }
                     item {
-                        DangerPillButton(
+                        CampusButton(style = CampusButtonStyle.DESTRUCTIVE, 
                             text = stringResource(R.string.account_archive),
                             onClick = { showArchiveDialog = true },
                             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)

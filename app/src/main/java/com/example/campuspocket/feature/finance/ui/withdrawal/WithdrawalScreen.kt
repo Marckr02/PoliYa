@@ -1,7 +1,9 @@
 package com.example.campuspocket.feature.finance.ui.withdrawal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +24,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,28 +38,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.CampusOverline
 import com.example.campuspocket.core.designsystem.MoneyText
+import com.example.campuspocket.core.designsystem.ShapeCard
+import com.example.campuspocket.core.designsystem.ShapeChip
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusSelectField
 import com.example.campuspocket.core.designsystem.components.CampusSelectItem
+import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
+import com.example.campuspocket.core.designsystem.components.EmptyState
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
 import com.example.campuspocket.core.util.Money
 import com.example.campuspocket.feature.finance.domain.AccountBalance
 import com.example.campuspocket.feature.finance.domain.WithdrawalError
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,11 +104,11 @@ fun WithdrawalScreen(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                EmptyStateCard(
+                EmptyState(
                     title = stringResource(R.string.withdrawal_no_savings_title),
                     message = stringResource(R.string.withdrawal_no_savings_message),
-                    icon = painterResource(R.drawable.ic_wallet),
-                    actionText = stringResource(R.string.withdrawal_create_savings),
+                    iconRes = R.drawable.ic_wallet,
+                    actionLabel = stringResource(R.string.withdrawal_create_savings),
                     onAction = onCreateAccount
                 )
             }
@@ -147,7 +165,13 @@ fun WithdrawalScreen(
                     }
                 }
                 CampusButton(
-                    text = stringResource(R.string.withdrawal_confirm),
+                    text = stringResource(
+                        if (!state.isSaving && !insufficientBalance) {
+                            R.string.withdrawal_confirm
+                        } else {
+                            R.string.withdrawal_review_amount
+                        }
+                    ),
                     onClick = viewModel::save,
                     enabled = !state.isSaving && !insufficientBalance,
                     modifier = Modifier
@@ -182,24 +206,42 @@ private fun SavingsAccountDropdown(
     var expanded by remember { mutableStateOf(false) }
     val selected = accounts.firstOrNull { it.account.id == selectedId }
 
-    CampusSelectField(
-        value = selected?.account?.name.orEmpty(),
-        label = stringResource(R.string.withdrawal_from),
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-        supportingText = selected?.let {
-            stringResource(R.string.withdrawal_balance, formatMoneyOrHidden(it.balanceCents))
-        },
-        modifier = modifier
+    BentoCard(
+        modifier = modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = ShapeCard
     ) {
-        accounts.forEach { balance ->
-            CampusSelectItem(
-                text = balance.account.name + " · " + formatMoneyOrHidden(balance.balanceCents),
-                selected = balance.account.id == selectedId,
-                onClick = {
-                    balance.account.id?.let(onSelect)
-                    expanded = false
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.withdrawal_from).uppercase(Locale.getDefault()),
+                    style = CampusOverline,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = selected?.account?.name.orEmpty(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                selected?.let {
+                    Text(
+                        text = stringResource(R.string.withdrawal_balance, formatMoneyOrHidden(it.balanceCents)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
+            }
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
             )
         }
     }
@@ -213,11 +255,14 @@ private fun AfterWithdrawalCard(
 ) {
     BentoCard(
         modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Text(
             text = stringResource(R.string.withdrawal_after_title),
-            style = MaterialTheme.typography.labelSmall,
+            style = CampusOverline,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(10.dp))
@@ -261,15 +306,13 @@ private fun CashDestinationCard(
     showError: Boolean,
     onCreateAccount: () -> Unit,
     modifier: Modifier = Modifier
-) {    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Surface(
+) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        BentoCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = if (showError) {
-                MaterialTheme.colorScheme.errorContainer
-            } else {
-                MaterialTheme.extended.track
-            }
+            containerColor = if (showError) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surface,
+            contentColor = if (showError) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface,
+            shape = ShapeCard
         ) {
             Row(
                 modifier = Modifier.padding(16.dp),
@@ -284,44 +327,49 @@ private fun CashDestinationCard(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_wallet),
-                        contentDescription = null, // decorativo: la etiqueta contigua describe la accion
+                        contentDescription = null,
                         tint = MaterialTheme.extended.onLavender
                     )
                 }
                 Column {
                     Text(
-                        text = stringResource(R.string.withdrawal_to),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = stringResource(R.string.withdrawal_to).uppercase(Locale.getDefault()),
+                        style = CampusOverline,
+                        color = if (showError) MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.82f) else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = cashName ?: stringResource(R.string.account_type_cash),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (showError) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
         }
         if (showError) {
-            Row(
+            BentoCard(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                shape = ShapeCard,
+                contentPadding = PaddingValues(12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.withdrawal_error_cash),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = stringResource(R.string.finance_new_account),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .heightIn(min = 48.dp)
-                        .clickable(onClick = onCreateAccount)
-                        .padding(horizontal = 8.dp, vertical = 14.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.withdrawal_error_cash),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.weight(1f)
+                    )
+                    CampusTextButton(
+                        text = stringResource(R.string.finance_new_account),
+                        onClick = onCreateAccount,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }
@@ -337,8 +385,8 @@ private fun AmountSection(
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = stringResource(R.string.transaction_amount),
-            style = MaterialTheme.typography.bodyMedium,
+            text = stringResource(R.string.transaction_amount).uppercase(Locale.getDefault()),
+            style = CampusOverline,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Row(
@@ -346,14 +394,14 @@ private fun AmountSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             listOf(5, 10, 15).forEach { dollars ->
-                AmountChip(
+                WithdrawalAmountChip(
                     label = "$$dollars",
                     selected = !state.isCustomAmount && state.presetDollars == dollars,
                     onClick = { onPreset(dollars) },
                     modifier = Modifier.weight(1f)
                 )
             }
-            AmountChip(
+            WithdrawalAmountChip(
                 label = stringResource(R.string.withdrawal_other),
                 selected = state.isCustomAmount,
                 onClick = onOther,
@@ -373,8 +421,9 @@ private fun AmountSection(
                 label = stringResource(R.string.withdrawal_other_amount),
                 prefix = "$",
                 singleLine = true,
+                isError = amountError != null,
                 supportingText = amountError?.let {
-                    { Text(errorText(it, state.selectedAccount?.account?.name)) }
+                    { InlineError(errorText(it, state.selectedAccount?.account?.name)) }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
@@ -392,39 +441,49 @@ private fun AmountSection(
 }
 
 @Composable
-private fun AmountChip(
+private fun WithdrawalAmountChip(
     label: String,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
-        shape = MaterialTheme.shapes.small,
-        color = if (selected) MaterialTheme.extended.selected
-        else MaterialTheme.extended.track
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                if (selected) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                        tint = MaterialTheme.extended.onSelected,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = if (selected) MaterialTheme.extended.onSelected
-                    else MaterialTheme.colorScheme.onSurface
-                )
+    val ext = MaterialTheme.extended
+    val selectedDesc = stringResource(if (selected) R.string.chip_state_selected else R.string.chip_state_unselected)
+    Box(
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .clip(ShapeChip)
+            .background(if (selected) ext.lime else androidx.compose.ui.graphics.Color.Transparent)
+            .border(1.dp, if (selected) ext.ink else ext.controlLine, ShapeChip)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = null,
+                role = Role.RadioButton
+            )
+            .semantics {
+                this.selected = selected
+                this.stateDescription = selectedDesc
             }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (selected) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = null,
+                    tint = ext.ink,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(Modifier.width(4.dp))
+            }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = if (selected) ext.ink else MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -435,7 +494,9 @@ private fun InlineError(text: String) {
         text = text,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error,
-        modifier = Modifier.padding(start = 4.dp)
+        modifier = Modifier
+            .padding(start = 4.dp)
+            .semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite }
     )
 }
 

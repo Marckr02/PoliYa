@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlarmManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,14 +51,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.BuildConfig
 import com.example.campuspocket.R
 import com.example.campuspocket.core.backup.BackupImportIssue
+import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusSwitch
+import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
-import com.example.campuspocket.core.designsystem.components.PrimaryPillButton
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
+import com.example.campuspocket.core.designsystem.components.UnderlinedTabRow
 import com.example.campuspocket.core.designsystem.components.SettingsSectionCard
 import com.example.campuspocket.core.designsystem.components.descriptionRes
 import com.example.campuspocket.core.designsystem.components.iconRes
@@ -198,7 +201,7 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
-                        SecondaryPillButton(
+                        CampusButton(style = CampusButtonStyle.SECONDARY,
                             text = stringResource(R.string.done),
                             onClick = { viewModel.dismissBackupBanner() }
                         )
@@ -206,330 +209,331 @@ fun SettingsScreen(
                 }
             }
 
-        // ---- Mi perfil ----
-        SettingsSectionCard(
-            title = stringResource(R.string.settings_profile),
-            subtitle = stringResource(R.string.settings_profile_local_note)
-        ) {
-            CampusTextField(
-                value = displayNameInput,
-                onValueChange = {
-                    displayNameInput = it
-                    nameSaved = false
-                },
-                label = stringResource(R.string.settings_profile_label),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                PrimaryPillButton(
-                    text = stringResource(R.string.save),
-                    onClick = {
-                        viewModel.setDisplayName(displayNameInput)
-                        nameSaved = true
+            // ---- Mi perfil ----
+            SettingsSectionCard(
+                title = stringResource(R.string.settings_profile),
+                subtitle = stringResource(R.string.settings_profile_local_note)
+            ) {
+                CampusTextField(
+                    value = displayNameInput,
+                    onValueChange = {
+                        displayNameInput = it
+                        nameSaved = false
                     },
-                    modifier = Modifier.weight(1f)
+                    label = stringResource(R.string.settings_profile_label),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                if (userPreferences.displayName.isNotBlank()) {
-                    SecondaryPillButton(
-                        text = stringResource(R.string.settings_profile_clear),
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    CampusButton(
+                        text = stringResource(R.string.save),
                         onClick = {
-                            displayNameInput = ""
-                            nameSaved = false
-                            viewModel.clearDisplayName()
+                            viewModel.setDisplayName(displayNameInput)
+                            nameSaved = true
                         },
                         modifier = Modifier.weight(1f)
                     )
-                }
-            }
-            if (nameSaved) {
-                Text(
-                    text = stringResource(R.string.settings_profile_saved),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
-        // ---- Mis módulos ----
-        SettingsSectionCard(
-            title = stringResource(R.string.settings_modules),
-            subtitle = stringResource(R.string.settings_modules_note)
-        ) {
-            CampusModule.entries.forEach { module ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(module.iconRes()),
-                        contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(module.titleRes()),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = stringResource(module.descriptionRes()),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                    if (userPreferences.displayName.isNotBlank()) {
+                        CampusButton(style = CampusButtonStyle.SECONDARY,
+                            text = stringResource(R.string.settings_profile_clear),
+                            onClick = {
+                                displayNameInput = ""
+                                nameSaved = false
+                                viewModel.clearDisplayName()
+                            },
+                            modifier = Modifier.weight(1f)
                         )
                     }
-                    CampusSwitch(
-                        checked = userPreferences.isModuleEnabled(module),
-                        onCheckedChange = { viewModel.setModuleEnabled(module, it) },
-                        contentDescription = stringResource(module.titleRes())
+                }
+                if (nameSaved) {
+                    Text(
+                        text = stringResource(R.string.settings_profile_saved),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-        }
 
-        // ---- Apariencia ----
-        SettingsSectionCard(title = stringResource(R.string.settings_appearance)) {
-            PillSegmentedControl(
-                options = ThemeMode.entries,
-                selected = userPreferences.themeMode,
-                onSelect = viewModel::setThemeMode,
-                label = { mode -> stringResource(themeLabelRes(mode)) }
-            )
-        }
-
-        // ---- Respaldo ----
-        SettingsSectionCard(title = stringResource(R.string.settings_backup)) {
-            Text(
-                text = lastBackupAt?.let {
-                    DATE_FMT.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()))
-                } ?: stringResource(R.string.never),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            PrimaryPillButton(
-                text = stringResource(R.string.settings_export),
-                onClick = { showExportWarning = true },
-                enabled = !state.busy,
-                modifier = Modifier.fillMaxWidth()
-            )
-            SecondaryPillButton(
-                text = stringResource(R.string.settings_import),
-                onClick = { openLauncher.launch(arrayOf("application/json", "application/octet-stream", "text/*")) },
-                enabled = !state.busy,
-                modifier = Modifier.fillMaxWidth()
-            )
-            // Botón de debug solo en builds de depuración (el canal real es el aviso diario).
-            if (BuildConfig.DEBUG) {
-                SecondaryPillButton(
-                    text = stringResource(R.string.settings_debug_review_now),
-                    onClick = { viewModel.reviewNow(context); message = R.string.loading },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            if (state.busy) Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            message?.let {
-                Text(
-                    text = stringResource(it),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        // ---- Calendario ----
-        SettingsSectionCard(
-            title = stringResource(R.string.settings_calendar),
-            subtitle = stringResource(R.string.settings_calendar_note)
-        ) {
-            SecondaryPillButton(
-                text = stringResource(R.string.settings_calendar_export),
-                onClick = { calendarLauncher.launch(viewModel.suggestedCalendarFileName()) },
-                enabled = !state.calendarBusy,
-                modifier = Modifier.fillMaxWidth()
-            )
-            if (state.calendarBusy) {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-            calendarMessage?.let {
-                Text(
-                    text = stringResource(it),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        // ---- Notificaciones ----
-        SettingsSectionCard(title = stringResource(R.string.settings_notifications)) {
-            val notifGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                androidx.core.app.ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-            } else true
-            val exactAlarmsOk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
-            } else true
-            ToggleRow(
-                label = stringResource(R.string.settings_notifications_system),
-                checked = notifGranted,
-                onCheckedChange = {
-                    context.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                    })
-                }
-            )
-            ToggleRow(
-                label = stringResource(R.string.settings_exact_alarms),
-                checked = exactAlarmsOk,
-                onCheckedChange = {
-                    context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                        data = android.net.Uri.parse("package:${context.packageName}")
-                    })
-                },
-                detail = if (!exactAlarmsOk) stringResource(R.string.settings_exact_alarms_denied) else null
-            )
-            Spacer(Modifier.height(4.dp))
-            ToggleRow(label = stringResource(R.string.settings_channel_tasks), checked = prefs.channelTasks, onCheckedChange = { viewModel.setChannelEnabled("tasks", it) })
-            ToggleRow(label = stringResource(R.string.settings_channel_payments), checked = prefs.channelPayments, onCheckedChange = { viewModel.setChannelEnabled("payments", it) })
-            ToggleRow(label = stringResource(R.string.settings_channel_budgets), checked = prefs.channelBudgets, onCheckedChange = { viewModel.setChannelEnabled("budgets", it) })
-        }
-
-        // ---- Semestre activo ----
-        SettingsSectionCard(title = stringResource(R.string.settings_active_semester)) {
-            Text(
-                text = activeSemester ?: stringResource(R.string.never),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            semesters.forEach { sem ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    CampusSwitch(
-                        checked = sem.isActive,
-                        onCheckedChange = { if (it) viewModel.setActiveSemester(sem.id) },
-                        contentDescription = sem.name
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(sem.name)
-                }
-            }
-        }
-
-        // ---- Seguridad ----
-        SettingsSectionCard(title = stringResource(R.string.settings_security)) {
-            val canLock = viewModel.lockSupported(context)
-            ToggleRow(
-                label = stringResource(R.string.settings_biometric_lock),
-                checked = prefs.lockEnabled,
-                onCheckedChange = { if (it) viewModel.enableLock() else viewModel.disableLock() },
-                enabled = canLock
-            )
-            if (!canLock) {
-                Text(stringResource(R.string.settings_lock_unsupported), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
-            }
-            if (prefs.lockEnabled) {
-                Text(stringResource(R.string.settings_lock_timeout), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                PillSegmentedControl(
-                    options = listOf(
-                        0 to R.string.settings_lock_immediately,
-                        60 to R.string.settings_lock_1min,
-                        300 to R.string.settings_lock_5min
-                    ),
-                    selected = listOf(
-                        0 to R.string.settings_lock_immediately,
-                        60 to R.string.settings_lock_1min,
-                        300 to R.string.settings_lock_5min
-                    ).first { it.first == prefs.lockTimeoutSeconds },
-                    onSelect = { viewModel.setLockTimeout(it.first) },
-                    label = { (_, labelRes) -> stringResource(labelRes) }
-                )
-            }
-        }
-
-        // ---- Acerca de ----
-        SettingsSectionCard(title = stringResource(R.string.settings_about)) {
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium)
-
-            // Versión con código: "Versión 0.8.1 (801)"
-            Text(
-                text = stringResource(
-                    R.string.settings_version_format,
-                    BuildConfig.VERSION_NAME,
-                    BuildConfig.VERSION_CODE
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            // Info de compilación real: "Compilación 7213dc1 · 2026-10-26"
-            Text(
-                text = stringResource(R.string.settings_build_info, BuildConfig.GIT_SHA, BuildConfig.BUILD_DATE),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            // Último respaldo
-            Text(
-                text = stringResource(R.string.settings_last_backup) + ": " +
-                    (lastBackupAt?.let { DATE_FMT.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())) } ?: stringResource(R.string.never)),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            // Novedades de esta versión (se abre a mano; el aviso automático vive en Inicio)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .clickable(
-                        role = Role.Button,
-                        onClickLabel = stringResource(R.string.settings_whats_new)
-                    ) { viewModel.openWhatsNew() },
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // ---- Mis módulos ----
+            SettingsSectionCard(
+                title = stringResource(R.string.settings_modules),
+                subtitle = stringResource(R.string.settings_modules_note)
             ) {
-                Text(stringResource(R.string.settings_whats_new), style = MaterialTheme.typography.bodyMedium)
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = null, // decorativo: la fila ya tiene etiqueta
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
+                CampusModule.entries.forEach { module ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(module.iconRes()),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(module.titleRes()),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = stringResource(module.descriptionRes()),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        CampusSwitch(
+                            checked = userPreferences.isModuleEnabled(module),
+                            onCheckedChange = { viewModel.setModuleEnabled(module, it) },
+                            contentDescription = stringResource(module.titleRes())
+                        )
+                    }
+                }
+            }
+
+            // ---- Apariencia ----
+            SettingsSectionCard(title = stringResource(R.string.settings_appearance)) {
+                UnderlinedTabRow(
+                    options = ThemeMode.entries,
+                    selected = userPreferences.themeMode,
+                    onSelect = viewModel::setThemeMode,
+                    label = { mode -> stringResource(themeLabelRes(mode)) }
                 )
             }
-        }
 
-        // Diálogo "Novedades de esta versión"
-        if (showWhatsNew) {
-            CampusDialog(
-                onDismissRequest = { viewModel.dismissWhatsNew() },
-                title = stringResource(R.string.settings_whats_new_dialog_title, BuildConfig.VERSION_NAME),
-                confirmText = stringResource(R.string.ok),
-                onConfirm = { viewModel.dismissWhatsNew() },
-                content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 360.dp)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+            // ---- Respaldo ----
+            SettingsSectionCard(title = stringResource(R.string.settings_backup)) {
+                Text(
+                    text = lastBackupAt?.let {
+                        DATE_FMT.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()))
+                    } ?: stringResource(R.string.never),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                CampusButton(
+                    text = stringResource(R.string.settings_export),
+                    onClick = { showExportWarning = true },
+                    enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                CampusButton(style = CampusButtonStyle.SECONDARY,
+                    text = stringResource(R.string.settings_import),
+                    onClick = { openLauncher.launch(arrayOf("application/json", "application/octet-stream", "text/*")) },
+                    enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                // Botón de debug solo en builds de depuración (el canal real es el aviso diario).
+                if (BuildConfig.DEBUG) {
+                    CampusButton(style = CampusButtonStyle.SECONDARY,
+                        text = stringResource(R.string.settings_debug_review_now),
+                        onClick = { viewModel.reviewNow(context); message = R.string.loading },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                if (state.busy) Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                message?.let {
+                    Text(
+                        text = stringResource(it),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // ---- Calendario ----
+            SettingsSectionCard(
+                title = stringResource(R.string.settings_calendar),
+                subtitle = stringResource(R.string.settings_calendar_note)
+            ) {
+                CampusButton(style = CampusButtonStyle.SECONDARY,
+                    text = stringResource(R.string.settings_calendar_export),
+                    onClick = { calendarLauncher.launch(viewModel.suggestedCalendarFileName()) },
+                    enabled = !state.calendarBusy,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (state.calendarBusy) {
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+                calendarMessage?.let {
+                    Text(
+                        text = stringResource(it),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // ---- Notificaciones ----
+            SettingsSectionCard(title = stringResource(R.string.settings_notifications)) {
+                val notifGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    androidx.core.app.ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                } else true
+                val exactAlarmsOk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
+                } else true
+                SettingsLinkRow(
+                    title = stringResource(R.string.settings_notifications_system),
+                    statusText = if (notifGranted) stringResource(R.string.onboarding_continue) else stringResource(R.string.settings_exact_alarms_denied),
+                    isOk = notifGranted,
+                    onOpen = {
+                        context.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        })
+                    }
+                )
+                SettingsLinkRow(
+                    title = stringResource(R.string.settings_exact_alarms),
+                    statusText = if (exactAlarmsOk) stringResource(R.string.onboarding_continue) else stringResource(R.string.settings_exact_alarms_denied),
+                    isOk = exactAlarmsOk,
+                    onOpen = {
+                        context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                            data = Uri.parse("package:${context.packageName}")
+                        })
+                    }
+                )
+                Spacer(Modifier.height(4.dp))
+                ToggleRow(label = stringResource(R.string.settings_channel_tasks), checked = prefs.channelTasks, onCheckedChange = { viewModel.setChannelEnabled("tasks", it) })
+                ToggleRow(label = stringResource(R.string.settings_channel_payments), checked = prefs.channelPayments, onCheckedChange = { viewModel.setChannelEnabled("payments", it) })
+                ToggleRow(label = stringResource(R.string.settings_channel_budgets), checked = prefs.channelBudgets, onCheckedChange = { viewModel.setChannelEnabled("budgets", it) })
+            }
+
+            // ---- Semestre activo ----
+            SettingsSectionCard(title = stringResource(R.string.settings_active_semester)) {
+                Text(
+                    text = activeSemester ?: stringResource(R.string.never),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                semesters.forEach { sem ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        stringArrayResource(R.array.release_notes_current).forEach { item ->
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text("•", style = MaterialTheme.typography.bodyMedium)
-                                Text(item, style = MaterialTheme.typography.bodyMedium)
+                        CampusSwitch(
+                            checked = sem.isActive,
+                            onCheckedChange = { if (it) viewModel.setActiveSemester(sem.id) },
+                            contentDescription = sem.name
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(sem.name)
+                    }
+                }
+            }
+
+            // ---- Seguridad ----
+            SettingsSectionCard(title = stringResource(R.string.settings_security)) {
+                val canLock = viewModel.lockSupported(context)
+                ToggleRow(
+                    label = stringResource(R.string.settings_biometric_lock),
+                    checked = prefs.lockEnabled,
+                    onCheckedChange = { if (it) viewModel.enableLock() else viewModel.disableLock() },
+                    enabled = canLock
+                )
+                if (!canLock) {
+                    Text(stringResource(R.string.settings_lock_unsupported), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                }
+                if (prefs.lockEnabled) {
+                    Text(stringResource(R.string.settings_lock_timeout), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    UnderlinedTabRow(
+                        options = listOf(
+                            0 to R.string.settings_lock_immediately,
+                            60 to R.string.settings_lock_1min,
+                            300 to R.string.settings_lock_5min
+                        ),
+                        selected = listOf(
+                            0 to R.string.settings_lock_immediately,
+                            60 to R.string.settings_lock_1min,
+                            300 to R.string.settings_lock_5min
+                        ).first { it.first == prefs.lockTimeoutSeconds },
+                        onSelect = { viewModel.setLockTimeout(it.first) },
+                        label = { (_, labelRes) -> stringResource(labelRes) }
+                    )
+                }
+            }
+
+            // ---- Acerca de ----
+            SettingsSectionCard(title = stringResource(R.string.settings_about)) {
+                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium)
+
+                // Versión con código: "Versión 0.8.1 (801)"
+                Text(
+                    text = stringResource(
+                        R.string.settings_version_format,
+                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_CODE
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                // Info de compilación real: "Compilación 7213dc1 · 2026-10-26"
+                Text(
+                    text = stringResource(R.string.settings_build_info, BuildConfig.GIT_SHA, BuildConfig.BUILD_DATE),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                // Último respaldo
+                Text(
+                    text = stringResource(R.string.settings_last_backup) + ": " +
+                        (lastBackupAt?.let { DATE_FMT.format(Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())) } ?: stringResource(R.string.never)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                // Novedades de esta versión (se abre a mano; el aviso automático vive en Inicio)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp)
+                        .clickable(
+                            role = Role.Button,
+                            onClickLabel = stringResource(R.string.settings_whats_new)
+                        ) { viewModel.openWhatsNew() },
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(stringResource(R.string.settings_whats_new), style = MaterialTheme.typography.bodyMedium)
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            // Diálogo "Novedades de esta versión"
+            if (showWhatsNew) {
+                CampusDialog(
+                    onDismissRequest = { viewModel.dismissWhatsNew() },
+                    title = stringResource(R.string.settings_whats_new_dialog_title, BuildConfig.VERSION_NAME),
+                    confirmText = stringResource(R.string.ok),
+                    onConfirm = { viewModel.dismissWhatsNew() },
+                    content = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 360.dp)
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            stringArrayResource(R.array.release_notes_current).forEach { item ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("•", style = MaterialTheme.typography.bodyMedium)
+                                    Text(item, style = MaterialTheme.typography.bodyMedium)
+                                }
                             }
                         }
                     }
-                }
-            )
+                )
+            }
         }
-    }
     }
 }
 
@@ -539,6 +543,40 @@ private fun themeLabelRes(mode: ThemeMode): Int = when (mode) {
     ThemeMode.SYSTEM -> R.string.settings_theme_system
     ThemeMode.LIGHT -> R.string.settings_theme_light
     ThemeMode.DARK -> R.string.settings_theme_dark
+}
+
+@Composable
+private fun SettingsLinkRow(
+    title: String,
+    statusText: String,
+    isOk: Boolean,
+    onOpen: () -> Unit
+) {
+    val ext = MaterialTheme.extended
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.bodySmall,
+                color = if (isOk) ext.onMint else MaterialTheme.colorScheme.error
+            )
+        }
+        CampusTextButton(
+            text = stringResource(R.string.home_open_settings_desc),
+            onClick = onOpen
+        )
+    }
 }
 
 @Composable

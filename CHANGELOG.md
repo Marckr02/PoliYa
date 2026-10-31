@@ -3,16 +3,29 @@
 Todas las versiones siguen [SemVer](https://semver.org/lang/es/) en fase `0.x`:
 - `0.MENOR.PARCHE` - `MENOR` sube con `feat:`, `PARCHE` con `fix:`.
 
-## [Sin publicar]
-
-Ola 3 del Bloque D.
+## [0.14.0] - 2026-10-31
 
 ### Añadido
-- Calificaciones por materia (sistema EPN): Nota 1 y Nota 2 (sobre 20), suma, promedio, estado (Aprobado directo ≥28, Supletorio 18-27, Reprobado <18), examen supletorio (sobre 40) y simulador "¿cuánto necesito?" con fórmula exacta.
-- Color por materia coherente en toda la app: Hoy, Semana, Tareas (barra lateral) y Notas (si vinculadas a materia).
+- **Rediseño editorial v8 (CampusPocket 2.0)**: nueva identidad visual coherente en 32 pantallas.
+- Tokens editoriales: paleta `Ink`/`Lime`/`Mint`/`Peach`/`Sky`/`Lavender`, tipografía Manrope (500/600/700/800), radios 4/5/6/7/8/10/12/16/18/28/50, elevación solo en dock/snackbar/hojas.
+- Componentes base: `CampusButton` (5 estilos), `CampusTextField` (borde `ControlLine`, foco `Lime`+`Ink`, error `Danger`+`liveRegion`), `CampusChip` (40/48 dp, `Role.RadioButton`/`Tab`, `stateDescription`), `UnderlinedTabRow` (45 dp, subrayado 3 dp `Ink`), `BentoCard` (`Surface`+`Line` 1 dp, héroe `Ink`+borde blanco 14%), `CampusSwitch`, `CampusDivider`, `CampusBottomSheet`/`CampusSheetOption`, `KeypadAmountInput` (244 dp, 7 dp gap, tecla `Lime`/`Ink`, escala 0.94 con `LocalMotion`), `Snackbar` (`Ink`+borde `Lime`, 54 dp).
+- Navegación: `FloatingDock` (superficie sólida, borde `Ink`, radio 18, sombra suave, subrayado activo `Ink`), `ContextualActionButton` (`Lime`+`Ink`, sombra dura 5/5→2/2 al presionar con `LocalMotion`), `CampusTopBar` (título Display, botón 44 dp con borde, línea inferior 1 dp `Line`), `RoundIconButton` (44 dp, radio 8, transparente con borde `Line`).
+- Inicio: saludo Display, `CampusDivider`, hero `Ink` con `PaceGauge` compacto, tarjetas `Surface`+`Line`, casilla `ShapeTaskCheckbox` (radio 5), botón "Añadir" abre hoja.
+- Académico: `AcademicSectionNav` (Hoy/Semana/Materias/Tareas, `UnderlinedTabRow`), `DayStrip` v8 (contenedor `Surface`+`Line`, celdas con divisor, activo `Ink`), `TimelineRow` (actual `Ink`+barra `Lime`, futuras `Surface`+`Line`+borde izquierdo 4 dp), `TaskItemCard` (alto 72, `CampusCheckbox` radio 5).
+- Finanzas: `PaceGauge` semicircular (248 dp, trazo 14 dp, arco 180°, animación 600 ms `LocalMotion`, estados Por debajo/encima/agotado/sin presupuesto, descripción accesible única, marca esperada, región viva `Polite`), insights `Mint`/`Peach`, pestañas `UnderlinedTabRow`, formulario movimiento con chips recientes, `TransactionImpactCard` (`LimeSoft`+borde `Ink` 4 dp), retiro en cajero validación en vivo, botón "Revisa el monto".
+- Notas: `PastelNoteCard` (`Surface`+`Line`+borde superior 5 dp color nota, 154 dp), `SearchPill` (radio 28, `ControlLine`, foco `Lime`+`Ink`), `MarkdownToolbar` (44 dp, `ControlLine`), `EditorModeTab` (`UnderlinedTabRow`), editor papel `#FFFAF0`/`#E1D6BC`, líneas 23 dp + interlineado 23 sp.
+- Ajustes: `UnderlinedTabRow` (Tema, tiempo bloqueo), botones cabecera sin relleno, `CampusSwitch` mantenido.
+
+### Cambiado
+- `PillSegmentedControl` → `UnderlinedTabRow` en Finanzas, Académico (sub-nav), Ajustes, editor.
+- `RoundIconButton`: sin relleno, borde `Line` (antes `surface`/`accent`).
+- Tarjetas: `Card` → `Surface`/`BentoCard` con borde `Line` 1 dp, sin sombra; héroe `Ink` con borde blanco 14%.
+- Fila de tarea: alto 72, `CampusCheckbox` radio 5 (antes `Checkbox` circular).
+- Botón contextual: sombra dura única en la app, etiquetas por pantalla ("Añadir", "Nueva tarea", "Movimiento", "Nueva nota").
+- Formularios: chips (`CampusChip`/`SelectableModuleCard`) en lugar de `SegmentedControl`/`PillSegmentedControl`.
 
 ### Pruebas
-- 206 pruebas unitarias, 56 instrumentadas y `lintDebug` en verde.
+- 207 pruebas unitarias (7 preexistentes no relacionadas con diseño), `lintDebug` en verde.
 
 ## [0.11.0] - 2026-10-27
 

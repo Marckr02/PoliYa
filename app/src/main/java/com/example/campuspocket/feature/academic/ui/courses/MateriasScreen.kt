@@ -38,11 +38,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.CampusTheme
+import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.EmptyCoursesState
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.feature.academic.domain.model.Course
 import com.example.campuspocket.feature.academic.ui.TimeText
 import com.example.campuspocket.feature.academic.ui.shortLabelRes
@@ -76,15 +77,23 @@ fun MateriasScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                SecondaryPillButton(
-                    text = stringResource(R.string.import_pdf_title),
-                    onClick = onImport
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    CampusButton(
+                        style = CampusButtonStyle.SECONDARY,
+                        text = stringResource(R.string.import_pdf_title),
+                        onClick = onImport
+                    )
+                    CampusButton(
+                        style = CampusButtonStyle.PRIMARY,
+                        text = stringResource(R.string.course_new),
+                        onClick = onAddCourse
+                    )
+                }
             }
 
             when {
                 state.isLoading -> {
-                    LoadingShimmer(modifier = Modifier.weight(1f))
+                    ShimmerList(modifier = Modifier.weight(1f))
                 }
 
                 state.courses.isEmpty() -> {

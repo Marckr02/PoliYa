@@ -37,8 +37,8 @@ import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.components.AccountsCarousel
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusTextButton
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.EmptyState
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
 import com.example.campuspocket.feature.finance.data.AccountType
 import com.example.campuspocket.feature.finance.domain.AccountBalance
@@ -83,16 +83,16 @@ fun AccountsScreen(
 
         when {
             state.isLoading -> {
-                LoadingShimmer(modifier = Modifier.weight(1f))
+                ShimmerList(modifier = Modifier.weight(1f))
             }
 
             state.balances.isEmpty() -> {
-                EmptyStateCard(
+                EmptyState(
                     modifier = Modifier.weight(1f),
                     title = stringResource(R.string.empty_finance),
                     message = stringResource(R.string.empty_finance),
-                    icon = painterResource(R.drawable.ic_wallet),
-                    actionText = stringResource(R.string.finance_new_account),
+                    iconRes = R.drawable.ic_wallet,
+                    actionLabel = stringResource(R.string.finance_new_account),
                     onAction = onAddAccount
                 )
             }

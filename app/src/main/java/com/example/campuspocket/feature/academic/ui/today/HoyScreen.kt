@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusDialog
+import com.example.campuspocket.core.designsystem.components.CampusDivider
 import com.example.campuspocket.core.designsystem.components.CampusSectionHeader
 import com.example.campuspocket.core.designsystem.components.DayStrip
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
@@ -88,25 +89,21 @@ fun HoyScreen(
                     icon = Icons.Filled.DateRange,
                     contentDescription = stringResource(R.string.today_open_week),
                     onClick = onShowWeek,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
                 RoundIconButton(
                     iconRes = R.drawable.ic_action_task_list,
                     contentDescription = stringResource(R.string.today_open_tasks),
                     onClick = onNavigateToTasks,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
                 RoundIconButton(
                     iconRes = R.drawable.ic_schedule,
                     contentDescription = stringResource(R.string.today_open_courses),
                     onClick = onNavigateToCourses,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
+
+        CampusDivider()
 
         if (state.weekDays.isNotEmpty()) {
             DayStrip(

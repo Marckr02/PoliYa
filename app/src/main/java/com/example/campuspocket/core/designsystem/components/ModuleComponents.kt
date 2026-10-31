@@ -95,8 +95,8 @@ fun ModuleCard(
 }
 
 /**
- * Tarjeta de módulo seleccionable (onboarding): todo el bloque responde al
- * toque y el estado se comunica con casilla + borde, no solo con color.
+ * Tarjeta de módulo seleccionable v8 (onboarding): `Surface` + borde `Line` 1 dp + `ShapeCard`,
+ * casilla `CampusCheckbox` con `ShapeTaskCheckbox`. El estado se comunica con casilla + borde.
  */
 @Composable
 fun SelectableModuleCard(
@@ -115,11 +115,9 @@ fun SelectableModuleCard(
             role = Role.Checkbox,
             onValueChange = onSelectedChange
         ),
-        containerColor = if (selected) {
-            MaterialTheme.extended.lavender
-        } else {
-            MaterialTheme.colorScheme.surface
-        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = com.example.campuspocket.core.designsystem.ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Row(
@@ -129,11 +127,7 @@ fun SelectableModuleCard(
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                tint = if (selected) {
-                    MaterialTheme.extended.onLavender
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
+                tint = if (selected) MaterialTheme.extended.lime else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(28.dp)
             )
             Spacer(Modifier.width(14.dp))
@@ -154,7 +148,8 @@ fun SelectableModuleCard(
                 checked = selected,
                 onCheckedChange = onSelectedChange,
                 contentDescription = title,
-                enabled = enabled
+                enabled = enabled,
+                boxShape = com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
             )
         }
     }

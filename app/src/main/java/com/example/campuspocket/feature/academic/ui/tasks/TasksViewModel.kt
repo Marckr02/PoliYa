@@ -3,6 +3,7 @@ package com.example.campuspocket.feature.academic.ui.tasks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.campuspocket.core.di.AppScope
+import com.example.campuspocket.core.designsystem.components.TaskFilter
 import com.example.campuspocket.feature.academic.domain.model.Course
 import com.example.campuspocket.feature.academic.domain.model.Task
 import com.example.campuspocket.feature.academic.domain.repository.CourseRepository
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,8 +32,7 @@ import javax.inject.Inject
  * ordenadas por fecha de entrega. El borrado es diferido (5 s) para permitir deshacer.
  */
 data class TasksUiState(
-    val showCompleted: Boolean = false,
-    val courseFilterId: Long? = null,
+    val filter: TaskFilter = TaskFilter.ALL,
     val tasks: List<Task> = emptyList(),
     val courses: List<Course> = emptyList(),
     val isLoading: Boolean = true
@@ -52,29 +51,31 @@ class TasksViewModel @Inject constructor(
     private val appScope: AppScope
 ) : ViewModel() {
 
-    private val showCompleted = MutableStateFlow(false)
-    private val courseFilterId = MutableStateFlow<Long?>(null)
+    // FIX-01: "Todas" reúne pendientes y completadas; el filtro se aplica en el estado.
+    private val filter = MutableStateFlow(TaskFilter.ALL)
+    private val selectedCourseId = MutableStateFlow<Long?>(null)
     private val hiddenTaskIds = MutableStateFlow<Set<Long>>(emptySet())
 
-    private val tasksFlow = showCompleted.flatMapLatest { completed ->
-        if (completed) taskRepository.observeCompleted() else taskRepository.observePending()
-    }
+    private val allTasksFlow = combine(
+        taskRepository.observePending(),
+        taskRepository.observeCompleted()
+    ) { pending, completed -> pending + completed }
 
     val uiState: StateFlow<TasksUiState> = combine(
-        tasksFlow,
+        allTasksFlow,
         courseRepository.observeCourses(),
-        showCompleted,
-        courseFilterId,
+        filter,
+        selectedCourseId,
         hiddenTaskIds
-    ) { tasks, courses, showDone, filterId, hiddenIds ->
+    ) { tasks, courses, selectedFilter, courseId, hiddenIds ->
         TasksUiState(
-            showCompleted = showDone,
-            courseFilterId = filterId,
+            filter = selectedFilter,
             courses = courses,
-            tasks = tasks
-                .filterNot { task -> task.id != null && task.id in hiddenIds }
-                .filter { filterId == null || it.courseId == filterId }
-                .sortedBy { it.dueAt },
+            tasks = filterTasks(
+                tasks = tasks.filterNot { task -> task.id != null && task.id in hiddenIds },
+                filter = selectedFilter,
+                courseId = courseId
+            ).sortedBy { it.dueAt },
             isLoading = false
         )
     }.stateIn(
@@ -89,12 +90,12 @@ class TasksViewModel @Inject constructor(
     private var pendingDeletion: Task? = null
     private var pendingDeletionJob: Job? = null
 
-    fun setShowCompleted(value: Boolean) {
-        showCompleted.value = value
+    fun setFilter(value: TaskFilter) {
+        filter.value = value
     }
 
     fun setCourseFilter(courseId: Long?) {
-        courseFilterId.value = courseId
+        selectedCourseId.value = courseId
     }
 
     /** Completar cancela sus alarmas y crea la siguiente ocurrencia si se repite. */
@@ -174,5 +175,32 @@ class TasksViewModel @Inject constructor(
         val zone = ZoneId.systemDefault()
         val dueDate = task.dueAt.atZone(zone).toLocalDate()
         return !dueDate.isAfter(LocalDate.now(zone))
+    }
+}
+
+/**
+ * Semántica de filtros (FIX-01): "Todas" incluye pendientes y completadas;
+ * "Completadas" solo completadas; "Hoy", "Esta semana" y "Por materia" solo
+ * pendientes del rango. El filtro por materia lo refina la UI con su selector.
+ */
+internal fun filterTasks(
+    tasks: List<Task>,
+    filter: TaskFilter,
+    today: LocalDate = LocalDate.now(),
+    courseId: Long? = null
+): List<Task> {
+    val base = if (courseId != null) tasks.filter { it.courseId == courseId } else tasks
+    return when (filter) {
+        TaskFilter.ALL -> base
+        TaskFilter.COMPLETED -> base.filter { it.completedAt != null }
+        TaskFilter.TODAY -> base.filter {
+            it.completedAt == null &&
+                it.dueAt.atZone(ZoneId.systemDefault()).toLocalDate() == today
+        }
+        TaskFilter.THIS_WEEK -> base.filter {
+            val date = it.dueAt.atZone(ZoneId.systemDefault()).toLocalDate()
+            it.completedAt == null && !date.isBefore(today) && !date.isAfter(today.plusDays(6))
+        }
+        TaskFilter.BY_COURSE -> base.filter { it.completedAt == null }
     }
 }

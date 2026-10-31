@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -26,9 +27,10 @@ import com.example.campuspocket.core.designsystem.MotionTokens
 import com.example.campuspocket.core.designsystem.extended
 
 /**
- * Interruptor propio de 52 × 32 dp con área táctil de 48 dp. En oscuro el
- * carril encendido se invierte (claro) para que el estado no dependa solo del
- * color.
+ * Interruptor v8 de 45 × 26 dp con área táctil de 48 dp. La pista apagada usa
+ * `Track` con borde `ControlLine` para que el control se distinga del fondo; la
+ * encendida usa `Ink`. El pulgar y su posición completan el estado, que nunca
+ * depende solo del color.
  */
 @Composable
 fun CampusSwitch(
@@ -41,23 +43,23 @@ fun CampusSwitch(
     val ext = MaterialTheme.extended
     val motion = LocalMotion.current
     val track by animateColorAsState(
-        targetValue = if (checked) ext.selected else ext.track,
+        targetValue = if (checked) ext.ink else ext.track,
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "switchTrack"
     )
     val thumb by animateColorAsState(
-        targetValue = if (checked) ext.onSelected else MaterialTheme.colorScheme.onSurfaceVariant,
+        targetValue = if (checked) ext.onInk else MaterialTheme.colorScheme.surface,
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "switchThumb"
     )
     val offset by animateDpAsState(
-        targetValue = if (checked) 20.dp else 0.dp,
+        targetValue = if (checked) 19.dp else 0.dp,
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "switchOffset"
     )
     Box(
         modifier = modifier
-            .size(width = 52.dp, height = 48.dp)
+            .size(width = 48.dp, height = 48.dp)
             .semantics { this.contentDescription = contentDescription }
             .toggleable(
                 value = checked,
@@ -69,19 +71,27 @@ fun CampusSwitch(
     ) {
         Box(
             modifier = Modifier
-                .width(52.dp)
-                .size(width = 52.dp, height = 32.dp)
+                .width(45.dp)
+                .size(width = 45.dp, height = 26.dp)
                 .clip(CircleShape)
                 .background(track)
-                .padding(4.dp),
+                .border(1.dp, if (checked) ext.ink else ext.controlLine, CircleShape)
+                .padding(3.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Box(
                 modifier = Modifier
                     .offset(x = offset)
-                    .size(24.dp)
+                    .size(20.dp)
                     .clip(CircleShape)
                     .background(thumb)
+                    .then(
+                        if (checked) Modifier else Modifier.border(
+                            1.dp,
+                            ext.controlLine,
+                            CircleShape
+                        )
+                    )
             )
         }
     }

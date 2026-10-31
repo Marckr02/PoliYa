@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,9 +23,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -34,7 +36,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
@@ -66,8 +67,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -88,6 +87,7 @@ import com.example.campuspocket.core.util.Haptics
 import com.example.campuspocket.core.designsystem.ContrastUtil
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.PillShape
+import com.example.campuspocket.core.designsystem.ShapeCard
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
 import com.example.campuspocket.feature.academic.domain.model.Course
@@ -103,10 +103,22 @@ import com.example.campuspocket.feature.finance.domain.AccountBalance
 import com.example.campuspocket.feature.notes.data.FolderEntity
 import com.example.campuspocket.feature.notes.data.NoteEntity
 import com.example.campuspocket.feature.notes.domain.MarkdownActions
+import com.example.campuspocket.core.designsystem.components.PastelNoteCard
 import java.time.format.DateTimeFormatter
 import java.time.ZoneId
 import java.util.Locale
 import kotlin.math.abs
+
+/** Divisor de 1 dp `Line`: cierra cabeceras y separa secciones. */
+@Composable
+fun CampusDivider(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(MaterialTheme.colorScheme.outlineVariant)
+    )
+}
 
 @Composable
 fun HeroCard(
@@ -119,14 +131,14 @@ fun HeroCard(
     onClick: () -> Unit
 ) {
     val ext = MaterialTheme.extended
-    Card(
-        modifier = modifier.fillMaxWidth().clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(
-            containerColor = ext.ink,
-            contentColor = ext.onInk
-        ),
-        shape = MaterialTheme.shapes.extraLarge,
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = com.example.campuspocket.core.designsystem.ShapeHero,
+        color = ext.ink,
+        contentColor = ext.onInk,
+        border = BorderStroke(1.dp, ext.onInk.copy(alpha = 0.14f)),
+        shadowElevation = 0.dp
     ) {
         Column(
             modifier = Modifier.padding(22.dp),
@@ -209,14 +221,6 @@ fun HeroCard(
 }
 
 @Composable
-fun PriorityBadge(
-    priority: Priority,
-    modifier: Modifier = Modifier
-) {
-    PriorityTag(priority = priority, modifier = modifier)
-}
-
-@Composable
 fun BudgetProgressBar(
     modifier: Modifier = Modifier,
     progress: Float,
@@ -256,117 +260,6 @@ fun BudgetProgressBar(
                     .clip(PillShape)
                     .background(color)
             )
-        }
-    }
-}
-
-@Composable
-fun ShimmerPlaceholder(modifier: Modifier = Modifier, height: Dp = 16.dp, width: Dp = Dp.Unspecified) {
-    Box(
-        modifier = modifier
-            .height(height)
-            .width(width)
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
-    )
-}
-
-@Composable
-fun LoadingShimmer(modifier: Modifier = Modifier, itemCount: Int = 5) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        LazyColumn(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(itemCount) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    shape = MaterialTheme.shapes.large,
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            ShimmerPlaceholder(width = 44.dp, height = 44.dp)
-                            Spacer(Modifier.width(12.dp))
-                            Column(Modifier.weight(1f)) {
-                                ShimmerPlaceholder(width = 120.dp, height = 18.dp)
-                                Spacer(Modifier.height(8.dp))
-                                ShimmerPlaceholder(width = 80.dp, height = 14.dp)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun EmptyStateCard(
-    title: String,
-    message: String,
-    modifier: Modifier = Modifier,
-    icon: Any? = null,
-    actionText: String? = null,
-    onAction: (() -> Unit)? = null
-) {
-    val ext = MaterialTheme.extended
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .background(ext.lavender),
-                contentAlignment = Alignment.Center
-            ) {
-                when (icon) {
-                    is Int -> Icon(
-                        painter = painterResource(id = icon),
-                        contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                        modifier = Modifier.size(28.dp),
-                        tint = ext.onLavender
-                    )
-                    is Painter -> Icon(
-                        painter = icon,
-                        contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                        modifier = Modifier.size(28.dp),
-                        tint = ext.onLavender
-                    )
-                    is ImageVector -> Icon(
-                        imageVector = icon,
-                        contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                        modifier = Modifier.size(28.dp),
-                        tint = ext.onLavender
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-            if (actionText != null && onAction != null) {
-                Spacer(modifier = Modifier.height(20.dp))
-                PrimaryPillButton(text = actionText, onClick = onAction)
-            }
         }
     }
 }
@@ -427,7 +320,13 @@ fun WeeklyScheduleGrid(
 ) {
     val hours = (timeRange.first..timeRange.last).toList()
     val dayLabels = days.map { it.day }
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clip(ShapeCard)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, ShapeCard)
+    ) {
         Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             Row(
                 modifier = Modifier
@@ -500,7 +399,7 @@ fun ClassBlock(entry: WeekEntry, onClick: () -> Unit, modifier: Modifier = Modif
     Card(
         modifier = modifier.fillMaxWidth().fillMaxHeight().clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = container),
-        shape = MaterialTheme.shapes.small,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -656,6 +555,7 @@ fun TaskItemCard(
             BentoCard(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(min = 72.dp)
                     .combinedClickable(
                         onClick = onClick,
                         onLongClick = { menuExpanded = true },
@@ -693,7 +593,8 @@ fun TaskItemCard(
                                 onToggleCompleted(checked)
                             }
                         },
-                        contentDescription = stringResource(R.string.task_toggle_complete, task.title)
+                        contentDescription = stringResource(R.string.task_toggle_complete, task.title),
+                        boxShape = com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
                     )
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
@@ -740,7 +641,7 @@ fun TaskItemCard(
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
                             )
-                            PriorityBadge(priority = task.priority)
+                            PriorityTag(priority = task.priority)
                         }
 
                         if (task.subtasks.isNotEmpty()) {
@@ -1053,19 +954,15 @@ fun NoteCard(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
-    val (container, content) = if (courseColorArgb != null) {
+    val noteColor = if (courseColorArgb != null) {
         // Usar color de la materia con variaciones para modo claro/oscuro
-        val courseColor = Color(courseColorArgb)
-        val container = courseColor.copy(alpha = 0.18f).compositeOver(MaterialTheme.colorScheme.surface)
-        val content = ContrastUtil.onColorFor(courseColor)
-        container to content
+        Color(courseColorArgb)
     } else {
-        notePalette(note.id)
+        notePaletteColor(note.id)
     }
     PastelNoteCard(
         note = note,
-        containerColor = container,
-        contentColor = content,
+        noteColor = noteColor,
         onClick = onClick,
         onPinToggle = onPinToggle,
         onMove = onMove,
@@ -1075,13 +972,13 @@ fun NoteCard(
 }
 
 @Composable
-private fun notePalette(id: Long): Pair<Color, Color> {
+private fun notePaletteColor(id: Long): Color {
     val ext = MaterialTheme.extended
     return when (id.mod(4)) {
-        0 -> ext.lavender to ext.onLavender
-        1 -> ext.limeSoft to ext.onLimeSoft
-        2 -> ext.peach to ext.onPeach
-        else -> ext.sky to ext.onSky
+        0 -> ext.lavender
+        1 -> ext.limeSoft
+        2 -> ext.peach
+        else -> ext.sky
     }
 }
 
@@ -1152,20 +1049,23 @@ fun MarkdownToolbar(
         R.string.markdown_code,
         R.string.markdown_code_block
     )
+    val ext = MaterialTheme.extended
     Row(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 4.dp),
+            .padding(horizontal = 20.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         actions.forEachIndexed { index, (label, action) ->
             val description = stringResource(descriptions[index])
             Box(
                 modifier = Modifier
-                    .heightIn(min = 48.dp)
-                    .clip(PillShape)
-                    .background(MaterialTheme.extended.track)
+                    .sizeIn(minWidth = 44.dp, minHeight = 44.dp)
+                    .height(44.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .border(1.dp, ext.controlLine, RoundedCornerShape(5.dp))
+                    .background(MaterialTheme.colorScheme.surface)
                     .clickable(role = Role.Button) {
                         val result = action(currentContent, selectionStart, selectionEnd)
                         onContentChange(result.text)
@@ -1173,13 +1073,13 @@ fun MarkdownToolbar(
                         onActionApplied()
                     }
                     .semantics { contentDescription = description }
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                    .padding(horizontal = 12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.extended.onTrack,
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.clearAndSetSemantics {}
                 )
             }
@@ -1193,14 +1093,14 @@ fun EditorModeTab(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    RoundIconButton(
-        icon = if (showPreview) Icons.Filled.DateRange else Icons.Filled.Check,
-        contentDescription = if (showPreview) {
-            stringResource(R.string.markdown_edit)
-        } else {
-            stringResource(R.string.markdown_preview)
+    // v8: pestañas subrayadas Editar / Vista previa
+    UnderlinedTabRow(
+        options = listOf(false, true),
+        selected = showPreview,
+        onSelect = { _ -> onToggle() },
+        label = { isPreview ->
+            stringResource(if (isPreview) R.string.markdown_preview else R.string.markdown_edit)
         },
-        onClick = onToggle,
         modifier = modifier
     )
 }

@@ -19,6 +19,14 @@
         android:theme="@style/Theme.CampusPocket"
         tools:targetApi="31">
 
+        <!-- Desactivar auto-inicialización de Firebase Crashlytics para inicializar manualmente -->
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

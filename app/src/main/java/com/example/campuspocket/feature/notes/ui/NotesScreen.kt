@@ -37,11 +37,11 @@ import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
 import com.example.campuspocket.core.designsystem.components.EmptyNotesState
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
+import com.example.campuspocket.core.designsystem.components.EmptyState
 import com.example.campuspocket.core.designsystem.components.FolderChipsRow
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.designsystem.components.SearchPill
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.components.StaggeredNotesGrid
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.navigation.LocalSnackbarHost
@@ -78,9 +78,7 @@ fun NotesScreen(
                 RoundIconButton(
                     icon = Icons.Filled.Add,
                     contentDescription = stringResource(R.string.notes_new),
-                    onClick = onNewNote,
-                    containerColor = MaterialTheme.extended.accent,
-                    contentColor = MaterialTheme.extended.onAccent
+                    onClick = onNewNote
                 )
             }
         )
@@ -119,7 +117,7 @@ fun NotesScreen(
                 Modifier.fillMaxSize().padding(top = 24.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                LoadingShimmer()
+                ShimmerList()
             }
 
             state.notes.isNotEmpty() -> {
@@ -145,11 +143,11 @@ fun NotesScreen(
             }
 
             state.query.isNotBlank() -> {
-                EmptyStateCard(
+                EmptyState(
                     modifier = Modifier.fillMaxWidth(),
                     title = stringResource(R.string.search),
                     message = stringResource(R.string.notes_no_results),
-                    icon = painterResource(R.drawable.ic_notes)
+                    iconRes = R.drawable.ic_notes
                 )
             }
 

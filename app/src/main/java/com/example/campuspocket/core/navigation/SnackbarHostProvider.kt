@@ -1,14 +1,12 @@
 package com.example.campuspocket.core.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
@@ -24,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.withTimeoutOrNull
 import androidx.compose.ui.unit.dp
-import com.example.campuspocket.core.designsystem.PillShape
+import com.example.campuspocket.core.designsystem.ShapeSnackbar
 import com.example.campuspocket.core.designsystem.extended
 
 /**
@@ -67,7 +65,8 @@ suspend fun SnackbarHostState.showUndoSnackbar(
 }
 
 /**
- * Snackbar personalizado del proyecto (diseño: radio 20 dp, fondo ink, acción lima).
+ * Snackbar del rediseño v8: fondo `Ink`, texto blanco, borde `Lime` de 1 dp,
+ * radio 12 y 54 dp mínimos; la acción va en `Lime` con 5 s de duración.
  */
 @Composable
 fun CampusSnackbar(data: SnackbarData) {
@@ -76,10 +75,11 @@ fun CampusSnackbar(data: SnackbarData) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
-            .heightIn(min = 56.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .heightIn(min = 54.dp)
+            .clip(ShapeSnackbar)
             .background(ext.ink)
-            .padding(start = 20.dp, end = 8.dp),
+            .border(1.dp, ext.lime, ShapeSnackbar)
+            .padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

@@ -49,8 +49,8 @@ import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.EmptyState
+import com.example.campuspocket.core.designsystem.components.ShimmerCard
 import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
 import com.example.campuspocket.core.util.Money
 import com.example.campuspocket.feature.finance.domain.GetMonthSummary
@@ -144,11 +144,11 @@ fun LazyListScope.budgetItems(
 
     if (state.isLoading) {
         item(key = "budget_loading", contentType = "loading") {
-            LoadingShimmer(
+            ShimmerCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .height(160.dp)
+                    .padding(horizontal = 20.dp),
+                cardHeight = 160.dp
             )
         }
         return
@@ -259,13 +259,13 @@ fun LazyListScope.budgetItems(
 
     if (state.rows.isEmpty() && (state.semesterMode || state.monthlyBudgetCents == null)) {
         item(key = "budget_empty", contentType = "empty") {
-            EmptyStateCard(
+            EmptyState(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 title = stringResource(R.string.empty_budgets),
                 message = stringResource(R.string.empty_budgets_message),
-                icon = painterResource(R.drawable.ic_wallet)
+                iconRes = R.drawable.ic_wallet
             )
         }
     }

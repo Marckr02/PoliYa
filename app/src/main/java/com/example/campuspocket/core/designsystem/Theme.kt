@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
 /**
- * Esquemas Material 3 completos derivados de la paleta de la especificación.
+ * Esquemas Material 3 completos derivados de la paleta editorial v8.
  *
  * Reglas aplicadas:
- * - El acento índigo señala acciones y selección; no pinta grandes áreas.
- * - El fondo claro es neutro (#F2F3F7); las tarjetas son blancas y sin bordes.
- * - En oscuro no hay negro absoluto: #0B0E13 con superficies por tono.
- * - El "ink" (casi negro) se reserva para hero, barra flotante y elementos de énfasis.
+ * - La tinta verde señala texto, selección y superficies de énfasis.
+ * - El fondo claro es papel cálido (#F2F0E9); las tarjetas son marfil sin sombra.
+ * - En oscuro no hay negro absoluto: #071817 con superficies por tono.
+ * - Lima y ámbar son acentos; el ámbar nunca es el único indicador de estado.
  */
 private val LightColorScheme = lightColorScheme(
     primary = CampusPalette.Light.Primary,
@@ -23,7 +23,7 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = CampusPalette.Light.OnPrimaryContainer,
     inversePrimary = CampusPalette.Light.InversePrimary,
 
-    secondary = CampusPalette.Light.Ink,
+    secondary = CampusPalette.Light.InkSoft,
     onSecondary = CampusPalette.Light.OnPrimary,
     secondaryContainer = CampusPalette.Light.Lavender,
     onSecondaryContainer = CampusPalette.Light.OnLavender,

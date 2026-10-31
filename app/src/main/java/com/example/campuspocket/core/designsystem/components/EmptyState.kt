@@ -1,10 +1,11 @@
 package com.example.campuspocket.core.designsystem.components
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -31,19 +31,20 @@ import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.R
 
 /**
- * Estado vacío reutilizable (Sección 8 v5).
+ * Estado vacío reutilizable (Sección 8 v5). Única API de estados vacíos (FIX-20).
  *
  * Tarjeta `surface` de radio 32 dp, icono de 72 dp en caja tintada
  * (24 dp de radio), título 20 sp ExtraBold, texto 14 sp, botón primario de 48 dp.
+ * Recibe textos ya resueltos; las variantes tipadas resuelven sus recursos.
  */
 @Composable
 fun EmptyState(
     modifier: Modifier = Modifier,
-    @androidx.annotation.DrawableRes iconRes: Int,
-    @androidx.annotation.StringRes titleRes: Int,
-    @androidx.annotation.StringRes messageRes: Int,
-    @androidx.annotation.StringRes actionLabelRes: Int? = null,
-    action: (() -> Unit)? = null
+    @DrawableRes iconRes: Int,
+    title: String,
+    message: String,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null
 ) {
     val ext = MaterialTheme.extended
 
@@ -85,40 +86,38 @@ fun EmptyState(
                 }
 
                 Text(
-                    text = stringResource(titleRes),
+                    text = title,
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center
                 )
 
                 Text(
-                    text = stringResource(messageRes),
+                    text = message,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
 
-                actionLabelRes?.let { labelRes ->
-                    if (action != null) {
-                        Spacer(Modifier.height(8.dp))
-                        androidx.compose.material3.Button(
-                            onClick = action,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 48.dp)
-                                .clip(PillShape),
-                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
+                if (actionLabel != null && onAction != null) {
+                    Spacer(Modifier.height(8.dp))
+                    androidx.compose.material3.Button(
+                        onClick = onAction,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 48.dp)
+                            .clip(PillShape),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text(
+                            text = actionLabel,
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.ExtraBold
                             )
-                        ) {
-                            Text(
-                                text = stringResource(labelRes),
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.ExtraBold
-                                )
-                            )
-                        }
+                        )
                     }
                 }
             }
@@ -137,10 +136,10 @@ fun EmptyTasksState(
     EmptyState(
         modifier = modifier,
         iconRes = R.drawable.ic_dock_school_outline,
-        titleRes = R.string.empty_tasks_title,
-        messageRes = R.string.empty_tasks_message,
-        actionLabelRes = R.string.task_new,
-        action = onNewTask
+        title = stringResource(R.string.empty_tasks_title),
+        message = stringResource(R.string.empty_tasks_message),
+        actionLabel = stringResource(R.string.task_new),
+        onAction = onNewTask
     )
 }
 
@@ -154,11 +153,12 @@ fun EmptyMovementsState(
 ) {
     EmptyState(
         modifier = modifier,
-        iconRes = R.drawable.ic_dock_wallet_outline,
-        titleRes = R.string.empty_movements_title,
-        messageRes = R.string.empty_movements_message,
-        actionLabelRes = R.string.finance_new_movement,
-        action = onNewMovement
+        // FIX-54: icono de gasto, coherente con la acción de crear un movimiento.
+        iconRes = R.drawable.ic_move_expense,
+        title = stringResource(R.string.empty_movements_title),
+        message = stringResource(R.string.empty_movements_message),
+        actionLabel = stringResource(R.string.finance_new_movement),
+        onAction = onNewMovement
     )
 }
 
@@ -173,10 +173,10 @@ fun EmptyNotesState(
     EmptyState(
         modifier = modifier,
         iconRes = R.drawable.ic_dock_notes_outline,
-        titleRes = R.string.empty_notes_title,
-        messageRes = R.string.empty_notes_message,
-        actionLabelRes = R.string.note_new,
-        action = onNewNote
+        title = stringResource(R.string.empty_notes_title),
+        message = stringResource(R.string.empty_notes_message),
+        actionLabel = stringResource(R.string.note_new),
+        onAction = onNewNote
     )
 }
 
@@ -191,10 +191,10 @@ fun EmptyPaymentsState(
     EmptyState(
         modifier = modifier,
         iconRes = R.drawable.ic_schedule,
-        titleRes = R.string.empty_payments_title,
-        messageRes = R.string.empty_payments_message,
-        actionLabelRes = R.string.scheduled_payment_new,
-        action = onNewPayment
+        title = stringResource(R.string.empty_payments_title),
+        message = stringResource(R.string.empty_payments_message),
+        actionLabel = stringResource(R.string.scheduled_payment_new),
+        onAction = onNewPayment
     )
 }
 
@@ -209,9 +209,28 @@ fun EmptyCoursesState(
     EmptyState(
         modifier = modifier,
         iconRes = R.drawable.ic_dock_school_outline,
-        titleRes = R.string.empty_courses_title,
-        messageRes = R.string.empty_courses_message,
-        actionLabelRes = R.string.course_new,
-        action = onNewCourse
+        title = stringResource(R.string.empty_courses_title),
+        message = stringResource(R.string.empty_courses_message),
+        actionLabel = stringResource(R.string.course_new),
+        onAction = onNewCourse
+    )
+}
+
+/**
+ * Patrón único de "registro no encontrado" para todos los formularios (FIX-07).
+ * Se muestra cuando el ViewModel expone notFound = true y ofrece volver atrás.
+ */
+@Composable
+fun FormNotFoundState(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    EmptyState(
+        modifier = modifier,
+        iconRes = R.drawable.ic_warning,
+        title = stringResource(R.string.form_not_found_title),
+        message = stringResource(R.string.form_not_found_message),
+        actionLabel = stringResource(R.string.back),
+        onAction = onBack
     )
 }

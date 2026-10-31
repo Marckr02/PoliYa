@@ -1,5 +1,6 @@
 package com.example.campuspocket.feature.academic.ui.tasks
 
+import com.example.campuspocket.core.designsystem.components.TaskFilter
 import com.example.campuspocket.core.di.AppScope
 import com.example.campuspocket.feature.academic.FakeCourseRepository
 import com.example.campuspocket.feature.academic.FakeTaskRepository
@@ -46,21 +47,15 @@ class TasksViewModelTest {
     }
 
     @Test
-    fun `pendientes ordenadas por fecha de entrega y completadas ocultas`() = runTest(testDispatcher) {
-        val (viewModel, _) = viewModel(
-            tasks = listOf(
-                testTask(id = 1, title = "Tarde", dueAt = Instant.ofEpochMilli(2_000_000_000_000)),
-                testTask(id = 2, title = "Pronto", dueAt = Instant.ofEpochMilli(1_000_000_000_000)),
-                testTask(id = 3, title = "Hecha", dueAt = Instant.ofEpochMilli(500_000_000_000),
-                    completedAt = Instant.ofEpochMilli(1_000_000_000_000))
-            )
-        )
+    fun `el filtro Todas incluye pendientes y completadas`() = runTest(testDispatcher) {
+        val (vm, _) = viewModel(tasks = listOf(
+            testTask(id = 1, title = "A"),
+            testTask(id = 2, title = "B", completedAt = Instant.ofEpochMilli(1_000_000_000_000))
+        ))
         advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertFalse(state.showCompleted)
-        assertEquals(listOf("Pronto", "Tarde"), state.tasks.map { it.title })
+        vm.setFilter(TaskFilter.ALL)
+        advanceUntilIdle()
+        assertEquals(listOf("A", "B"), vm.uiState.value.tasks.map { it.title })
     }
 
     @Test
@@ -73,11 +68,11 @@ class TasksViewModelTest {
         )
         advanceUntilIdle()
 
-        viewModel.setShowCompleted(true)
+        viewModel.setFilter(TaskFilter.COMPLETED)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertTrue(state.showCompleted)
+        assertEquals(TaskFilter.COMPLETED, state.filter)
         assertEquals(listOf("Hecha"), state.tasks.map { it.title })
     }
 

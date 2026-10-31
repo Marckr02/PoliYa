@@ -34,9 +34,9 @@ import com.example.campuspocket.core.designsystem.CampusTheme
 import com.example.campuspocket.core.designsystem.components.CampusSelectField
 import com.example.campuspocket.core.designsystem.components.CampusSelectItem
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.EmptyState
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.components.TaskFilter
 import com.example.campuspocket.core.designsystem.components.TaskFilterRow
 import com.example.campuspocket.core.designsystem.components.TaskItemCard
@@ -56,7 +56,8 @@ fun TasksScreen(
     viewModel: TasksViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    var selectedFilter by rememberSaveable { mutableStateOf(TaskFilter.ALL) }
+    // FIX-01: el filtro vive en el ViewModel; "Todas" incluye pendientes y completadas.
+    val selectedFilter = state.filter
     var selectedCourseId by rememberSaveable { mutableStateOf<Long?>(null) }
     var courseMenuExpanded by remember { mutableStateOf(false) }
     val ext = MaterialTheme.extended
@@ -91,15 +92,13 @@ fun TasksScreen(
     }
 
     val today = LocalDate.now(ZoneId.systemDefault())
-    val visibleTasks = remember(state.tasks, selectedFilter, selectedCourseId, today) {
-        state.tasks.filter { task ->
-            val dueDate = task.dueAt.atZone(ZoneId.systemDefault()).toLocalDate()
-            when (selectedFilter) {
-                TaskFilter.ALL, TaskFilter.COMPLETED -> true
-                TaskFilter.TODAY -> dueDate == today
-                TaskFilter.THIS_WEEK -> !dueDate.isBefore(today) && !dueDate.isAfter(today.plusDays(6))
-                TaskFilter.BY_COURSE -> task.courseId == selectedCourseId
-            }
+    // El ViewModel ya aplicó la semántica del filtro (FIX-01); aquí solo refina
+    // "Por materia" con el selector local de la pantalla.
+    val visibleTasks = remember(state.tasks, selectedFilter, selectedCourseId) {
+        if (selectedFilter == TaskFilter.BY_COURSE) {
+            state.tasks.filter { task -> task.courseId == selectedCourseId }
+        } else {
+            state.tasks
         }
     }
     val groups = remember(visibleTasks, selectedFilter, today) {
@@ -116,9 +115,7 @@ fun TasksScreen(
                 RoundIconButton(
                     icon = Icons.Filled.Add,
                     contentDescription = stringResource(R.string.task_new),
-                    onClick = onAddTask,
-                    containerColor = ext.accent,
-                    contentColor = ext.onAccent
+                    onClick = onAddTask
                 )
             }
         )
@@ -132,10 +129,7 @@ fun TasksScreen(
             TaskFilterRow(
                 modifier = Modifier.padding(top = 4.dp),
                 selectedFilter = selectedFilter,
-                onFilterChange = { filter ->
-                    selectedFilter = filter
-                    viewModel.setShowCompleted(filter == TaskFilter.COMPLETED)
-                }
+                onFilterChange = viewModel::setFilter
             )
 
             if (selectedFilter == TaskFilter.BY_COURSE && state.courses.isNotEmpty()) {
@@ -160,11 +154,11 @@ fun TasksScreen(
 
             when {
                 state.isLoading -> {
-                    LoadingShimmer(modifier = Modifier.weight(1f))
+                    ShimmerList(modifier = Modifier.weight(1f))
                 }
 
                 visibleTasks.isEmpty() -> {
-                    EmptyStateCard(
+                    EmptyState(
                         modifier = Modifier.weight(1f),
                         title = stringResource(R.string.empty_tasks_here),
                         message = if (selectedFilter == TaskFilter.ALL) {
@@ -172,8 +166,8 @@ fun TasksScreen(
                         } else {
                             stringResource(R.string.task_empty_filter)
                         },
-                        icon = painterResource(R.drawable.ic_notes),
-                        actionText = stringResource(R.string.task_new),
+                        iconRes = R.drawable.ic_notes,
+                        actionLabel = stringResource(R.string.task_new),
                         onAction = onAddTask
                     )
                 }

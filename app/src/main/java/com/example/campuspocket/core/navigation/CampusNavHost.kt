@@ -298,7 +298,7 @@ fun CampusNavHost(
                     onNavigate = { destination -> navigateToTopLevel(destination.route) },
                     modifier = Modifier
                         .navigationBarsPadding()
-                        .padding(bottom = 22.dp)
+                        .padding(bottom = 12.dp)
                 )
             }
         }
@@ -400,7 +400,7 @@ fun CampusNavHost(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .navigationBarsPadding()
-                        .padding(end = 20.dp, bottom = 102.dp),
+                        .padding(end = 22.dp, bottom = 93.dp),
                     enter = fadeIn(tween(180)),
                     exit = fadeOut(tween(120))
                 ) {

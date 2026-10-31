@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,8 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.CampusTheme
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.AcademicSection
+import com.example.campuspocket.core.designsystem.components.AcademicSectionNav
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.components.WeeklyScheduleGrid
 import androidx.compose.material3.Surface
 
@@ -66,31 +66,37 @@ fun SemanaScreen(
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 RoundIconButton(
-                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    iconRes = R.drawable.ic_schedule,
                     contentDescription = stringResource(R.string.academic_today),
                     onClick = onShowToday,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
                 RoundIconButton(
-                    icon = Icons.Filled.Check,
+                    iconRes = R.drawable.ic_action_task_list,
                     contentDescription = stringResource(R.string.today_open_tasks),
                     onClick = onNavigateToTasks,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
                 RoundIconButton(
                     iconRes = R.drawable.ic_schedule,
                     contentDescription = stringResource(R.string.today_open_courses),
                     onClick = onNavigateToCourses,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
+        AcademicSectionNav(
+            selected = AcademicSection.WEEK,
+            onSelect = { section ->
+                when (section) {
+                    AcademicSection.TODAY -> onShowToday()
+                    AcademicSection.WEEK -> Unit
+                    AcademicSection.COURSES -> onNavigateToCourses()
+                    AcademicSection.TASKS -> onNavigateToTasks()
+                }
+            }
+        )
+
         if (state.isLoading) {
-            LoadingShimmer(modifier = Modifier.weight(1f))
+            ShimmerList(modifier = Modifier.weight(1f))
         } else {
             WeeklyScheduleGrid(
                 modifier = Modifier.weight(1f),

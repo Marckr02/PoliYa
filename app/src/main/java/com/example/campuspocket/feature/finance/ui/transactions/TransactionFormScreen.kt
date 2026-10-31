@@ -1,6 +1,7 @@
 package com.example.campuspocket.feature.finance.ui.transactions
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -8,8 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -78,7 +82,6 @@ import com.example.campuspocket.core.designsystem.components.CampusSelectField
 import com.example.campuspocket.core.designsystem.components.CampusSelectItem
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
 import com.example.campuspocket.core.designsystem.components.TransactionKeypadPanel
 import com.example.campuspocket.core.designsystem.components.TransactionTypeSelector
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
@@ -322,7 +325,7 @@ fun TransactionFormScreen(
                 )
 
                 if (state.isEditing && state.type != TransactionType.TRANSFER) {
-                    SecondaryPillButton(
+                    CampusButton(style = CampusButtonStyle.SECONDARY, 
                         text = stringResource(R.string.save_as_template),
                         onClick = {
                             templateName = state.description.trim().ifBlank {
@@ -539,33 +542,16 @@ private fun AmountSection(
 
         val pace = impact.pace
         if (pace != null) {
-            val over = pace.isOver
-            val color = if (over) ext.onPeach else ext.onMint
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics { liveRegion = LiveRegionMode.Polite }
-            ) {
-                Icon(
-                    imageVector = if (over) Icons.Filled.Warning else Icons.Filled.CheckCircle,
-                    contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                    tint = color,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = stringResource(
-                        R.string.transaction_impact_below,
-                        formatPercent(pace.realPct),
-                        formatPercent(pace.expectedPct)
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = color,
-                    textAlign = TextAlign.Center
-                )
-            }
+            TransactionImpactCard(
+                text = stringResource(
+                    R.string.transaction_impact_below,
+                    formatPercent(pace.realPct),
+                    formatPercent(pace.expectedPct)
+                ),
+                spentFraction = pace.barProgress,
+                expectedFraction = pace.expectedFraction,
+                over = pace.isOver
+            )
         } else if (
             state.type != TransactionType.EXPENSE &&
             impact.accountName != null &&
@@ -584,6 +570,77 @@ private fun AmountSection(
                     .fillMaxWidth()
                     .semantics { liveRegion = LiveRegionMode.Polite }
             )
+        }
+    }
+}
+
+@Composable
+private fun TransactionImpactCard(
+    text: String,
+    spentFraction: Float,
+    expectedFraction: Float,
+    over: Boolean
+) {
+    val ext = MaterialTheme.extended
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .heightIn(min = 58.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .background(ext.limeSoft)
+            .semantics { liveRegion = LiveRegionMode.Polite }
+    ) {
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .fillMaxHeight()
+                .background(ext.ink)
+        )
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = if (over) Icons.Filled.Warning else Icons.Filled.CheckCircle,
+                contentDescription = null, // el texto contiguo describe el estado
+                tint = if (over) ext.danger else ext.onLimeSoft,
+                modifier = Modifier.size(16.dp)
+            )
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = ext.onLimeSoft
+                )
+                Spacer(Modifier.height(6.dp))
+                Canvas(modifier = Modifier.fillMaxWidth().height(5.dp)) {
+                    val radius = androidx.compose.ui.geometry.CornerRadius(size.height / 2f)
+                    drawRoundRect(
+                        color = ext.onLimeSoft.copy(alpha = 0.18f),
+                        cornerRadius = radius
+                    )
+                    if (spentFraction > 0f) {
+                        drawRoundRect(
+                            color = ext.ink,
+                            size = Size(size.width * spentFraction.coerceIn(0f, 1f), size.height),
+                            cornerRadius = radius
+                        )
+                    }
+                    val markerX = (size.width * expectedFraction.coerceIn(0f, 1f))
+                        .coerceIn(2.dp.toPx(), size.width - 2.dp.toPx())
+                    drawLine(
+                        color = ext.ink,
+                        start = androidx.compose.ui.geometry.Offset(markerX, 0f),
+                        end = androidx.compose.ui.geometry.Offset(markerX, size.height),
+                        strokeWidth = 2.dp.toPx(),
+                        cap = androidx.compose.ui.graphics.StrokeCap.Round
+                    )
+                }
+            }
         }
     }
 }
@@ -1089,9 +1146,9 @@ private fun AccountSheet(
 @Composable
 private fun SectionLabel(text: String) {
     Text(
-        text = text,
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        text = text.uppercase(Locale.getDefault()),
+        style = com.example.campuspocket.core.designsystem.CampusOverline,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.semantics { heading() }
     )
 }

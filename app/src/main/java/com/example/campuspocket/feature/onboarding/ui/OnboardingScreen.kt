@@ -63,11 +63,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.preferences.CampusModule
+import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusTextField
-import com.example.campuspocket.core.designsystem.components.PrimaryPillButton
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
 import com.example.campuspocket.core.designsystem.components.SelectableModuleCard
+import com.example.campuspocket.core.designsystem.components.CampusDivider
 import com.example.campuspocket.core.designsystem.components.descriptionRes
 import com.example.campuspocket.core.designsystem.components.iconRes
 import com.example.campuspocket.core.designsystem.components.titleRes
@@ -175,6 +176,8 @@ fun OnboardingScreen(
             )
         }
 
+        CampusDivider()
+
         when (state.step) {
             0 -> NameStep(
                 name = state.name,
@@ -271,12 +274,12 @@ private fun NameStep(
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(8.dp))
-    PrimaryPillButton(
+    CampusButton(
         text = stringResource(R.string.onboarding_continue),
         onClick = onContinue,
         modifier = Modifier.fillMaxWidth()
     )
-    SecondaryPillButton(
+    CampusButton(style = CampusButtonStyle.SECONDARY, 
         text = stringResource(R.string.onboarding_later),
         onClick = onContinue,
         modifier = Modifier.fillMaxWidth()
@@ -312,14 +315,14 @@ private fun ModulesStep(
         )
     }
     Spacer(Modifier.height(4.dp))
-    PrimaryPillButton(
+    CampusButton(
         text = stringResource(R.string.onboarding_continue),
         onClick = onContinue,
         enabled = !state.saving,
         loading = state.saving,
         modifier = Modifier.fillMaxWidth()
     )
-    SecondaryPillButton(
+    CampusButton(style = CampusButtonStyle.SECONDARY, 
         text = stringResource(R.string.back),
         onClick = onBack,
         enabled = !state.saving,
@@ -397,12 +400,12 @@ private fun ScheduleStep(
                 }
             }
             Spacer(Modifier.height(4.dp))
-            PrimaryPillButton(
+            CampusButton(
                 text = stringResource(R.string.onboarding_import_schedule),
                 onClick = onImportClick,
                 modifier = Modifier.fillMaxWidth()
             )
-            SecondaryPillButton(
+            CampusButton(style = CampusButtonStyle.SECONDARY, 
                 text = stringResource(R.string.onboarding_import_later),
                 onClick = onSkipImport,
                 modifier = Modifier.fillMaxWidth()
@@ -523,14 +526,14 @@ private fun ScheduleStep(
     Spacer(Modifier.height(16.dp))
 
     // Botones finales
-    PrimaryPillButton(
+    CampusButton(
         text = stringResource(R.string.onboarding_start),
         onClick = onFinish,
         enabled = !state.saving,
         loading = state.saving,
         modifier = Modifier.fillMaxWidth()
     )
-    SecondaryPillButton(
+    CampusButton(style = CampusButtonStyle.SECONDARY, 
         text = stringResource(R.string.back),
         onClick = onBack,
         enabled = !state.saving,

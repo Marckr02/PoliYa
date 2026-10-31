@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.LocalPrivacyMode
 import com.example.campuspocket.core.designsystem.extended
@@ -31,9 +30,8 @@ fun PrivacyToggleButton(
         ),
         onClick = onToggle,
         modifier = modifier,
-        size = 48.dp,
-        containerColor = if (hidden) ext.cream else ext.track,
-        contentColor = if (hidden) ext.onCream else MaterialTheme.colorScheme.onSurface,
+        containerColor = if (hidden) ext.lime else androidx.compose.ui.graphics.Color.Transparent,
+        contentColor = if (hidden) ext.onLime else MaterialTheme.colorScheme.onSurface,
         role = Role.Switch
     )
 }

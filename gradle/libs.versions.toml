@@ -34,12 +34,14 @@ coroutines = "1.10.2"
 junit = "4.13.2"
 androidxJunit = "1.1.5"
 espresso = "3.7.0"
+androidxTestCore = "1.5.0"
 
 # Firebase Crashlytics
-firebaseBom = "33.6.0"
-crashlytics = "19.2.1"
-crashlyticsGradle = "3.0.1"
-googleServices = "4.4.2"
+firebaseBom = "34.12.0"
+crashlytics = "19.3.0"
+crashlyticsGradle = "3.0.7"
+googleServices = "4.4.4"
+analyticsKtx = "22.1.2"
 
 [libraries]
 # AndroidX base
@@ -97,11 +99,13 @@ pdfbox-jvm = { group = "org.apache.pdfbox", name = "pdfbox", version.ref = "pdfb
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 
 # Firebase Crashlytics
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "crashlytics" }
 crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "crashlytics" }
+firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "analyticsKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

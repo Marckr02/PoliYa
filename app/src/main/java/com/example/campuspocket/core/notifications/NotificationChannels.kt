@@ -40,4 +40,26 @@ object NotificationChannels {
             )
         )
     }
+
+    fun setChannelEnabled(context: Context, channelId: String, enabled: Boolean) {
+        val manager = context.getSystemService(NotificationManager::class.java) ?: return
+        val channelKey = when (channelId) {
+            "tasks" -> TASKS
+            "payments" -> PAYMENTS
+            "budgets" -> BUDGET
+            "classes" -> CLASSES
+            else -> channelId
+        }
+        val current = manager.getNotificationChannel(channelKey) ?: return
+        val importance = if (enabled) {
+            when (channelKey) {
+                TASKS -> NotificationManager.IMPORTANCE_HIGH
+                PAYMENTS, BUDGET -> NotificationManager.IMPORTANCE_DEFAULT
+                else -> NotificationManager.IMPORTANCE_LOW
+            }
+        } else NotificationManager.IMPORTANCE_NONE
+
+        val updated = NotificationChannel(channelKey, current.name, importance)
+        manager.createNotificationChannel(updated)
+    }
 }

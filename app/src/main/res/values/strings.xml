@@ -28,6 +28,8 @@
     <string name="sort">Ordenar</string>
     <string name="done">Listo</string>
     <string name="close">Cerrar</string>
+    <string name="chip_selected_state">Seleccionado</string>
+    <string name="chip_unselected_state">No seleccionado</string>
     <string name="confirm">Confirmar</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
@@ -302,6 +304,9 @@
     <string name="withdrawal_other">Otro</string>
     <string name="withdrawal_other_amount">Otro monto</string>
     <string name="withdrawal_confirm">Confirmar retiro</string>
+    <string name="withdrawal_review_amount">Revisa el monto</string>
+    <string name="chip_state_selected">Seleccionado</string>
+    <string name="chip_state_unselected">No seleccionado</string>
 
     <!-- Finance v6: Formulario de gasto -->
     <string name="transaction_type_expense">Gasto</string>
@@ -663,6 +668,10 @@
     <string name="finance_pace_no_budget_message">Define un presupuesto total del mes para ver tu ritmo de gasto.</string>
     <string name="finance_pace_create_budget">Crear presupuesto</string>
     <string name="finance_pace_accessibility">Has gastado %1$s del presupuesto; lo esperado a hoy es %2$s.</string>
+    <string name="finance_gauge_spent_caption">gastado hasta hoy</string>
+    <string name="finance_gauge_below_status">Por debajo del ritmo · puedes gastar %1$s más</string>
+    <string name="finance_gauge_above_status">Por encima del ritmo · llevas %1$s más de lo esperado</string>
+    <string name="finance_gauge_exhausted">Presupuesto agotado</string>
     <string name="finance_insight_per_day_title">Puedes gastar por día</string>
     <plurals name="finance_insight_days_remaining">
         <item quantity="one">%1$d día restante</item>
@@ -715,7 +724,10 @@
     <string name="note_copy">Copiar contenido</string>
     <string name="note_copied">Contenido copiado</string>
     <string name="note_share_error">No se pudo compartir la nota</string>
-    <string name="note_saved_status">Guardado · hace un momento</string>
+    <string name="note_saved_status">Guardado</string>
+    <string name="form_not_found_title">Este registro ya no existe</string>
+    <string name="form_not_found_message">Puede que lo hayas eliminado en otro dispositivo o desde el respaldo.</string>
+    <string name="module_disabled">Ese módulo está desactivado en Ajustes</string>
     <string name="note_saving_status">Guardando…</string>
     <string name="note_course_picker">Materia de la nota</string>
     <string name="note_folder_picker">Carpeta de la nota</string>

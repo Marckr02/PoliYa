@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.Icon
@@ -41,6 +42,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -113,6 +115,8 @@ fun CampusSelectField(
             placeholder = placeholder,
             readOnly = true,
             isError = isError,
+            // FIX-30: el texto de apoyo se anuncia como error cuando aplica.
+            errorDescription = supportingText?.takeIf { isError },
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
@@ -135,7 +139,8 @@ fun CampusSelectField(
                 }
             },
             modifier = Modifier
-                .menuAnchor()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .semantics { role = Role.DropdownList }
                 .fillMaxWidth()
         )
         ExposedDropdownMenu(
@@ -189,7 +194,8 @@ fun CampusCheckbox(
     contentDescription: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    boxSize: Dp = 26.dp
+    boxSize: Dp = 26.dp,
+    boxShape: androidx.compose.ui.graphics.Shape = CircleShape
 ) {
     val ext = MaterialTheme.extended
     val fill by animateColorAsState(
@@ -223,9 +229,9 @@ fun CampusCheckbox(
         Box(
             modifier = Modifier
                 .size(boxSize)
-                .clip(CircleShape)
+                .clip(boxShape)
                 .background(fill)
-                .border(2.dp, border, CircleShape),
+                .border(2.dp, border, boxShape),
             contentAlignment = Alignment.Center
         ) {
             if (checkProgress > 0f) {

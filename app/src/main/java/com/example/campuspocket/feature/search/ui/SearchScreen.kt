@@ -56,8 +56,8 @@ import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.EmptyState
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.components.SearchPill
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHiddenSigned
@@ -152,7 +152,7 @@ fun SearchScreen(
             } else {
                 val query = state.query.trim()
                 if (state.isLoading) {
-                    LoadingShimmer(modifier = Modifier.fillMaxWidth().weight(1f))
+                    ShimmerList(modifier = Modifier.fillMaxWidth().weight(1f))
                 } else {
                     Text(
                         text = pluralStringResource(
@@ -174,11 +174,11 @@ fun SearchScreen(
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            EmptyStateCard(
+                            EmptyState(
                                 title = stringResource(R.string.search_no_results_title),
                                 message = stringResource(R.string.search_no_results_message, query),
-                                icon = Icons.Filled.Search,
-                                actionText = stringResource(R.string.search_clear_query),
+                                iconRes = R.drawable.ic_search,
+                                actionLabel = stringResource(R.string.search_clear_query),
                                 onAction = { onQueryChange("") }
                             )
                         }
@@ -211,10 +211,10 @@ private fun ColumnScope.IfBlankQuery(
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
-            EmptyStateCard(
+            EmptyState(
                 title = stringResource(R.string.search_empty_title),
                 message = stringResource(R.string.search_empty_message),
-                icon = Icons.Filled.Search
+                iconRes = R.drawable.ic_search
             )
         }
         return

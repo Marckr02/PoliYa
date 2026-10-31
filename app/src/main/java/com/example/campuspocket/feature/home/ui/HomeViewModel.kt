@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.example.campuspocket.BuildConfig
 import com.example.campuspocket.core.preferences.PreferenceKeys
+import com.example.campuspocket.core.util.LogUtil
 import com.example.campuspocket.feature.academic.domain.model.Course
 import com.example.campuspocket.feature.academic.domain.model.Task
 import com.example.campuspocket.feature.academic.domain.repository.CourseRepository
@@ -125,7 +126,11 @@ class HomeViewModel @Inject constructor(
     fun onWhatsNewSeen() {
         _autoWhatsNew.value = false
         viewModelScope.launch {
-            dataStore.edit { it[PreferenceKeys.LAST_SEEN_VERSION] = BuildConfig.VERSION_NAME }
+            try {
+                dataStore.edit { it[PreferenceKeys.LAST_SEEN_VERSION] = BuildConfig.VERSION_NAME }
+            } catch (e: Exception) {
+                LogUtil.e("No se pudo guardar LAST_SEEN_VERSION", e, tag = "Home")
+            }
         }
     }
 

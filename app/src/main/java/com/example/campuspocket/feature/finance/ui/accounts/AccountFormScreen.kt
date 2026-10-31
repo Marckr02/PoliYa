@@ -59,6 +59,7 @@ import com.example.campuspocket.core.designsystem.components.CampusSelectItem
 import com.example.campuspocket.core.designsystem.components.CampusSwitch
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
+import com.example.campuspocket.core.designsystem.components.FormNotFoundState
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.feature.finance.data.AccountType
 
@@ -85,6 +86,10 @@ fun AccountFormScreen(
             title = stringResource(if (state.isEditing) R.string.account_name else R.string.finance_new_account),
             onBack = requestBack
         )
+        if (state.notFound) {
+            FormNotFoundState(onBack = requestBack)
+            return@Column
+        }
         if (!state.isLoaded) {
             Box(
                 modifier = Modifier.fillMaxSize(),

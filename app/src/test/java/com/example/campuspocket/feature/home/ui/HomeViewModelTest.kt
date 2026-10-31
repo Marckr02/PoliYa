@@ -28,6 +28,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -89,7 +90,7 @@ class HomeViewModelTest {
                 noteRepository = FakeNoteRepository(),
                 dataStore = PreferenceDataStoreFactory.create(
                     scope = backgroundScope,
-                    produceFile = { File(folder.root, "home.preferences_pb") }
+                    produceFile = { File(folder.newFolder(), "home.preferences_pb") }
                 ),
                 clock = fixedClock
             )
@@ -169,7 +170,7 @@ class HomeViewModelTest {
             noteRepository = FakeNoteRepository(),
             dataStore = PreferenceDataStoreFactory.create(
                 scope = backgroundScope,
-                produceFile = { File(folder.root, "timeline.preferences_pb") }
+                produceFile = { File(folder.newFolder(), "timeline.preferences_pb") }
             ),
             clock = fixedClock
         )
@@ -197,11 +198,13 @@ class HomeViewModelTest {
     @Test
     fun `novedades se muestran una vez tras actualizar y se marcan como vistas`() =
         runTest(testDispatcher) {
+            val file = File(folder.newFolder(), "whatsnew_${System.nanoTime()}.preferences_pb")
             val store = PreferenceDataStoreFactory.create(
                 scope = backgroundScope,
-                produceFile = { File(folder.root, "whatsnew.preferences_pb") }
+                produceFile = { file }
             )
             store.edit { it[PreferenceKeys.LAST_SEEN_VERSION] = "0.8.0" }
+            advanceUntilIdle()
 
             val viewModel = HomeViewModel(
                 courseRepository = FakeCourseRepository(),
@@ -228,7 +231,7 @@ class HomeViewModelTest {
         runTest(testDispatcher) {
             val store = PreferenceDataStoreFactory.create(
                 scope = backgroundScope,
-                produceFile = { File(folder.root, "fresh.preferences_pb") }
+                produceFile = { File(folder.newFolder(), "fresh.preferences_pb") }
             )
 
             val viewModel = HomeViewModel(

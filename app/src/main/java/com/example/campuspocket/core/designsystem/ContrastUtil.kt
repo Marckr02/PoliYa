@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.luminance
  */
 object ContrastUtil {
 
-    val DarkInk = Color(0xFF0A2229)
+    val DarkInk = Color(0xFF103C3B)
     val LightInk = Color(0xFFFFFFFF)
 
     fun contrastRatio(a: Color, b: Color): Float {

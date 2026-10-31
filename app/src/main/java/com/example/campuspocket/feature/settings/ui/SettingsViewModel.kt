@@ -15,6 +15,7 @@ import com.example.campuspocket.core.backup.BackupImportException
 import com.example.campuspocket.core.backup.BackupImportIssue
 import com.example.campuspocket.core.backup.BackupManager
 import com.example.campuspocket.core.calendar.CalendarExportManager
+import com.example.campuspocket.core.notifications.NotificationChannels
 import com.example.campuspocket.core.preferences.CampusModule
 import com.example.campuspocket.core.preferences.PreferenceKeys
 import com.example.campuspocket.core.preferences.ThemeMode
@@ -243,6 +244,7 @@ class SettingsViewModel @Inject constructor(
                 "payments" -> dataStore.edit { it[PreferenceKeys.CHANNEL_PAYMENTS] = enabled }
                 "budgets" -> dataStore.edit { it[PreferenceKeys.CHANNEL_BUDGETS] = enabled }
             }
+            NotificationChannels.setChannelEnabled(context, channel, enabled)
         }
     }
 

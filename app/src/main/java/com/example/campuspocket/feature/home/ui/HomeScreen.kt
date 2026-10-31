@@ -51,14 +51,19 @@ import androidx.compose.ui.unit.dp
 import com.example.campuspocket.BuildConfig
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.CampusNumeral
+import com.example.campuspocket.core.designsystem.CampusOverline
 import com.example.campuspocket.core.designsystem.components.BentoCard
+import com.example.campuspocket.core.designsystem.components.CampusCheckbox
 import com.example.campuspocket.core.designsystem.components.CampusDialog
+import com.example.campuspocket.core.designsystem.components.CampusDivider
 import com.example.campuspocket.core.designsystem.components.CampusSectionHeader
 import com.example.campuspocket.core.designsystem.MoneyText
-import com.example.campuspocket.core.designsystem.components.EmptyStateCard
-import com.example.campuspocket.core.designsystem.components.PriorityBadge
+import com.example.campuspocket.core.designsystem.components.EmptyState
+import com.example.campuspocket.core.designsystem.components.PaceGauge
+import com.example.campuspocket.core.designsystem.components.PriorityTag
 import com.example.campuspocket.core.designsystem.components.PrivacyToggleButton
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
+import com.example.campuspocket.core.designsystem.components.formatGaugePercent
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.preferences.CampusModule
 import com.example.campuspocket.core.preferences.UserPreferences
@@ -116,13 +121,13 @@ fun HomeScreen(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = dateText.uppercase(Locale.forLanguageTag("es")),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = CampusOverline,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = displayName?.let { stringResource(R.string.home_greeting_name, it) }
                         ?: stringResource(R.string.home_greeting_generic),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.semantics { heading() }
                 )
@@ -130,10 +135,7 @@ fun HomeScreen(
             RoundIconButton(
                 icon = Icons.Filled.Search,
                 contentDescription = stringResource(R.string.search),
-                onClick = onOpenSearch,
-                size = 40.dp,
-                containerColor = ext.track,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                onClick = onOpenSearch
             )
             Spacer(Modifier.width(4.dp))
             PrivacyToggleButton(onToggle = onTogglePrivacy)
@@ -144,42 +146,17 @@ fun HomeScreen(
             )
         }
 
+        CampusDivider()
+
         if (activeModules.isEmpty()) {
-            EmptyStateCard(
+            EmptyState(
                 title = stringResource(R.string.home_no_modules_title),
                 message = stringResource(R.string.home_no_modules_message),
-                actionText = stringResource(R.string.home_choose_modules),
+                iconRes = R.drawable.ic_settings,
+                actionLabel = stringResource(R.string.home_choose_modules),
                 onAction = onOpenSettings
             )
             return@Column
-        }
-
-        // Fila de Acciones Rápidas (+ Gasto, + Tarea, + Nota)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (preferences.isModuleEnabled(CampusModule.FINANCE)) {
-                QuickActionButton(
-                    label = stringResource(R.string.home_quick_add_format, stringResource(R.string.home_quick_expense)),
-                    onClick = onAddExpense,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            if (preferences.isModuleEnabled(CampusModule.ACADEMIC)) {
-                QuickActionButton(
-                    label = stringResource(R.string.home_quick_add_format, stringResource(R.string.home_quick_task)),
-                    onClick = onAddTask,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            if (preferences.isModuleEnabled(CampusModule.NOTES)) {
-                QuickActionButton(
-                    label = stringResource(R.string.home_quick_add_format, stringResource(R.string.home_quick_note)),
-                    onClick = onAddNote,
-                    modifier = Modifier.weight(1f)
-                )
-            }
         }
 
         val showFinance = preferences.isModuleEnabled(CampusModule.FINANCE)
@@ -254,9 +231,13 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Checkbox(
+                            CampusCheckbox(
                                 checked = task.completedAt != null,
-                                onCheckedChange = { done -> onToggleTaskCompleted(task, done) }
+                                onCheckedChange = { done -> onToggleTaskCompleted(task, done) },
+                                contentDescription = stringResource(
+                                    R.string.task_toggle_complete,
+                                    task.title
+                                )
                             )
                             Spacer(Modifier.width(8.dp))
                             Column(Modifier.weight(1f)) {
@@ -269,7 +250,7 @@ fun HomeScreen(
                                 )
                             }
                             Spacer(Modifier.width(8.dp))
-                            PriorityBadge(priority = task.priority)
+                            PriorityTag(priority = task.priority)
                         }
                     }
                 }
@@ -580,15 +561,10 @@ private fun NextClassCard(
 ) {
     val ext = MaterialTheme.extended
     BentoCard(
-        modifier = Modifier.border(
-            1.dp,
-            ext.inkLine,
-            MaterialTheme.shapes.extraLarge
-        ),
         onClick = onClick,
         containerColor = ext.ink,
         contentColor = ext.onInk,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = com.example.campuspocket.core.designsystem.ShapeHero,
         contentPadding = PaddingValues(22.dp)
     ) {
         Row(
@@ -709,31 +685,26 @@ private fun FinanceSummaryCard(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
-    val fraction = if (monthlyBudgetCents != null && monthlyBudgetCents > 0L) {
-        (monthlySpentCents.toFloat() / monthlyBudgetCents).coerceIn(0f, 1f)
-    } else {
-        null
-    }
     val pace = BudgetPace.compute(today, monthlyBudgetCents, monthlySpentCents)
     BentoCard(
         modifier = modifier,
         onClick = onClick,
-        containerColor = ext.accent,
-        contentColor = ext.onAccent,
-        shape = MaterialTheme.shapes.large,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = com.example.campuspocket.core.designsystem.ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Text(
             text = stringResource(R.string.home_remaining_label),
             style = MaterialTheme.typography.labelSmall,
-            color = ext.onAccent.copy(alpha = 0.82f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(4.dp))
         if (monthlyRemainingCents != null) {
             MoneyText(
                 amountCents = monthlyRemainingCents,
                 style = MaterialTheme.typography.headlineMedium,
-                color = ext.onAccent,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -741,7 +712,7 @@ private fun FinanceSummaryCard(
             Text(
                 text = "—",
                 style = MaterialTheme.typography.headlineMedium,
-                color = ext.onAccent,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -750,7 +721,7 @@ private fun FinanceSummaryCard(
             Text(
                 text = stringResource(R.string.home_pace_per_day, Money.format(pace.perDayCents)),
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = ext.onAccent,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -758,26 +729,33 @@ private fun FinanceSummaryCard(
             Text(
                 text = stringResource(R.string.budgets_no_budget),
                 style = MaterialTheme.typography.labelSmall,
-                color = ext.onAccent.copy(alpha = 0.82f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Spacer(Modifier.weight(1f))
-        if (fraction != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(5.dp)
-                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(50))
-                    .background(ext.onAccent.copy(alpha = 0.22f))
-            ) {
-                Box(
-                    Modifier
-                        .fillMaxWidth(fraction)
-                        .height(5.dp)
-                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(50))
-                        .background(ext.ink)
-                )
+        if (pace != null) {
+            val spentPercent = formatGaugePercent(pace.realPct.toFloat())
+            val expectedPercent = formatGaugePercent(pace.expectedPct.toFloat())
+            val gaugeDescription = stringResource(
+                R.string.finance_pace_accessibility,
+                "$spentPercent %",
+                "$expectedPercent %"
+            )
+            val gaugeFill = when {
+                pace.isBudgetExhausted || pace.isOver -> ext.danger
+                androidx.compose.foundation.isSystemInDarkTheme() -> ext.gaugeFillDark
+                else -> ext.mint
             }
+            PaceGauge(
+                spentFraction = pace.barProgress,
+                expectedFraction = pace.expectedFraction,
+                percentLabel = spentPercent,
+                contentDescription = gaugeDescription,
+                fillColor = gaugeFill,
+                diameter = 132.dp,
+                strokeWidth = 10.dp,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
     }
 }
@@ -795,7 +773,7 @@ private fun TasksSummaryCard(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = MaterialTheme.shapes.large,
+        shape = com.example.campuspocket.core.designsystem.ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Text(

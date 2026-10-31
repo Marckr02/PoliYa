@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
@@ -25,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.CampusOverline
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.extended
@@ -47,23 +47,21 @@ internal fun BudgetInsightsRow(
             .height(IntrinsicSize.Max),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        val cardShape = RoundedCornerShape(24.dp)
         BentoCard(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
-            shape = cardShape,
             contentPadding = PaddingValues(16.dp)
         ) {
             Text(
-                text = stringResource(R.string.finance_insight_per_day_title),
-                style = MaterialTheme.typography.labelMedium,
+                text = stringResource(R.string.finance_insight_per_day_title).uppercase(),
+                style = CampusOverline,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(8.dp))
             MoneyText(
                 amountCents = pace.perDayCents,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1
             )
@@ -85,22 +83,34 @@ internal fun BudgetInsightsRow(
 
         val closingReliable = pace.hasEnoughDataForClosing
         val closingAlert = closingReliable && pace.isClosingOverBudget
+        val closingGood = closingReliable && !closingAlert
         val ext = MaterialTheme.extended
+        val closingContainer = when {
+            closingAlert -> ext.peach
+            closingGood -> ext.mint
+            else -> MaterialTheme.colorScheme.surface
+        }
+        val closingContent = when {
+            closingAlert -> ext.onPeach
+            closingGood -> ext.onMint
+            else -> MaterialTheme.colorScheme.onSurface
+        }
         BentoCard(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
-            shape = cardShape,
-            containerColor = if (closingAlert) ext.peach else MaterialTheme.colorScheme.surface,
-            contentColor = if (closingAlert) ext.onPeach else MaterialTheme.colorScheme.onSurface,
+            containerColor = closingContainer,
+            contentColor = closingContent,
             contentPadding = PaddingValues(16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(R.string.finance_insight_closing_title),
-                    style = MaterialTheme.typography.labelMedium,
+                    text = stringResource(R.string.finance_insight_closing_title).uppercase(),
+                    style = CampusOverline,
                     color = if (closingAlert) {
                         ext.onPeach.copy(alpha = 0.82f)
+                    } else if (closingGood) {
+                        ext.onMint.copy(alpha = 0.75f)
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     },
@@ -119,8 +129,8 @@ internal fun BudgetInsightsRow(
             if (closingReliable) {
                 MoneyText(
                     amountCents = pace.estimatedClosingCents,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = if (closingAlert) ext.onPeach else MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = closingContent,
                     maxLines = 1
                 )
             } else {
@@ -128,7 +138,7 @@ internal fun BudgetInsightsRow(
                     text = stringResource(R.string.finance_insight_not_enough_data),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = closingContent
                 )
             }
             Spacer(Modifier.height(4.dp))
@@ -144,6 +154,8 @@ internal fun BudgetInsightsRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = if (closingAlert) {
                     ext.onPeach.copy(alpha = 0.82f)
+                } else if (closingGood) {
+                    ext.onMint.copy(alpha = 0.82f)
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 }

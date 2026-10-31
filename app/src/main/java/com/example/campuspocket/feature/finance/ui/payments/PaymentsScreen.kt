@@ -44,7 +44,7 @@ import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.EmptyPaymentsState
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.navigation.LocalSnackbarHost
@@ -168,14 +168,7 @@ fun LazyListScope.paymentItems(
     if (view == PaymentsView.LIST) {
         when {
             state.isLoading -> item(key = "payments_loading", contentType = "loading") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    LoadingShimmer()
-                }
+                ShimmerList(rows = 3)
             }
 
             state.payments.isEmpty() -> item(key = "payments_empty", contentType = "empty") {

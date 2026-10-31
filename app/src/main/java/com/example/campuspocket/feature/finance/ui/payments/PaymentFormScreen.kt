@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.CampusDatePickerDialog
 import com.example.campuspocket.core.designsystem.components.CampusDialog
@@ -44,7 +45,6 @@ import com.example.campuspocket.core.designsystem.components.CampusSwitch
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
 import com.example.campuspocket.core.designsystem.components.PillSegmentedControl
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
 import com.example.campuspocket.core.designsystem.components.campusDatePickerColors
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.core.util.Money
@@ -207,7 +207,7 @@ fun PaymentFormScreen(
             // Próxima fecha de pago
             Column {
                 Text(stringResource(R.string.scheduled_payment_next_due), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                SecondaryPillButton(
+                CampusButton(style = CampusButtonStyle.SECONDARY, 
                     text = DATE_FMT.format(state.nextDueDate),
                     onClick = { showDatePicker = true },
                     modifier = Modifier.fillMaxWidth()

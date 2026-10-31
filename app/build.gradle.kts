@@ -182,10 +182,12 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.crashlytics)
     implementation(libs.crashlytics.ktx)
+    implementation(libs.firebase.analytics.ktx)
 
     // Pruebas unitarias (JVM)
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
+    testImplementation(libs.androidx.test.core)
     // Arnés del extractor con PDFs reales (no va en la app)
     testImplementation(libs.pdfbox.jvm)
 

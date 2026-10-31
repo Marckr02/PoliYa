@@ -1,8 +1,15 @@
 package com.example.campuspocket.core.designsystem.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -11,10 +18,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -22,10 +27,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -39,6 +48,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.CampusKeypadLabel
 import com.example.campuspocket.core.designsystem.CampusTheme
+import com.example.campuspocket.core.designsystem.LocalMotion
+import com.example.campuspocket.core.designsystem.MotionTokens
+import com.example.campuspocket.core.designsystem.ShapeBottomSheet
+import com.example.campuspocket.core.designsystem.ShapeChip
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.util.Haptics
 
@@ -72,11 +85,12 @@ fun keypadNextDigits(current: String, key: String): String {
 }
 
 /**
- * Panel del teclado del formulario de movimiento (v6, Parte 2).
+ * Panel del teclado del formulario de movimiento (v8 §6.8).
  *
- * Rejilla fija de 4 columnas: fila 1 con 1-3 y borrar; filas 2-4 con los
- * dígitos y, en la cuarta columna, un botón Guardar que ocupa esas tres filas.
- * Vibra en cada tecla y en el guardado.
+ * Rejilla 4 × 4 de 244 dp con separación de 7 dp: fila 1 con 1-3 y borrar;
+ * filas 2-4 con los dígitos y, en la cuarta columna, un botón Guardar que ocupa
+ * esas tres filas. Bordes `ControlLine`, radio 10, Guardar en `Lime` con borde
+ * `Ink`. Vibra en cada tecla y en el guardado.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -95,6 +109,9 @@ fun TransactionKeypadPanel(
     val doubleZeroDescription = stringResource(R.string.keypad_double_zero_desc)
     val tripleZeroDescription = stringResource(R.string.keypad_triple_zero_desc)
     val saveLabel = stringResource(R.string.keypad_save)
+    val lineColor = MaterialTheme.colorScheme.outlineVariant
+    val keyContainer = MaterialTheme.colorScheme.surface
+    val keyContent = MaterialTheme.colorScheme.onSurface
 
     fun descriptionOf(key: String): String = when (key) {
         KEYPAD_BACKSPACE -> backspaceDescription
@@ -106,17 +123,27 @@ fun TransactionKeypadPanel(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-        tonalElevation = 3.dp
+        shape = ShapeBottomSheet,
+        tonalElevation = 0.dp
     ) {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .height(244.dp)
+                .drawBehind {
+                    drawLine(
+                        color = lineColor,
+                        start = Offset.Zero,
+                        end = Offset(size.width, 0f),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }
+                .padding(horizontal = 14.dp, vertical = 8.dp)
         ) {
-            val spacing = 8.dp
+            val spacing = 7.dp
             val keyWidth = (maxWidth - spacing * 3) / 4f
-            val saveHeight = 48.dp * 3f + spacing * 2f
+            val keyHeight = (maxHeight - spacing * 3) / 4f
+            val saveHeight = keyHeight * 3f + spacing * 2f
 
             Column(verticalArrangement = Arrangement.spacedBy(spacing)) {
                 Row(
@@ -127,7 +154,9 @@ fun TransactionKeypadPanel(
                         KeypadKey(
                             label = key,
                             description = descriptionOf(key),
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).height(keyHeight),
+                            containerColor = keyContainer,
+                            contentColor = keyContent,
                             onClick = {
                                 Haptics.tick(view)
                                 onAmountChange(keypadNextDigits(digits, key))
@@ -137,7 +166,9 @@ fun TransactionKeypadPanel(
                     KeypadKey(
                         label = KEYPAD_BACKSPACE,
                         description = descriptionOf(KEYPAD_BACKSPACE),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).height(keyHeight),
+                        containerColor = keyContainer,
+                        contentColor = keyContent,
                         isBackspace = true,
                         onLongClick = {
                             Haptics.reject(view)
@@ -161,7 +192,9 @@ fun TransactionKeypadPanel(
                                     KeypadKey(
                                         label = key,
                                         description = descriptionOf(key),
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.weight(1f).height(keyHeight),
+                                        containerColor = keyContainer,
+                                        contentColor = keyContent,
                                         onClick = {
                                             Haptics.tick(view)
                                             onAmountChange(keypadNextDigits(digits, key))
@@ -174,44 +207,18 @@ fun TransactionKeypadPanel(
                     }
 
                     // Guardar ocupa las tres filas de la cuarta columna.
-                    Box(
+                    SaveKeypadKey(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .width(keyWidth)
-                            .height(saveHeight)
-                            .alpha(if (saveEnabled) 1f else 0.45f)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(ext.accent)
-                            .semantics { contentDescription = saveLabel }
-                            .combinedClickable(
-                                enabled = saveEnabled,
-                                role = Role.Button,
-                                onClick = {
-                                    Haptics.confirm(view)
-                                    onSave()
-                                }
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                                tint = ext.onAccent,
-                                modifier = Modifier.height(24.dp)
-                            )
-                            Spacer(Modifier.height(6.dp))
-                            Text(
-                                text = saveLabel,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = ext.onAccent,
-                                textAlign = TextAlign.Center
-                            )
+                            .height(saveHeight),
+                        label = saveLabel,
+                        enabled = saveEnabled,
+                        onClick = {
+                            Haptics.confirm(view)
+                            onSave()
                         }
-                    }
+                    )
                 }
             }
         }
@@ -225,20 +232,50 @@ private fun KeypadKey(
     description: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
     isBackspace: Boolean = false,
     onLongClick: (() -> Unit)? = null
 ) {
     val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.94f else 1f,
+        animationSpec = tween(motion.ms(MotionTokens.Short)),
+        label = "keypadScale"
+    )
+    val container by animateColorAsState(
+        targetValue = if (pressed) ext.lime else containerColor,
+        animationSpec = tween(motion.ms(MotionTokens.Short)),
+        label = "keypadContainer"
+    )
+    val content by animateColorAsState(
+        targetValue = if (pressed) ext.ink else contentColor,
+        animationSpec = tween(motion.ms(MotionTokens.Short)),
+        label = "keypadContent"
+    )
     Box(
         modifier = modifier
-            .heightIn(min = 48.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(ext.track)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(ShapeChip)
+            .background(container)
+            .border(1.dp, ext.controlLine, ShapeChip)
             .semantics { contentDescription = description }
             .combinedClickable(
-                onClick = onClick,
+                interactionSource = interaction,
+                indication = LocalIndication.current,
+                enabled = true,
+                onClickLabel = null,
+                role = Role.Button,
+                onLongClickLabel = null,
                 onLongClick = onLongClick,
-                role = Role.Button
+                onDoubleClick = null,
+                onClick = onClick
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -246,15 +283,80 @@ private fun KeypadKey(
             Icon(
                 painter = painterResource(R.drawable.ic_backspace),
                 contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                tint = ext.onTrack,
+                tint = content,
                 modifier = Modifier.height(24.dp)
             )
         } else {
             Text(
                 text = label,
                 style = CampusKeypadLabel,
-                color = ext.onTrack,
+                color = content,
                 maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun SaveKeypadKey(
+    label: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed && enabled) 0.94f else 1f,
+        animationSpec = tween(motion.ms(MotionTokens.Short)),
+        label = "saveKeyScale"
+    )
+    val container = if (enabled) ext.lime else ext.track
+    val content = if (enabled) ext.ink else ext.inkMuted
+    val border = if (enabled) ext.ink else ext.controlLine
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(ShapeChip)
+            .background(container)
+            .border(1.dp, border, ShapeChip)
+            .semantics { contentDescription = label }
+            .combinedClickable(
+                interactionSource = interaction,
+                indication = LocalIndication.current,
+                enabled = enabled,
+                onClickLabel = null,
+                role = Role.Button,
+                onLongClickLabel = null,
+                onLongClick = null,
+                onDoubleClick = null,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = null, // decorativo: la etiqueta contigua describe la accion
+                tint = content,
+                modifier = Modifier.height(24.dp)
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.ExtraBold
+                ),
+                color = content,
+                textAlign = TextAlign.Center
             )
         }
     }

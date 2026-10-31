@@ -19,8 +19,7 @@ class CampusApp : Application() {
         NotificationChannels.ensureCreated(this)
         LockInterceptor.register(this)
 
-        // Crashlytics: inicialización perezosa; solo se activa si el usuario dio consentimiento.
-        // La preferencia se gestiona en Ajustes > Privacidad > "Enviar informes de fallos".
+        // Crashlytics: inicialización manual (auto-inicialización desactivada en Manifest)
         initCrashlyticsIfOptedIn()
     }
 
@@ -28,26 +27,25 @@ class CampusApp : Application() {
         val prefs = getSharedPreferences(PreferenceKeys.CRASHLYTICS_PREFS, MODE_PRIVATE)
         val optedIn = prefs.getBoolean(PreferenceKeys.CRASHLYTICS_OPT_IN, false)
 
-        // Inicializar FirebaseApp primero si no está inicializado
-        if (FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseApp.initializeApp(this)
-        }
-
-        // Crashlytics se inicializa vía componente; si no está presente, no rompemos la app
         try {
+            // Inicializar FirebaseApp primero (requiere app/google-services.json)
+            if (FirebaseApp.getApps(this).isEmpty()) {
+                FirebaseApp.initializeApp(this)
+            }
+
+            // Crashlytics: solo habilitar si hay consentimiento
+            val crashlytics = FirebaseCrashlytics.getInstance()
             if (optedIn) {
-                // Marcar versión en los informes para filtrar en consola
-                FirebaseCrashlytics.getInstance().setCustomKey("app_version", BuildConfig.VERSION_NAME)
-                FirebaseCrashlytics.getInstance().setCustomKey("app_version_code", BuildConfig.VERSION_CODE)
-                FirebaseCrashlytics.getInstance().setCustomKey("git_sha", BuildConfig.GIT_SHA)
-                FirebaseCrashlytics.getInstance().setCustomKey("build_date", BuildConfig.BUILD_DATE)
+                crashlytics.setCrashlyticsCollectionEnabled(true)
+                crashlytics.setCustomKey("app_version", BuildConfig.VERSION_NAME)
+                crashlytics.setCustomKey("app_version_code", BuildConfig.VERSION_CODE)
+                crashlytics.setCustomKey("git_sha", BuildConfig.GIT_SHA)
+                crashlytics.setCustomKey("build_date", BuildConfig.BUILD_DATE)
             } else {
-                // Desactivar recolección si no hay consentimiento
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+                crashlytics.setCrashlyticsCollectionEnabled(false)
             }
         } catch (e: Exception) {
-            // Crashlytics no disponible (p. ej. build sin google-services.json); no rompemos la app
-            // Log para depuración
+            // Crashlytics/Firebase no configurado o google-services.json ausente
             e.printStackTrace()
         }
     }

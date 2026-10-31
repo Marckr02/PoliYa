@@ -42,13 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusButton
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.CampusTopBar
-import com.example.campuspocket.core.designsystem.components.SecondaryPillButton
 import com.example.campuspocket.feature.academic.domain.model.SchoolDays
 import com.example.campuspocket.feature.academic.importer.ParseWarning
 import com.example.campuspocket.feature.academic.ui.TimeField
@@ -213,7 +213,7 @@ private fun ReviewContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    SecondaryPillButton(
+                    CampusButton(style = CampusButtonStyle.SECONDARY, 
                         text = stringResource(R.string.cancel),
                         onClick = onDone,
                         modifier = Modifier.weight(1f)
@@ -393,7 +393,7 @@ private fun CourseReviewCard(
                     onRemove = { onRemoveSession(index) }
                 )
             }
-            SecondaryPillButton(
+            CampusButton(style = CampusButtonStyle.SECONDARY, 
                 text = stringResource(R.string.course_add_session),
                 onClick = onAddSession,
                 modifier = Modifier.fillMaxWidth()

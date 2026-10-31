@@ -1,5 +1,6 @@
 package com.example.campuspocket.core.designsystem.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
@@ -13,16 +14,22 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.campuspocket.core.designsystem.PillShape
+import com.example.campuspocket.core.designsystem.ShapeControl
 import com.example.campuspocket.core.designsystem.extended
 
-enum class CampusButtonStyle { PRIMARY, SECONDARY, DESTRUCTIVE }
+enum class CampusButtonStyle { PRIMARY, SECONDARY, DESTRUCTIVE, INK }
+
+/** Borde del primario: un paso más oscuro que `Accent` para delimitar el control. */
+private val AccentBorder = Color(0xFFD9A92D)
 
 /**
- * Botón único de la app. Primario en ámbar con texto verde profundo, secundario
- * en pista y destructivo en danger. Siempre de 54 dp de alto.
+ * Botón único de la app (v8 §6.3): 52 dp de alto, radio 7 y etiqueta de 14 en
+ * peso 800. El primario va en ámbar con borde propio y texto tinta; el
+ * secundario y el de peligro son transparentes con borde. El deshabilitado usa
+ * `Track`/`InkMuted` sin opacidad: el motivo se comunica en el texto contiguo.
  */
 @Composable
 fun CampusButton(
@@ -35,27 +42,43 @@ fun CampusButton(
     leadingIcon: ImageVector? = null
 ) {
     val ext = MaterialTheme.extended
+    val disabled = !enabled
     val container = when (style) {
         CampusButtonStyle.PRIMARY -> ext.accent
-        CampusButtonStyle.SECONDARY -> ext.track
-        CampusButtonStyle.DESTRUCTIVE -> ext.danger
+        CampusButtonStyle.SECONDARY -> Color.Transparent
+        CampusButtonStyle.DESTRUCTIVE -> Color.Transparent
+        CampusButtonStyle.INK -> ext.ink
     }
     val content = when (style) {
-        CampusButtonStyle.PRIMARY -> ext.onAccent
+        CampusButtonStyle.PRIMARY -> ext.ink
         CampusButtonStyle.SECONDARY -> MaterialTheme.colorScheme.onSurface
-        CampusButtonStyle.DESTRUCTIVE -> ext.onDanger
+        CampusButtonStyle.DESTRUCTIVE -> ext.danger
+        CampusButtonStyle.INK -> ext.onInk
     }
+    val border = when {
+        disabled -> ext.controlLine
+        style == CampusButtonStyle.PRIMARY -> AccentBorder
+        style == CampusButtonStyle.SECONDARY -> ext.controlLine
+        style == CampusButtonStyle.DESTRUCTIVE -> ext.danger
+            .copy(alpha = 0.5f)
+            .compositeOver(MaterialTheme.colorScheme.outlineVariant)
+        else -> ext.ink
+    }
+    // Sin opacidad: los colores deshabilitados son tokens opacos.
+    val resolvedContainer = if (disabled) ext.track else container
+    val resolvedContent = if (disabled) ext.inkMuted else content
     Button(
         onClick = onClick,
-        modifier = modifier.heightIn(min = 54.dp),
+        modifier = modifier.heightIn(min = 52.dp),
         enabled = enabled && !loading,
-        shape = PillShape,
-        contentPadding = PaddingValues(horizontal = 24.dp),
+        shape = ShapeControl,
+        contentPadding = PaddingValues(horizontal = 20.dp),
+        border = BorderStroke(1.dp, border),
         colors = ButtonDefaults.buttonColors(
-            containerColor = container,
-            contentColor = content,
-            disabledContainerColor = container.copy(alpha = 0.45f),
-            disabledContentColor = content.copy(alpha = 0.6f)
+            containerColor = resolvedContainer,
+            contentColor = resolvedContent,
+            disabledContainerColor = resolvedContainer,
+            disabledContentColor = resolvedContent
         )
     ) {
         if (loading) {
@@ -86,25 +109,6 @@ fun CampusButtonRowScope(
     style: CampusButtonStyle = CampusButtonStyle.PRIMARY
 ) {
     CampusButton(text = text, onClick = onClick, modifier = modifier, style = style)
-}
-
-/** Compatibilidad con las pantallas existentes. */
-@Composable
-fun CampusPrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    loading: Boolean = false
-) {
-    CampusButton(
-        text = text,
-        onClick = onClick,
-        modifier = modifier,
-        style = CampusButtonStyle.PRIMARY,
-        enabled = enabled,
-        loading = loading
-    )
 }
 
 /** Enlace de acción textual con área táctil mínima de 48 dp. */

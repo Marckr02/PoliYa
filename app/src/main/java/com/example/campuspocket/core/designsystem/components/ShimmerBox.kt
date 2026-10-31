@@ -107,6 +107,26 @@ fun ShimmerRow(
 }
 
 /**
+ * Esqueleto de lista completa: varias filas apiladas (reemplazo de LoadingShimmer, FIX-21).
+ */
+@Composable
+fun ShimmerList(
+    modifier: Modifier = Modifier,
+    rows: Int = 4,
+    rowHeight: androidx.compose.ui.unit.Dp = 72.dp,
+    verticalSpacing: androidx.compose.ui.unit.Dp = 12.dp
+) {
+    androidx.compose.foundation.layout.Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(verticalSpacing)
+    ) {
+        repeat(rows.coerceAtLeast(1)) {
+            ShimmerRow(rowHeight = rowHeight)
+        }
+    }
+}
+
+/**
  * Variante para esqueletos de avatar/icono circular.
  */
 @Composable

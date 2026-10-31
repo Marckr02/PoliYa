@@ -52,8 +52,8 @@ import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusTextButton
 import com.example.campuspocket.core.designsystem.components.EmptyMovementsState
-import com.example.campuspocket.core.designsystem.components.LoadingShimmer
 import com.example.campuspocket.core.designsystem.components.SearchPill
+import com.example.campuspocket.core.designsystem.components.ShimmerList
 import com.example.campuspocket.core.designsystem.components.TransactionRow
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
@@ -114,12 +114,7 @@ fun LazyListScope.historyItems(
 
     when {
         state.isLoading -> item(key = "history_loading", contentType = "loading") {
-            Box(
-                modifier = Modifier.fillMaxWidth().height(160.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                LoadingShimmer()
-            }
+            ShimmerList(rows = 3)
         }
 
         state.transactions.isEmpty() -> item(key = "history_empty", contentType = "empty") {
