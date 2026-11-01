@@ -231,6 +231,28 @@ class CampusPaletteContrastTest {
         )
     }
 
+    /** v10 C2: bordes de notas pastel y bordes de botones primarios. */
+    @Test
+    fun `new C2 border tokens meet non text AA in both themes`() {
+        val light = CampusPalette.Light
+        val dark = CampusPalette.Dark
+        assertPairs(
+            listOf(
+                Pair("AccentBorder/Surface claro", light.AccentBorder, light.Surface),
+                Pair("NoteLavenderBorder/Surface claro", light.NoteLavenderBorder, light.Surface),
+                Pair("NoteLimeSoftBorder/Surface claro", light.NoteLimeSoftBorder, light.Surface),
+                Pair("NotePeachBorder/Surface claro", light.NotePeachBorder, light.Surface),
+                Pair("NoteSkyBorder/Surface claro", light.NoteSkyBorder, light.Surface),
+                Pair("AccentBorder/Surface oscuro", dark.AccentBorder, dark.Surface),
+                Pair("NoteLavenderBorder/Surface oscuro", dark.NoteLavenderBorder, dark.Surface),
+                Pair("NoteLimeSoftBorder/Surface oscuro", dark.NoteLimeSoftBorder, dark.Surface),
+                Pair("NotePeachBorder/Surface oscuro", dark.NotePeachBorder, dark.Surface),
+                Pair("NoteSkyBorder/Surface oscuro", dark.NoteSkyBorder, dark.Surface)
+            ),
+            3f
+        )
+    }
+
     /** v10 A1: `OnLime` es el nombre canónico del contenido sobre Lima y Ámbar. */
     @Test
     fun `onLime is readable on lime and accent in both themes`() {

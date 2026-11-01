@@ -291,8 +291,8 @@ fun CampusNavHost(
         bottomBar = {
             AnimatedVisibility(
                 visible = showDock,
-                enter = slideInVertically(animationSpec = tween(220)) { it } + fadeIn(tween(160)),
-                exit = slideOutVertically(animationSpec = tween(180)) { it } + fadeOut(tween(120))
+                enter = slideInVertically(animationSpec = tween(motion.ms(220))) { it } + fadeIn(tween(motion.ms(160))),
+                exit = slideOutVertically(animationSpec = tween(motion.ms(180))) { it } + fadeOut(tween(motion.ms(120)))
             ) {
                 FloatingDock(
                     destinations = dockDestinations,
@@ -403,8 +403,8 @@ fun CampusNavHost(
                         .align(Alignment.BottomEnd)
                         .navigationBarsPadding()
                         .padding(end = 22.dp, bottom = 93.dp),
-                    enter = fadeIn(tween(180)),
-                    exit = fadeOut(tween(120))
+                    enter = fadeIn(tween(motion.ms(180))),
+                    exit = fadeOut(tween(motion.ms(120)))
                 ) {
                     if (action != null) {
                         ContextualActionButton(
@@ -687,17 +687,17 @@ private fun navEnterTransition(
     NavTransitionType.Fade -> fadeIn(tween(motion.ms(MotionTokens.Short + 60)))
     NavTransitionType.Modal -> if (motion.enabled) {
         slideInVertically(
-            animationSpec = tween(300, easing = MotionEasing.EmphasizedDecelerate),
+            animationSpec = tween(motion.ms(300), easing = MotionEasing.EmphasizedDecelerate),
             initialOffsetY = { it }
-        ) + fadeIn(tween(300))
+        ) + fadeIn(tween(motion.ms(300)))
     } else {
         fadeIn(tween(0))
     }
     NavTransitionType.Detail -> if (motion.enabled) {
         slideInHorizontally(
-            animationSpec = tween(300, easing = MotionEasing.EmphasizedDecelerate),
+            animationSpec = tween(motion.ms(300), easing = MotionEasing.EmphasizedDecelerate),
             initialOffsetX = { it / 6 }
-        ) + fadeIn(tween(300))
+        ) + fadeIn(tween(motion.ms(300)))
     } else {
         fadeIn(tween(0))
     }
@@ -720,9 +720,9 @@ private fun navPopEnterTransition(
     NavTransitionType.Modal -> fadeIn(tween(motion.ms(200)))
     NavTransitionType.Detail -> if (motion.enabled) {
         slideInHorizontally(
-            animationSpec = tween(300, easing = MotionEasing.EmphasizedDecelerate),
+            animationSpec = tween(motion.ms(300), easing = MotionEasing.EmphasizedDecelerate),
             initialOffsetX = { -it / 6 }
-        ) + fadeIn(tween(300))
+        ) + fadeIn(tween(motion.ms(300)))
     } else {
         fadeIn(tween(0))
     }
@@ -735,17 +735,17 @@ private fun navPopExitTransition(
     NavTransitionType.Fade -> fadeOut(tween(motion.ms(MotionTokens.Short)))
     NavTransitionType.Modal -> if (motion.enabled) {
         slideOutVertically(
-            animationSpec = tween(200, easing = MotionEasing.EmphasizedAccelerate),
+            animationSpec = tween(motion.ms(200), easing = MotionEasing.EmphasizedAccelerate),
             targetOffsetY = { it }
-        ) + fadeOut(tween(200))
+        ) + fadeOut(tween(motion.ms(200)))
     } else {
         fadeOut(tween(0))
     }
     NavTransitionType.Detail -> if (motion.enabled) {
         slideOutHorizontally(
-            animationSpec = tween(200, easing = MotionEasing.EmphasizedAccelerate),
+            animationSpec = tween(motion.ms(200), easing = MotionEasing.EmphasizedAccelerate),
             targetOffsetX = { it / 6 }
-        ) + fadeOut(tween(200))
+        ) + fadeOut(tween(motion.ms(200)))
     } else {
         fadeOut(tween(0))
     }

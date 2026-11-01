@@ -157,14 +157,13 @@ class BudgetsViewModel @Inject constructor(
     }
 
     /** Copia del mes anterior solo las categorías sin presupuesto este mes (no pisa nada). */
-    fun copyFromPreviousMonth() {
-        viewModelScope.launch {
-            val current = _yearMonth.value
-            val previous = current.minusMonths(1)
-            val existing = financeRepository.getBudgetsForMonth(current.toString()).map { it.categoryId }.toSet()
-            financeRepository.getBudgetsForMonth(previous.toString())
-                .filter { it.categoryId !in existing }
-                .forEach { financeRepository.upsertBudget(current.toString(), it.categoryId, it.amountCents) }
-        }
+    suspend fun copyFromPreviousMonth(): Int {
+        val current = _yearMonth.value
+        val previous = current.minusMonths(1)
+        val existing = financeRepository.getBudgetsForMonth(current.toString()).map { it.categoryId }.toSet()
+        val toCopy = financeRepository.getBudgetsForMonth(previous.toString())
+            .filter { it.categoryId !in existing }
+        toCopy.forEach { financeRepository.upsertBudget(current.toString(), it.categoryId, it.amountCents) }
+        return toCopy.size
     }
 }

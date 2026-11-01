@@ -110,7 +110,7 @@
     <string name="import_pdf_select">Seleccionar PDF</string>
     <string name="import_pdf_confirm">Confirmar e importar</string>
     <string name="import_unsupported_format">Formato de PDF no reconocido. En la página del horario del sistema usa Ctrl+P y \"Guardar como PDF\".</string>
-    <string name="import_merge_absent_warning">Este PDF ya no incluye %1$d materias guardadas en el semestre: %2$s. Se borrarán si continúas.</string>
+    <string name="import_merge_absent_warning">Este PDF ya no incluye %1$d materias guardadas en el semestre: %2$s. Se eliminarán si continúas.</string>
     <string name="import_merge_delete_button">Eliminar y guardar</string>
     <string name="import_pdf_warnings">Advertencias</string>
     <string name="import_pdf_no_text">Este PDF no tiene texto seleccionable (suele pasar al imprimir con \"Microsoft Print to PDF\"). Vuelve a guardarlo con \"Guardar como PDF\" desde el navegador o descarga el PDF original del sistema.</string>
@@ -225,6 +225,8 @@
     <string name="budget_spent">Gastado</string>
     <string name="budget_remaining">Restante</string>
     <string name="budget_copy_previous">Copiar del mes anterior</string>
+    <string name="budget_copied_previous_success">Se copiaron %1$d presupuestos del mes anterior</string>
+    <string name="budget_copied_previous_empty">No hay presupuestos en el mes anterior para copiar</string>
     <string name="budgets_monthly">Con presupuesto</string>
     <string name="budgets_no_budget">Sin presupuesto</string>
     <string name="budget_exceeded">Excedido</string>
@@ -234,8 +236,8 @@
     <string name="transaction_date">Fecha</string>
     <string name="transaction_amount">Monto</string>
     <string name="transaction_description">Descripción</string>
-    <string name="keypad_backspace">Borrar dígito</string>
-    <string name="keypad_clear_all">Mantén pulsado para borrar todo</string>
+    <string name="keypad_backspace">Eliminar dígito</string>
+    <string name="keypad_clear_all">Mantén pulsado para eliminar todo</string>
     <string name="transaction_category">Categoría</string>
     <string name="transaction_account">Cuenta</string>
     <string name="transaction_target_account">Cuenta destino</string>
@@ -330,8 +332,8 @@
     <string name="transaction_account_balance">%1$s · %2$s</string>
     <string name="transaction_more_accounts">Más cuentas</string>
     <string name="keypad_save">Guardar</string>
-    <string name="keypad_backspace_desc">Borrar dígito</string>
-    <string name="keypad_clear_all_desc">Mantén pulsado para borrar todo</string>
+    <string name="keypad_backspace_desc">Eliminar dígito</string>
+    <string name="keypad_clear_all_desc">Mantén pulsado para eliminar todo</string>
     <string name="keypad_digit_desc">%1$d</string>
     <string name="keypad_add_desc">Sumar %1$s</string>
     <string name="transaction_saved_undo">Gasto guardado</string>
@@ -412,7 +414,7 @@
     <string name="note_link_task">Vincular a tarea</string>
     <string name="note_move_to_folder">Mover a carpeta</string>
     <string name="note_move_to_root">Raíz (sin carpeta)</string>
-    <string name="notes_folder_delete_explain">Se borrará la carpeta y sus subcarpetas; las notas que contiene se conservan sin carpeta.</string>
+    <string name="notes_folder_delete_explain">Se eliminará la carpeta y sus subcarpetas; las notas que contiene se conservan sin carpeta.</string>
     <string name="notes_empty_title">Sin título</string>
     <string name="note_pin">Fijar</string>
     <string name="note_pinned">Fijada</string>
@@ -537,10 +539,10 @@
     <string name="settings_profile">Mi perfil</string>
     <string name="settings_profile_label">Nombre para mostrar</string>
     <string name="settings_profile_local_note">Perfil local de este dispositivo; no es una cuenta en línea.</string>
-    <string name="settings_profile_clear">Borrar nombre</string>
+    <string name="settings_profile_clear">Quitar nombre</string>
     <string name="settings_profile_saved">Nombre guardado</string>
     <string name="settings_modules">Mis módulos</string>
-    <string name="settings_modules_note">Desactivar un módulo solo oculta su acceso; no borra sus datos.</string>
+    <string name="settings_modules_note">Desactivar un módulo solo oculta su acceso; no elimina sus datos.</string>
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_channel_tasks">Tareas</string>
     <string name="settings_channel_payments">Pagos</string>
@@ -548,7 +550,7 @@
     <string name="settings_debug_review_now">Revisar ahora (debug)</string>
 
     <!-- Rediseño bento + barra flotante -->
-    <string name="clear">Borrar texto</string>
+    <string name="clear">Limpiar texto</string>
     <string name="timeline_now">AHORA</string>
     <string name="task_filter_all">Todas</string>
     <string name="task_filter_week">Esta semana</string>
@@ -601,7 +603,7 @@
     <string name="search_filter_transactions">Movimientos</string>
     <string name="search_filter_courses">Materias</string>
     <string name="search_recent_title">Búsquedas recientes</string>
-    <string name="search_clear_recent">Borrar todo</string>
+    <string name="search_clear_recent">Limpiar todo</string>
     <string name="search_recent_hint">Toca una búsqueda reciente o escribe para empezar.</string>
     <string name="search_empty_title">Busca en toda la app</string>
     <string name="search_empty_message">Encuentra tareas, notas, materias y movimientos desde un solo lugar.</string>

@@ -1,6 +1,7 @@
 package com.example.campuspocket.core.designsystem
 
 import android.provider.Settings
+import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 
 /**
  * Movimiento global (v5 §10.1). Se lee **una sola vez** al iniciar la Activity
@@ -26,7 +28,7 @@ data class MotionSpec(val enabled: Boolean) {
     fun ms(base: Int) = if (enabled) base else 0
 }
 
-val LocalMotion = staticCompositionLocalOf { MotionSpec(true) }
+val LocalMotion = staticCompositionLocalOf<MotionSpec> { MotionSpec(true) }
 
 /** Tokens de duración (ms). Nada supera 360 ms salvo visualizaciones puntuales. */
 object MotionTokens {
@@ -78,14 +80,12 @@ class MotionKeyHolder {
  */
 @Composable
 fun performHaptic(type: HapticType) {
-    val view = LocalContext.current as? View
+    val view = LocalView.current
     LaunchedEffect(type) {
-        view?.let {
-            when (type) {
-                HapticType.Confirm -> it.performHapticFeedback(android.view.HapticFeedbackConstants.CONFIRM)
-                HapticType.Reject -> it.performHapticFeedback(android.view.HapticFeedbackConstants.REJECT)
-                HapticType.KeyPress -> it.performHapticFeedback(android.view.HapticFeedbackConstants.CONTEXT_CLICK)
-            }
+        when (type) {
+            HapticType.Confirm -> view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+            HapticType.Reject -> view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+            HapticType.KeyPress -> view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
         }
     }
 }

@@ -196,9 +196,10 @@ private fun DockCell(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
     val contentColor by animateColorAsState(
         targetValue = if (selected) ext.inkContent else ext.inkMuted,
-        animationSpec = tween(180),
+        animationSpec = tween(motion.ms(180)),
         label = "dockContent"
     )
     Column(
@@ -220,7 +221,7 @@ private fun DockCell(
         ) {
             Crossfade(
                 targetState = selected,
-                animationSpec = tween(120),
+                animationSpec = tween(motion.ms(120)),
                 label = "dockIcon"
             ) { active ->
                 Icon(
@@ -440,21 +441,22 @@ fun CampusChip(
     semanticLabel: String? = null
 ) {
     val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
     val selectedState = stringResource(R.string.chip_selected_state)
     val unselectedState = stringResource(R.string.chip_unselected_state)
     val container by animateColorAsState(
         targetValue = if (selected) ext.lime else Color.Transparent,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "chipContainer"
     )
     val content by animateColorAsState(
         targetValue = if (selected) ext.onLime else MaterialTheme.colorScheme.onSurface,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "chipContent"
     )
     val border by animateColorAsState(
         targetValue = if (selected) ext.inkIndicator else ext.controlLine,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "chipBorder"
     )
     Box(
@@ -515,6 +517,7 @@ fun CampusChip(
  * borde `ControlLine`; el activo en `Lime` con borde `InkIndicator` y texto
  * `OnLime`. No es una pestaña de navegación: para eso existe [UnderlinedTabRow].
  */
+@Deprecated("Replaced by CampusChip selector groups", ReplaceWith(""))
 @Composable
 fun <T> PillSegmentedControl(
     options: List<T>,
@@ -571,19 +574,20 @@ private fun FormSegment(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
     val container by animateColorAsState(
         targetValue = if (isSelected) ext.lime else Color.Transparent,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "segmentContainer"
     )
     val content by animateColorAsState(
         targetValue = if (isSelected) ext.onLime else MaterialTheme.colorScheme.onSurface,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "segmentContent"
     )
     val border by animateColorAsState(
         targetValue = if (isSelected) ext.inkIndicator else ext.controlLine,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "segmentBorder"
     )
     Box(
@@ -693,9 +697,10 @@ private fun UnderlinedTab(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
     val content by animateColorAsState(
         targetValue = if (isSelected) ext.inkContent else MaterialTheme.colorScheme.onSurfaceVariant,
-        animationSpec = tween(150),
+        animationSpec = tween(motion.ms(150)),
         label = "tabContent"
     )
     Column(

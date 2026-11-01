@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Notas de la versión actual para el diálogo "Novedades" (v10, 0.14.4).
+    <!-- Notas de la versión actual para el diálogo "Novedades" (v10, 0.15.0).
          Texto plano, escrito para el usuario (sin etiquetas ni nombres de clases).
          Se actualiza en cada lanzamiento; el historial completo está en CHANGELOG.md. -->
 
     <string-array name="release_notes_current">
-        <item>El tema oscuro se lee mejor: las pestañas, las fichas y el interruptor encendido ahora se distinguen de un vistazo, en claro y en oscuro.</item>
-        <item>El medidor de gasto tiene su propio color de alerta, que antes se perdía sobre el fondo oscuro.</item>
-        <item>En Pagos programados, cada pago tiene una acción principal ("Marcar como pagado") y un menú "Más acciones" con Activar, Pausar, Editar y Eliminar. El estado Activo o Pausado ya no es un botón: es solo un indicador. Seguirás pudiendo deshacer una eliminación.</item>
-        <item>Todos los botones y controles tienen al menos 48 dp de área táctil, así que son más fáciles de pulsar.</item>
-        <item>Con el lector de pantalla, los iconos que solo son decorativos ya no se anuncian y las iniciales de los avatares no se repiten.</item>
-        <item>Se corrigieron la navegación de Materias, el guardado del formulario de movimiento, el guardado de las notas y el retiro en cajero, que ya no bloquea la pantalla.</item>
+        <item>Mejoras visuales y limpieza del sistema de diseño: los colores, bordes de notas pastel y la barra de navegación respetan la paleta editorial en modo claro y oscuro.</item>
+        <item>Animaciones adaptativas: todas las animaciones se detienen cuando activas la opción "Reducir animaciones" en los ajustes de accesibilidad de tu dispositivo.</item>
+        <item>Formatos unificados de fecha y moneda: las fechas y montos se muestran de forma consistente con el formato ecuatoriano (es-EC).</item>
+        <item>Menús desplegables integrados: los menús de acciones de notas, pagos y movimientos ahora siguen el estilo visual limpio de la aplicación.</item>
+        <item>Navegación y calendario adaptativo: el calendario mensual se ajusta automáticamente según la pantalla sin alturas rígidas ni bloqueos.</item>
     </string-array>
 </resources>

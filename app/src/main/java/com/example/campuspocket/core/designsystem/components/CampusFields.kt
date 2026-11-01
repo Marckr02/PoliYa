@@ -145,10 +145,9 @@ fun CampusSelectField(
                 .semantics { role = Role.DropdownList }
                 .fillMaxWidth()
         )
-        ExposedDropdownMenu(
+        CampusMenu(
             expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) },
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+            onDismissRequest = { onExpandedChange(false) }
         ) {
             menuContent()
         }
@@ -162,26 +161,19 @@ fun CampusSelectItem(
     onClick: () -> Unit,
     selected: Boolean = false
 ) {
-    androidx.compose.material3.DropdownMenuItem(
-        text = {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
+    CampusMenuItem(
+        text = text,
         onClick = onClick,
-        trailingIcon = if (selected) {
+        leading = if (selected) {
             {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = null, // decorativo: la etiqueta contigua describe la accion
-                    tint = MaterialTheme.extended.selected
+                    contentDescription = null, // decorativo
+                    tint = MaterialTheme.extended.selected,
+                    modifier = Modifier.size(17.dp)
                 )
             }
-        } else {
-            null
-        }
+        } else null
     )
 }
 
@@ -200,19 +192,20 @@ fun CampusCheckbox(
     boxShape: androidx.compose.ui.graphics.Shape = CircleShape
 ) {
     val ext = MaterialTheme.extended
+    val motion = com.example.campuspocket.core.designsystem.LocalMotion.current
     val fill by animateColorAsState(
         targetValue = if (checked) ext.selected else Color.Transparent,
-        animationSpec = tween(durationMillis = 180),
+        animationSpec = tween(durationMillis = motion.ms(180)),
         label = "checkboxFill"
     )
     val border by animateColorAsState(
         targetValue = if (checked) ext.selected else MaterialTheme.colorScheme.outline,
-        animationSpec = tween(durationMillis = 180),
+        animationSpec = tween(durationMillis = motion.ms(180)),
         label = "checkboxBorder"
     )
     val checkProgress by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
-        animationSpec = tween(durationMillis = 200),
+        animationSpec = tween(durationMillis = motion.ms(200)),
         label = "checkboxCheck"
     )
 

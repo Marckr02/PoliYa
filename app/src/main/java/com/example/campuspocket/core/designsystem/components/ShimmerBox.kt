@@ -45,9 +45,10 @@ fun ShimmerBox(
     shape: Shape = ShapeCard
 ) {
     val motion = LocalMotion.current
-    val base = MaterialTheme.extended.track
-    val band = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.08f)
-               else Color.White.copy(alpha = 0.45f)
+    val ext = MaterialTheme.extended
+    val base = ext.track
+    val band = if (ext.isDark) ext.onInk.copy(alpha = 0.08f)
+               else ext.onInk.copy(alpha = 0.45f)
 
     val progress: State<Float> = if (motion.enabled) {
         rememberInfiniteTransition(label = "shimmer").animateFloat(

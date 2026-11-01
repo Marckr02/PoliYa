@@ -115,9 +115,12 @@ internal object CampusPalette {
         val NotePaperText = Color(0xFF243B3F)
 
         // v10 C2: bordes y acentos adicionales
-        val AccentBorder = Color(0xFFD9A92D)
+        val AccentBorder = Color(0xFFA67C00)
+        val ButtonPrimaryBorder = Color(0xFFA67C00)
+        val OnInkTrack = Color(0x26FFFFFF)
+        val OnInkTick = Color(0xFFFFFFFF)
         val NoteLavenderBorder = Color(0xFF8D79AD)
-        val NoteLimeSoftBorder = Color(0xFF9AAB3E)
+        val NoteLimeSoftBorder = Color(0xFF71821C)
         val NotePeachBorder = Color(0xFFBF7D55)
         val NoteSkyBorder = Color(0xFF6692A0)
     }
@@ -213,7 +216,10 @@ internal object CampusPalette {
         val NotePaperText = Color(0xFFF1EAD5)
 
         // v10 C2: bordes y acentos adicionales
-        val AccentBorder = Color(0xFFD9A92D)
+        val AccentBorder = Color(0xFFA67C00)
+        val ButtonPrimaryBorder = Color(0xFFA67C00)
+        val OnInkTrack = Color(0x26FFFFFF)
+        val OnInkTick = Color(0xFFFFFFFF)
         val NoteLavenderBorder = Color(0xFFA592C4)
         val NoteLimeSoftBorder = Color(0xFFADBF55)
         val NotePeachBorder = Color(0xFFD4936A)
@@ -293,6 +299,9 @@ data class CampusExtendedColors(
     // v10 C2 & C4
     val isDark: Boolean,
     val accentBorder: Color,
+    val buttonPrimaryBorder: Color,
+    val onInkTrack: Color,
+    val onInkTick: Color,
     val noteLavenderBorder: Color,
     val noteLimeSoftBorder: Color,
     val notePeachBorder: Color,
@@ -366,6 +375,9 @@ internal val LightExtendedColors = CampusExtendedColors(
     // v10 C2 & C4
     isDark = false,
     accentBorder = CampusPalette.Light.AccentBorder,
+    buttonPrimaryBorder = CampusPalette.Light.ButtonPrimaryBorder,
+    onInkTrack = CampusPalette.Light.OnInkTrack,
+    onInkTick = CampusPalette.Light.OnInkTick,
     noteLavenderBorder = CampusPalette.Light.NoteLavenderBorder,
     noteLimeSoftBorder = CampusPalette.Light.NoteLimeSoftBorder,
     notePeachBorder = CampusPalette.Light.NotePeachBorder,
@@ -439,6 +451,9 @@ internal val DarkExtendedColors = CampusExtendedColors(
     // v10 C2 & C4
     isDark = true,
     accentBorder = CampusPalette.Dark.AccentBorder,
+    buttonPrimaryBorder = CampusPalette.Dark.ButtonPrimaryBorder,
+    onInkTrack = CampusPalette.Dark.OnInkTrack,
+    onInkTick = CampusPalette.Dark.OnInkTick,
     noteLavenderBorder = CampusPalette.Dark.NoteLavenderBorder,
     noteLimeSoftBorder = CampusPalette.Dark.NoteLimeSoftBorder,
     notePeachBorder = CampusPalette.Dark.NotePeachBorder,

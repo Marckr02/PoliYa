@@ -180,6 +180,12 @@ la salida real en la mano.
 
 ### Otras
 
+### Iconos (v10 C3)
+- Material Icons se usa exclusivamente en su variante `Filled` de forma consistente, con tamaños estandarizados en la escala (17 dp, 20 dp, 24 dp) y sin mezclar variantes `Filled` y `Outlined` dentro de una misma pantalla o barra.
+
+### Versionado y auditoría (v10 E1)
+- Cada entrega publica su versión correspondiente en `version.properties`, `CHANGELOG.md` y `release_notes.xml`, asignando fecha oficial de lanzamiento (noviembre 2026).
+
 ### Otras
 - `allowBackup = false` (el respaldo propio en JSON llega en la Fase 7).
 ### Respaldo (Fase 4.5, adelanto de la 7)

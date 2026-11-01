@@ -7,25 +7,32 @@ Las entradas marcadas **no publicada** nunca llegaron a salir: no hay etiqueta
 de Git ni `VERSION_NAME` que las respalde. Su trabajo se recoge dentro de la
 versión publicada que sí lo incorporó.
 
-## [0.15.0] - 2025-02-28
+## [0.15.0] - 2026-11-01
 
-Fases 3 y 4 del plan de auditoría v10 (C2–C7, D1–D8). Sin cambios de lógica de negocio, de base de datos ni de rutas.
+Fases 3 y 4 del plan de auditoría v10 (C1–C7, D1–D8). Sin cambios de lógica de negocio, de base de datos ni de rutas.
 
 ### Corregido
-- **Colores fuera de paleta (C2)**: eliminación de colores literales (`Color.White`, `Color(0xFF...)`) en componentes (BentoComponents, CampusButton, PaceGauge, ShimmerBox, SharedComponents) y centralización en `CampusExtendedColors` (tokens para bordes de notas pastel, acentos y contenedores).
-- **Control de tema oscuro (C4)**: exposición de `isDark` en `CampusExtendedColors` para evitar llamadas sueltas a `isSystemInDarkTheme()`.
+- **Colores fuera de paleta (C2)**: eliminación de colores literales (`Color.White`, `Color(0xFF...)`) en componentes y centralización en `CampusExtendedColors` con tokens para bordes pastel (`noteLavenderBorder`, `noteLimeSoftBorder`, `notePeachBorder`, `noteSkyBorder`), acento (`accentBorder`, `buttonPrimaryBorder`) y marcas sobre tinta (`onInkTrack`, `onInkTick`).
+- **Control de tema oscuro (C4)**: exposición de `isDark` en `CampusExtendedColors` para eliminar llamadas sueltas a `isSystemInDarkTheme()` fuera de `Theme.kt`.
+- **Animaciones respetan accesibilidad (C5)**: todas las animaciones `tween` en componentes y rutas de navegación usan `motion.ms(...)` para detenerse con "Reducir animaciones".
 - **Calendario embebido (D3)**: eliminación de la altura fija de 520.dp en `CalendarScreen` dentro de la vista de pagos para evitar problemas de scroll anidado y fuentes grandes.
-- **Terminología y glosario (D2)**: unificación de cadenas en `strings.xml` para cumplir estrictamente con el glosario (eliminación de "Borrar" en favor de "Eliminar", "Quitar", "Limpiar").
+- **Terminología y glosario (D2)**: eliminación total de "Borrar" en `strings.xml` (0 ocurrencias) en favor de "Eliminar", "Quitar" y "Limpiar".
 
 ### Añadido
 - **Formato unificado (`CampusFormats`) (D5)**: objeto centralizado en `core/util` para formateo de fechas, horas, moneda y porcentajes bajo el locale español de Ecuador (`es-EC`).
-- **Migración de menús (C7)**: adopción de `CampusMenu` / `CampusMenuItem` en reemplazo de los menús nativos de Material en BentoComponents, SharedComponents y HistoryScreen.
+- **Migración de menús (C7)**: adopción de `CampusMenu` / `CampusMenuItem` y `CampusSelectField` en reemplazo de los menús nativos de Material.
+- Pruebas de contraste para todos los tokens de borde C2 en `CampusPaletteContrastTest`.
 
 ### Cambiado
-- Marcado `PillSegmentedControl` como `@Deprecated`.
+- Marcado `PillSegmentedControl` con `@Deprecated` (C6).
 - Estandarización de porcentajes con `CampusFormats` en `PaceGauge`.
 
-### Corregido
+---
+
+## [0.14.4] - 2026-11-01
+
+Fases 1 y 2 del plan de auditoría v10 (A1–A3, E1, B1–B3). Sin cambios de
+lógica de negocio, de base de datos ni de rutas.
 - **Contraste del tema oscuro (A1–A3)**: el contenido sobre lima o ámbar usa el
   token `onLime` (#103C3B, el mismo valor que `onAccent`) en los dos temas; el
   texto activo de pestañas, chips y controles pasa de tinta a `inkContent`, y

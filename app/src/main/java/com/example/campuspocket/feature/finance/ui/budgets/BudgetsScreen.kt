@@ -40,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.campuspocket.R
+import com.example.campuspocket.core.navigation.LocalSnackbarHost
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
 import com.example.campuspocket.core.designsystem.components.BentoCard
@@ -271,9 +274,21 @@ fun LazyListScope.budgetItems(
     }
 
     item(key = "budget_copy_previous", contentType = "action") {
+        val snackbarHost = LocalSnackbarHost.current
+        val coroutineScope = rememberCoroutineScope()
+        val copiedMsg = stringResource(R.string.budget_copied_previous_success)
+        val emptyMsg = stringResource(R.string.budget_copied_previous_empty)
         CampusButton(
             text = stringResource(R.string.budget_copy_previous),
-            onClick = { viewModel.copyFromPreviousMonth() },
+            onClick = {
+                coroutineScope.launch {
+                    val count = viewModel.copyFromPreviousMonth()
+                    snackbarHost.showSnackbar(
+                        if (count > 0) String.format(Locale.getDefault(), copiedMsg, count)
+                        else emptyMsg
+                    )
+                }
+            },
             style = CampusButtonStyle.SECONDARY,
             modifier = Modifier
                 .fillMaxWidth()

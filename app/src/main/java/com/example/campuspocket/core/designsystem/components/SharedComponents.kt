@@ -88,6 +88,7 @@ import com.example.campuspocket.core.designsystem.ContrastUtil
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.PillShape
 import com.example.campuspocket.core.designsystem.ShapeCard
+import com.example.campuspocket.core.designsystem.LocalMotion
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
 import com.example.campuspocket.feature.academic.domain.model.Course
@@ -503,6 +504,7 @@ fun TaskItemCard(
     onDelete: () -> Unit
 ) {
     val ext = MaterialTheme.extended
+    val motion = LocalMotion.current
     val isCompleted = task.completedAt != null
     val view = LocalView.current
     var menuExpanded by remember { mutableStateOf(false) }
@@ -511,7 +513,7 @@ fun TaskItemCard(
 
     val strikeProgress by animateFloatAsState(
         targetValue = if (optimisticChecked) 1f else 0f,
-        animationSpec = tween(durationMillis = 200),
+        animationSpec = tween(durationMillis = motion.ms(200)),
         label = "taskStrike"
     )
     var titleWidth by remember { mutableStateOf(0f) }
@@ -663,7 +665,7 @@ fun TaskItemCard(
                             val total = task.subtasks.size
                             val fraction by animateFloatAsState(
                                 targetValue = done.toFloat() / total.toFloat(),
-                                animationSpec = tween(durationMillis = 220),
+                                animationSpec = tween(durationMillis = motion.ms(220)),
                                 label = "subtaskProgress"
                             )
                             val subtaskDescription = stringResource(
