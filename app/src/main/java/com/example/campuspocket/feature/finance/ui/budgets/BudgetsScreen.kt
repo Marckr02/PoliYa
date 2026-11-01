@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -52,6 +51,7 @@ import com.example.campuspocket.core.designsystem.components.CampusDialog
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.EmptyState
 import com.example.campuspocket.core.designsystem.components.ShimmerCard
+import com.example.campuspocket.core.designsystem.ShapeBar
 import com.example.campuspocket.core.util.Money
 import com.example.campuspocket.feature.finance.domain.GetMonthSummary
 import com.example.campuspocket.feature.finance.ui.summary.BudgetPaceCard
@@ -422,7 +422,7 @@ private fun BudgetRow(
                         modifier = Modifier
                             .width(4.dp)
                             .height(24.dp)
-                            .clip(RoundedCornerShape(2.dp))
+                            .clip(ShapeBar)
                             .background(Color(row.colorArgb))
                     )
                     Text(

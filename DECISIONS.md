@@ -19,9 +19,35 @@ Registro de decisiones de diseño y arquitectura. Fecha del registro: octubre 20
 
 ## Cómo verificar
 
-1. `./gradlew clean assembleDebug` en verde.
-2. `./gradlew testDebugUnitTest` en verde (Money, parser del PDF con el fixture 8.5, ViewModels de la Fase 1, utilidades).
-3. App: barra inferior con 4 destinos; Académico muestra Hoy/Semana/Materias funcionales.
+Hay dos niveles, porque la suite instrumentada completa cuesta ~16 min en el emulador.
+
+**1. Durante el trabajo (iteración rápida).** Solo las clases de prueba afectadas
+por el cambio; nada más:
+
+```powershell
+# Opción A: Gradle con filtro (reinstala los APK)
+.\gradlew.bat connectedDebugAndroidTest "-Pandroid.testInstrumentationRunnerArguments.class=com.example.campuspocket.feature.finance.PaymentsUiTest"
+
+# Opción B: adb directo, sin reinstall (APK ya instalado) — ~10 s más rápido
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" -s emulator-5554 shell `
+  "am instrument -w -e class com.example.campuspocket.feature.finance.PaymentsUiTest `
+   com.example.campuspocket.test/androidx.test.runner.AndroidJUnitRunner"
+```
+
+Ojo con PowerShell: el argumento de `-Pandroid.testInstrumentationRunnerArguments.class`
+va **entero entre comillas**; una lista separada por comas solo ejecuta la primera clase.
+
+**2. En la puerta de fase (una vez, al terminar).** Suite completa, porque es la
+puerta que garantiza que nada se rompió:
+
+```powershell
+.\gradlew.bat assembleDebug testDebugUnitTest lintDebug
+.\gradlew.bat connectedDebugAndroidTest
+```
+
+Criterio: `assembleDebug` en verde, `testDebugUnitTest` en verde, `lintDebug` sin
+errores y `connectedDebugAndroidTest` en verde. Solo se afirma "en verde" con
+la salida real en la mano.
 
 ## Decisiones
 
@@ -162,6 +188,33 @@ Registro de decisiones de diseño y arquitectura. Fecha del registro: octubre 20
 - **Importar = todo-o-nada**: valida formato y versión ANTES de tocar nada; confirmación del usuario; borrado e inserción en UNA transacción de Room con `PRAGMA defer_foreign_keys` (las FKs se verifican al commit; si falla, se revierte). Un archivo inválido deja todo intacto. Se aceptan `dbVersion` 2 y 3: v2 deriva `anchorDayOfMonth`; v3 deja `subtype = null` y `monthly_budgets` vacío. Una versión superior se rechaza.
 - Pruebas: JVM ida/vuelta (`BackupJsonTest`, `BackupVersioningTest`) + instrumentada `BackupManagerTest` (exportar→borrar→importar idéntico, incluido retiro y presupuesto total; inválido no cambia nada).
 - **Regla operativa nueva**: las instrumentadas se ejecutan en el teléfono SOLO con confirmación explícita del usuario (pueden sobreescribir sus datos al reinstalar).
+
+### Pruebas instrumentadas (política de ejecución, v10 · noviembre 2026)
+
+- **Decisión del usuario**: la suite instrumentada completa se ejecuta **una sola
+  vez, en la puerta de fase**. Durante el trabajo se ejecuta **solo la clase
+  afectada** por el cambio.
+- **Motivo medido** (emulador `CampusTest`, Android 16): las 64 pruebas tardan
+  ~905 s de ejecución. El coste está casi todo en las 9 clases Compose UI
+  (~900 s), porque cada prueba lanza una `Activity` nueva; las 8 clases de
+  DAO/migraciones/flujos son 22 pruebas en ~6 s, prácticamente gratis.
+  Una ejecución dirigida de una clase cuesta **81 s** por `adb am instrument` o
+  **92 s** por Gradle con filtro: ~12x menos que la suite completa.
+- **Consecuencia al escribir pruebas**: se escribe **una prueba instrumentada
+  por comportamiento comprobable**, no una por cada aserción. Lo que se pueda
+  verificar en JVM (dominio, ViewModel, formateo, tokens) se prueba en
+  `app/src/test` y no se duplica en `androidTest`.
+- **No se borra ninguna prueba** por esta política: la cobertura sigue igual.
+  Si alguna clase Compose resultara redundante, se propone fusionarla y se
+  decide con el usuario antes.
+- `connectedDebugAndroidTest` **desinstala** los APK al terminar. Para la vía
+  `adb am instrument` hay que reinstalarlos:
+  `adb install -r -t app/build/outputs/apk/debug/app-debug.apk` y
+  `adb install -r -t app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk`.
+- **Inestabilidad del emulador**: si una corrida falla con `TimeoutException` en
+  `ReferenceQueueDaemon` / `HardwareRenderer$DestroyContextRunnable` o con una
+  Activity en `PAUSED`, es infraestructura, no código. Se reinicia con
+  `adb reboot`, se espera `sys.boot_completed=1` y se repite.
 
 ### Otras
 - `local.properties` no se sube al repositorio.

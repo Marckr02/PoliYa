@@ -26,6 +26,33 @@ val ShapeTaskCheckbox = RoundedCornerShape(5.dp)
 val ShapeImpactCard = RoundedCornerShape(6.dp)
 val ShapeNoteSheet = RoundedCornerShape(4.dp)
 
+/*
+ * v10 C1: los radios que faltaban tienen ahora nombre semántico. La regla es
+ * que ningún componente escriba un número suelto: si un radio no existe, se
+ * añade aquí con el nombre de lo que forma.
+ */
+
+/** Barra de color (categoría, presupuesto): 2 dp. */
+val ShapeBar = RoundedCornerShape(2.dp)
+
+/** Badge de icono cuadrado (inicial de módulo, inicial de nota): 14 dp. */
+val ShapeBadge = RoundedCornerShape(14.dp)
+
+/** Fila de una hoja inferior (opción de menú, opción de navegación): 14 dp. */
+val ShapeSheetOption = RoundedCornerShape(14.dp)
+
+/** Tile de icono grande (44 dp) y fichas de selección grandes: 16 dp. */
+val ShapeIconTile = RoundedCornerShape(16.dp)
+
+/** Panel destacado dentro de una tarjeta (gráfico de ritmo): 24 dp. */
+val ShapePanel = RoundedCornerShape(24.dp)
+
+/** Tarjeta pequeña de leyenda (gráfico de ritmo): 18 dp. */
+val ShapeLegend = RoundedCornerShape(18.dp)
+
+/** Tarjeta ilustrada de estado vacío: 32 dp. */
+val ShapeBlob = RoundedCornerShape(32.dp)
+
 val CampusShapes = Shapes(
     extraSmall = ShapeChip,
     small = ShapeControl,

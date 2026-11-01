@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -42,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -65,6 +65,8 @@ import com.example.campuspocket.core.designsystem.components.PrivacyToggleButton
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.designsystem.components.formatGaugePercent
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeCard
+import com.example.campuspocket.core.designsystem.ShapeHero
 import com.example.campuspocket.core.preferences.CampusModule
 import com.example.campuspocket.core.preferences.UserPreferences
 import com.example.campuspocket.core.util.Money
@@ -296,7 +298,8 @@ fun HomeScreen(
                                     Text(
                                         text = (note.title.ifBlank { "N" }).take(1).uppercase(),
                                         style = MaterialTheme.typography.labelLarge,
-                                        color = if (index == 0) ext.onLavender else ext.onLimeSoft
+                                        color = if (index == 0) ext.onLavender else ext.onLimeSoft,
+                                        modifier = Modifier.clearAndSetSemantics {}
                                     )
                                 }
                                 Spacer(Modifier.width(12.dp))
@@ -384,7 +387,10 @@ private fun HomeAvatar(displayName: String?, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(48.dp)
-            .clickable(onClick = onClick)
+            .clickable(
+                role = Role.Button,
+                onClick = onClick
+            )
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center
     ) {
@@ -406,7 +412,8 @@ private fun HomeAvatar(displayName: String?, onClick: () -> Unit) {
                 Text(
                     text = displayName.take(1).uppercase(),
                     style = MaterialTheme.typography.titleMedium,
-                    color = ext.onLavender
+                    color = ext.onLavender,
+                    modifier = Modifier.clearAndSetSemantics {}
                 )
             }
         }
@@ -477,7 +484,7 @@ private fun HomeTimelineRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(ShapeCard)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -564,7 +571,7 @@ private fun NextClassCard(
         onClick = onClick,
         containerColor = ext.ink,
         contentColor = ext.onInk,
-        shape = com.example.campuspocket.core.designsystem.ShapeHero,
+        shape = ShapeHero,
         contentPadding = PaddingValues(22.dp)
     ) {
         Row(
@@ -590,7 +597,7 @@ private fun NextClassCard(
                     style = MaterialTheme.typography.labelMedium,
                     color = ext.onLime,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(50))
+                        .clip(CircleShape)
                         .background(ext.lime)
                         .padding(horizontal = 10.dp, vertical = 5.dp)
                 )
@@ -691,7 +698,7 @@ private fun FinanceSummaryCard(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = com.example.campuspocket.core.designsystem.ShapeCard,
+        shape = ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Text(
@@ -743,7 +750,7 @@ private fun FinanceSummaryCard(
             )
             val gaugeFill = when {
                 pace.isBudgetExhausted || pace.isOver -> ext.danger
-                androidx.compose.foundation.isSystemInDarkTheme() -> ext.gaugeFill
+                ext.isDark -> ext.gaugeFill
                 else -> ext.mint
             }
             PaceGauge(
@@ -773,7 +780,7 @@ private fun TasksSummaryCard(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = com.example.campuspocket.core.designsystem.ShapeCard,
+        shape = ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Text(

@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.example.campuspocket.core.designsystem.ContrastUtil
 import com.example.campuspocket.core.designsystem.LocalMotion
 import com.example.campuspocket.core.designsystem.MotionTokens
 import com.example.campuspocket.core.designsystem.extended
@@ -29,8 +30,9 @@ import com.example.campuspocket.core.designsystem.extended
 /**
  * Interruptor v8 de 45 × 26 dp con área táctil de 48 dp. La pista apagada usa
  * `Track` con borde `ControlLine` para que el control se distinga del fondo; la
- * encendida usa `Ink`. El pulgar y su posición completan el estado, que nunca
- * depende solo del color.
+ * encendida usa `InkIndicator` (tinta en claro, lima en oscuro). El pulgar se
+ * elige por contraste real contra la pista (blanco sobre tinta, tinta sobre lima).
+ * El pulgar y su posición completan el estado, que nunca depende solo del color.
  */
 @Composable
 fun CampusSwitch(
@@ -43,12 +45,16 @@ fun CampusSwitch(
     val ext = MaterialTheme.extended
     val motion = LocalMotion.current
     val track by animateColorAsState(
-        targetValue = if (checked) ext.ink else ext.track,
+        targetValue = if (checked) ext.inkIndicator else ext.track,
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "switchTrack"
     )
     val thumb by animateColorAsState(
-        targetValue = if (checked) ext.onInk else MaterialTheme.colorScheme.surface,
+        targetValue = if (checked) {
+            ContrastUtil.onColorFor(ext.inkIndicator)
+        } else {
+            MaterialTheme.colorScheme.surface
+        },
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "switchThumb"
     )

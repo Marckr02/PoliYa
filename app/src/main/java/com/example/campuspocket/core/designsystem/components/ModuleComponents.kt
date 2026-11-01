@@ -31,6 +31,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeCard
+import com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
 import com.example.campuspocket.core.preferences.CampusModule
 
 /**
@@ -117,7 +119,7 @@ fun SelectableModuleCard(
         ),
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = com.example.campuspocket.core.designsystem.ShapeCard,
+        shape = ShapeCard,
         contentPadding = PaddingValues(16.dp)
     ) {
         Row(
@@ -149,7 +151,7 @@ fun SelectableModuleCard(
                 onCheckedChange = onSelectedChange,
                 contentDescription = title,
                 enabled = enabled,
-                boxShape = com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
+                boxShape = ShapeTaskCheckbox
             )
         }
     }

@@ -493,7 +493,7 @@ fun SettingsScreen(
                         .heightIn(min = 48.dp)
                         .clickable(
                             role = Role.Button,
-                            onClickLabel = stringResource(R.string.settings_whats_new)
+                            onClickLabel = stringResource(R.string.settings_whats_new_open)
                         ) { viewModel.openWhatsNew() },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically

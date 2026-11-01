@@ -45,8 +45,8 @@ El release está firmado con el keystore local `keystore.jks` (alias `campuspock
 
 ## Cómo probar
 
-- **Unitarias (JVM)**: `.\gradlew.bat testDebugUnitTest` → 189 pruebas cubriendo dominio puro (Money, parser PDF, reloj, tareas, transacciones, presupuestos, ritmo del presupuesto, retiro en cajero, pagos recurrentes, bloqueo, notas, respaldo), búsqueda global y preferencias (UserPreferencesRepository con DataStore real en archivo temporal).
-- **Instrumentadas (emulador AVD `CampusTest` o similar)**: `.\gradlew.bat connectedDebugAndroidTest` → 54 pruebas: migraciones reales (1→2, 2→3, 3→4), retiro atómico y validaciones, presupuesto total mensual, respaldo ida/vuelta, Room DAOs, Compose UI, dock y humo de arranque.
+- **Unitarias (JVM)**: `.\gradlew.bat testDebugUnitTest` → 215 pruebas (1 ignorada por ser inestable en CI) cubriendo dominio puro (Money, parser PDF, reloj, tareas, transacciones, presupuestos, ritmo del presupuesto, retiro en cajero, pagos recurrentes, bloqueo, notas, respaldo), búsqueda global, preferencias (UserPreferencesRepository con DataStore real en archivo temporal) y contraste de la paleta.
+- **Instrumentadas (emulador AVD `CampusTest` o similar)**: `.\gradlew.bat connectedDebugAndroidTest` → 64 pruebas: migraciones reales (1→2, 2→3, 3→4), retiro atómico y validaciones, presupuesto total mensual, respaldo ida/vuelta, Room DAOs, Compose UI, dock, tamaño mínimo de los objetivos táctiles, pagos programados y humo de arranque.
 - **Release**: `.\gradlew.bat assembleRelease` genera un APK con R8 y recursos reducidos; probado en emulador (pestañas, búsqueda, exportar e importar respaldo) y `.\gradlew.bat lintDebug` en verde.
 
 ## Respaldo (exportar / restaurar)

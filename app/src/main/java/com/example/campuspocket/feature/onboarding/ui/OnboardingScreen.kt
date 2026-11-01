@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
@@ -72,6 +71,8 @@ import com.example.campuspocket.core.designsystem.components.CampusDivider
 import com.example.campuspocket.core.designsystem.components.descriptionRes
 import com.example.campuspocket.core.designsystem.components.iconRes
 import com.example.campuspocket.core.designsystem.components.titleRes
+import com.example.campuspocket.core.designsystem.ShapeCard
+import com.example.campuspocket.core.designsystem.ShapeNoteSheet
 
 /**
  * Onboarding de primer uso, tres pasos: nombre opcional, selección de módulos y horario/avisos.
@@ -236,7 +237,7 @@ private fun StepIndicator(currentStep: Int, totalSteps: Int) {
                     .size(if (isActive) 28.dp else 8.dp, 8.dp)
                     .background(
                         color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = ShapeNoteSheet
                     )
             )
             if (step < totalSteps) Spacer(Modifier.width(4.dp))
@@ -372,7 +373,7 @@ private fun ScheduleStep(
                     modifier = Modifier
                         .size(40.dp)
                         .background(ext.onCream.copy(alpha = 0.12f))
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(ShapeCard)
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_folder),

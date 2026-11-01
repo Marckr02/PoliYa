@@ -3,6 +3,137 @@
 Todas las versiones siguen [SemVer](https://semver.org/lang/es/) en fase `0.x`:
 - `0.MENOR.PARCHE` - `MENOR` sube con `feat:`, `PARCHE` con `fix:`.
 
+Las entradas marcadas **no publicada** nunca llegaron a salir: no hay etiqueta
+de Git ni `VERSION_NAME` que las respalde. Su trabajo se recoge dentro de la
+versión publicada que sí lo incorporó.
+
+## [0.15.0] - 2025-02-28
+
+Fases 3 y 4 del plan de auditoría v10 (C2–C7, D1–D8). Sin cambios de lógica de negocio, de base de datos ni de rutas.
+
+### Corregido
+- **Colores fuera de paleta (C2)**: eliminación de colores literales (`Color.White`, `Color(0xFF...)`) en componentes (BentoComponents, CampusButton, PaceGauge, ShimmerBox, SharedComponents) y centralización en `CampusExtendedColors` (tokens para bordes de notas pastel, acentos y contenedores).
+- **Control de tema oscuro (C4)**: exposición de `isDark` en `CampusExtendedColors` para evitar llamadas sueltas a `isSystemInDarkTheme()`.
+- **Calendario embebido (D3)**: eliminación de la altura fija de 520.dp en `CalendarScreen` dentro de la vista de pagos para evitar problemas de scroll anidado y fuentes grandes.
+- **Terminología y glosario (D2)**: unificación de cadenas en `strings.xml` para cumplir estrictamente con el glosario (eliminación de "Borrar" en favor de "Eliminar", "Quitar", "Limpiar").
+
+### Añadido
+- **Formato unificado (`CampusFormats`) (D5)**: objeto centralizado en `core/util` para formateo de fechas, horas, moneda y porcentajes bajo el locale español de Ecuador (`es-EC`).
+- **Migración de menús (C7)**: adopción de `CampusMenu` / `CampusMenuItem` en reemplazo de los menús nativos de Material en BentoComponents, SharedComponents y HistoryScreen.
+
+### Cambiado
+- Marcado `PillSegmentedControl` como `@Deprecated`.
+- Estandarización de porcentajes con `CampusFormats` en `PaceGauge`.
+
+### Corregido
+- **Contraste del tema oscuro (A1–A3)**: el contenido sobre lima o ámbar usa el
+  token `onLime` (#103C3B, el mismo valor que `onAccent`) en los dos temas; el
+  texto activo de pestañas, chips y controles pasa de tinta a `inkContent`, y
+  los bordes e indicadores activos pasan a `inkIndicator` (tinta en claro, lima
+  en oscuro). El interruptor encendido y las teclas del teclado numérico
+  siguen el mismo criterio.
+- **Medidor de ritmo (A2)**: el arco en alerta tiene su propio color (#FF969B)
+  en claro y en oscuro. Antes reutilizaba el relleno pálido de las alertas,
+  casi invisible sobre la tarjeta oscura.
+- Se migraron 23 de los 36 usos del token de tinta; los 13 que quedan son
+  rellenos decorativos, bordes de superficie o comparaciones semánticas y se
+  mantienen a propósito.
+
+### Añadido
+- **Menú del sistema de diseño**: superficies con borde de 1 dp, sin sombra y
+  filas de 48 dp, con variantes normal y destructiva y separador. Se usa en
+  Pagos programados y queda disponible para el resto de menús.
+- Pruebas de contraste de la paleta para los estados activos (claro y oscuro).
+- Pruebas instrumentadas que verifican el tamaño mínimo de los objetivos
+  táctiles y la estructura de la tarjeta de pago programado.
+
+### Cambiado
+- **Pagos programados (B3)**: cada pago tiene una sola acción principal,
+  "Marcar como pagado", y un menú de "Más acciones" con Activar/Pausar, Editar
+  y Eliminar. El estado Activo/Pausado deja de ser un botón y pasa a ser un
+  indicador. La eliminación se puede seguir deshaciendo desde el aviso
+  inferior.
+- **Objetivos táctiles y roles (B1)**: todo elemento interactivo mide al menos
+  48 × 48 dp de área táctil y expone su rol. La barra de formato del editor de
+  notas pasa de 44 a 48 dp. Los 46 tamaños declarados por debajo de 48 dp que
+  quedaban son, revisados uno a uno, decorativos o están dentro de un
+  contenedor interactivo que ya cumple el mínimo; ninguno es un control por sí
+  mismo. Los 10 `clickable` que no declaraban rol ahora lo hacen, salvo el
+  velo y la tarjeta del diálogo, que solo absorben toques y quedan justificados
+  en el código.
+- **Lectores de pantalla (B2)**: los iconos decorativos llevan un comentario
+  que justifica por qué no se anuncian y las iniciales de los avatares ya no
+  se leen dos veces. Antes 52 de los 55 `contentDescription = null` tenían la
+  justificación; ahora los 55 la tienen.
+- La versión de la app pasa a 0.14.4 y este archivo vuelve a cubrir 0.14.1,
+  0.14.2, 0.13.0 y 0.12.0, con el estado real de cada publicación.
+
+### Pruebas
+- 215 pruebas unitarias (1 de ellas ignorada por ser inestable en CI) y 64
+  instrumentadas; `lintDebug` en verde.
+
+---
+
+## [0.14.3] - no publicada
+
+No llegó a publicarse: no hay commit ni etiqueta `v0.14.3`. El hotfix de
+contraste del modo oscuro que tenía asignados se entrega dentro de 0.14.4.
+
+---
+
+## [0.14.2] - 2026-10-31
+
+Etiqueta `v0.14.2` · commit `61855bd` ("fix: 5 critical UX/UI audit fixes")
+
+### Corregido
+- La etiqueta de la próxima clase en Inicio usaba tinta sobre lima sin cumplir
+  el contraste mínimo; ahora usa el color de contenido correcto.
+- Materias vuelve a tener cabecera con botón "Volver": se había quedado una
+  trampa de navegación al entrar a una materia.
+- El formulario de movimiento ya no espera dos segundos antes de cerrar al
+  guardar.
+- El editor de notas ya no bloquea la interfaz al guardar: el vaciado del
+  estado es asíncrono.
+- El retiro en cajero ya no pide confirmar con un diálogo bloqueante: se cierra
+  al instante y muestra el aviso.
+
+### Pruebas
+- 211 pruebas unitarias (1 ignorada por ser inestable en CI) y 56
+  instrumentadas; `lintDebug` en verde.
+
+---
+
+## [0.14.1] - 2026-10-31
+
+Etiqueta `v0.14.1` · commit `a59c313` ("fix: v9 corrections")
+
+### Corregido
+- **Tema oscuro**: se añadieron los tokens de contenido y de indicador activo
+  para que los estados encendidos se distingan en oscuro, con pruebas de
+  contraste.
+- **Medidor de ritmo**: el relleno en alerta pasó a un color propio en lugar de
+  reutilizar el de alertas.
+- **Pestañas**: se retiraron los selectores en píldora que quedaban en Finanzas,
+  Académico, Ajustes y el editor de notas; en su lugar hay fichas y pestañas
+  subrayadas.
+- **Animaciones**: todas las transiciones de color y escala pasan por el
+  movimiento de la app, y el medidor ya no se reanima al recomponer.
+- **Accesibilidad**: los iconos decorativos quedan documentados, los botones de
+  texto del sistema se unifican y el título del medidor se anuncia como
+  encabezado.
+- **Editor de notas**: tokens propios para el papel y el texto, y estilos de
+  cuerpo de nota.
+
+### Añadido
+- Pruebas del ritmo de presupuesto: caso de aceptación y casos límite (meses
+  de 28 a 31 días, gasto igual o mayor al presupuesto).
+
+### Pruebas
+- 211 pruebas unitarias (1 ignorada por ser inestable en CI) y 56
+  instrumentadas; `lintDebug` en verde.
+
+---
+
 ## [0.14.0] - 2026-10-31
 
 ### Añadido
@@ -25,7 +156,44 @@ Todas las versiones siguen [SemVer](https://semver.org/lang/es/) en fase `0.x`:
 - Formularios: chips (`CampusChip`/`SelectableModuleCard`) en lugar de `SegmentedControl`/`PillSegmentedControl`.
 
 ### Pruebas
-- 207 pruebas unitarias (7 preexistentes no relacionadas con diseño), `lintDebug` en verde.
+- 207 pruebas unitarias (1 de ellas ignorada por ser inestable en CI) y 56
+  instrumentadas; `lintDebug` en verde.
+
+> **Aclaración (añadida en 0.14.4)**: esta entrada decía antes "207 pruebas
+> unitarias (7 preexistentes no relacionadas con diseño)". En la etiqueta
+> `v0.14.0` solo hay **1** prueba ignorada
+> (`UserPreferencesRepositoryTest`, marcada por ser inestable en CI); no hay
+> ninguna prueba fallando. Las 207 se ejecutaron y pasaron.
+
+---
+
+## [0.13.0] - no publicada
+
+No llegó a publicarse: no hay etiqueta `v0.13.0`. El commit `3d70ea9`
+(2026-10-28) añadió la activación opcional de Crashlytics con marcadores de
+versión; ese trabajo quedó incorporado en 0.14.0.
+
+---
+
+## [0.12.0] - 2026-10-27
+
+Etiqueta `v0.12.0` · commit `3b29e17` ("feat: calificaciones EPN y color por
+materia coherente")
+
+### Añadido
+- **Calificaciones EPN por materia**: registra Nota 1 y Nota 2 (sobre 20) y la
+  app calcula el estado (aprobado directo, supletorio o reprobado) y cuánto
+  necesitas en el supletorio. Incluye el simulador del examen final.
+- **Color de materia coherente**: Hoy, Semana, Tareas y Notas usan el mismo
+  color de materia en todas las pantallas.
+- Nueva tabla de calificaciones en la base de datos (migración v5 → v6) con su
+  esquema exportado para las pruebas.
+
+### Pruebas
+- 206 pruebas unitarias (1 ignorada por ser inestable en CI) y 56
+  instrumentadas; `lintDebug` en verde.
+
+---
 
 ## [0.11.0] - 2026-10-27
 

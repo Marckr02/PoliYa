@@ -67,6 +67,8 @@ internal object CampusPalette {
         val InkSoft = Color(0xFF1C5551)
         val InkLine = Color(0xFF315756)
         val Lime = Color(0xFFDFF36D)
+        // v10 A1: contenido sobre Lima o Ámbar. Comparte valor con OnAccent
+        // (#103C3B en ambos temas); onLime es el nombre canónico del par.
         val OnLime = Color(0xFF103C3B)
         val Accent = Color(0xFFF1C75B)
         val OnAccent = Color(0xFF103C3B)
@@ -99,6 +101,9 @@ internal object CampusPalette {
         val OnCream = Color(0xFF103C3B)
         val ControlLine = Color(0xFF7D8984)
         val GaugeFill = Color(0xFFDCEBDD)
+        // v10 A2: relleno dedicado del arco en alerta; no reutilizar DangerSoft
+        // (contenedor pálido de alertas, casi invisible sobre Ink en oscuro).
+        val GaugeAlert = Color(0xFFFF969B)
         val Scrim = Color(0x9E042229)
         // v9 1.1: color de contenido sobre Ink y de indicador activo
         val InkContent = Color(0xFF103C3B)
@@ -108,6 +113,13 @@ internal object CampusPalette {
         val NotePaperBorder = Color(0xFFE1D6BC)
         val NotePaperLine = Color(0xFF103C3B)
         val NotePaperText = Color(0xFF243B3F)
+
+        // v10 C2: bordes y acentos adicionales
+        val AccentBorder = Color(0xFFD9A92D)
+        val NoteLavenderBorder = Color(0xFF8D79AD)
+        val NoteLimeSoftBorder = Color(0xFF9AAB3E)
+        val NotePeachBorder = Color(0xFFBF7D55)
+        val NoteSkyBorder = Color(0xFF6692A0)
     }
 
     object Dark {
@@ -188,6 +200,8 @@ internal object CampusPalette {
         val OnCream = Color(0xFFF0F2E8)
         val ControlLine = Color(0xFF718782)
         val GaugeFill = Color(0xFF83DBA6)
+        // v10 A2: #FF969B en ambos temas para que el arco de alerta se vea sobre Ink.
+        val GaugeAlert = Color(0xFFFF969B)
         val Scrim = Color(0x9E042229)
         // v9 1.1: color de contenido sobre Ink y de indicador activo
         val InkContent = Color(0xFFF4F7EE)
@@ -197,6 +211,13 @@ internal object CampusPalette {
         val NotePaperBorder = Color(0xFF4A4739)
         val NotePaperLine = Color(0xFFDFF36D)
         val NotePaperText = Color(0xFFF1EAD5)
+
+        // v10 C2: bordes y acentos adicionales
+        val AccentBorder = Color(0xFFD9A92D)
+        val NoteLavenderBorder = Color(0xFFA592C4)
+        val NoteLimeSoftBorder = Color(0xFFADBF55)
+        val NotePeachBorder = Color(0xFFD4936A)
+        val NoteSkyBorder = Color(0xFF7CA8B6)
     }
 }
 
@@ -259,6 +280,7 @@ data class CampusExtendedColors(
     val onCream: Color,
     val controlLine: Color,
     val gaugeFill: Color,
+    val gaugeAlert: Color,
     val scrim: Color,
     // v9 1.1
     val inkContent: Color,
@@ -267,7 +289,14 @@ data class CampusExtendedColors(
     val notePaperBg: Color,
     val notePaperBorder: Color,
     val notePaperLine: Color,
-    val notePaperText: Color
+    val notePaperText: Color,
+    // v10 C2 & C4
+    val isDark: Boolean,
+    val accentBorder: Color,
+    val noteLavenderBorder: Color,
+    val noteLimeSoftBorder: Color,
+    val notePeachBorder: Color,
+    val noteSkyBorder: Color
 )
 
 internal val LightExtendedColors = CampusExtendedColors(
@@ -324,6 +353,7 @@ internal val LightExtendedColors = CampusExtendedColors(
     onCream = CampusPalette.Light.OnCream,
     controlLine = CampusPalette.Light.ControlLine,
     gaugeFill = CampusPalette.Light.GaugeFill,
+    gaugeAlert = CampusPalette.Light.GaugeAlert,
     scrim = CampusPalette.Light.Scrim,
     // v9 1.1
     inkContent = CampusPalette.Light.InkContent,
@@ -332,7 +362,14 @@ internal val LightExtendedColors = CampusExtendedColors(
     notePaperBg = CampusPalette.Light.NotePaperBg,
     notePaperBorder = CampusPalette.Light.NotePaperBorder,
     notePaperLine = CampusPalette.Light.NotePaperLine,
-    notePaperText = CampusPalette.Light.NotePaperText
+    notePaperText = CampusPalette.Light.NotePaperText,
+    // v10 C2 & C4
+    isDark = false,
+    accentBorder = CampusPalette.Light.AccentBorder,
+    noteLavenderBorder = CampusPalette.Light.NoteLavenderBorder,
+    noteLimeSoftBorder = CampusPalette.Light.NoteLimeSoftBorder,
+    notePeachBorder = CampusPalette.Light.NotePeachBorder,
+    noteSkyBorder = CampusPalette.Light.NoteSkyBorder
 )
 
 internal val DarkExtendedColors = CampusExtendedColors(
@@ -389,6 +426,7 @@ internal val DarkExtendedColors = CampusExtendedColors(
     onCream = CampusPalette.Dark.OnCream,
     controlLine = CampusPalette.Dark.ControlLine,
     gaugeFill = CampusPalette.Dark.GaugeFill,
+    gaugeAlert = CampusPalette.Dark.GaugeAlert,
     scrim = CampusPalette.Dark.Scrim,
     // v9 1.1
     inkContent = CampusPalette.Dark.InkContent,
@@ -397,7 +435,14 @@ internal val DarkExtendedColors = CampusExtendedColors(
     notePaperBg = CampusPalette.Dark.NotePaperBg,
     notePaperBorder = CampusPalette.Dark.NotePaperBorder,
     notePaperLine = CampusPalette.Dark.NotePaperLine,
-    notePaperText = CampusPalette.Dark.NotePaperText
+    notePaperText = CampusPalette.Dark.NotePaperText,
+    // v10 C2 & C4
+    isDark = true,
+    accentBorder = CampusPalette.Dark.AccentBorder,
+    noteLavenderBorder = CampusPalette.Dark.NoteLavenderBorder,
+    noteLimeSoftBorder = CampusPalette.Dark.NoteLimeSoftBorder,
+    notePeachBorder = CampusPalette.Dark.NotePeachBorder,
+    noteSkyBorder = CampusPalette.Dark.NoteSkyBorder
 )
 
 internal val LocalCampusExtendedColors = compositionLocalOf { LightExtendedColors }

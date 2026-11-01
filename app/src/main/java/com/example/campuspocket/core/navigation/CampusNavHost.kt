@@ -85,6 +85,8 @@ import com.example.campuspocket.core.designsystem.components.DockAction
 import com.example.campuspocket.core.designsystem.components.DockDestination
 import com.example.campuspocket.core.designsystem.components.FloatingDock
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeIconTile
+import com.example.campuspocket.core.designsystem.ShapeSheetOption
 import com.example.campuspocket.core.preferences.UserPreferences
 import com.example.campuspocket.feature.academic.ui.AcademicDestinations
 import com.example.campuspocket.feature.academic.ui.coursedetail.CourseDetailScreen
@@ -601,7 +603,7 @@ private fun QuickAddSheet(
                             alpha = rowProgress
                             translationY = (1f - rowProgress) * 12.dp.toPx()
                         }
-                        .clip(RoundedCornerShape(18.dp))
+                        .clip(ShapeSheetOption)
                         .clickable(role = Role.Button) {
                             option.onClick()
                             onDismiss()
@@ -612,7 +614,7 @@ private fun QuickAddSheet(
                     Box(
                         modifier = Modifier
                             .size(44.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(ShapeIconTile)
                             .background(option.containerColor),
                         contentAlignment = Alignment.Center
                     ) {

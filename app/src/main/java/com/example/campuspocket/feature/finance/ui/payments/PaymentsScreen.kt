@@ -1,6 +1,5 @@
 package com.example.campuspocket.feature.finance.ui.payments
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,8 +41,13 @@ import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.components.BentoCard
 import com.example.campuspocket.core.designsystem.components.UnderlinedTabRow
+import com.example.campuspocket.core.designsystem.components.CampusButton
+import com.example.campuspocket.core.designsystem.components.CampusButtonStyle
 import com.example.campuspocket.core.designsystem.components.CampusChip
 import com.example.campuspocket.core.designsystem.components.CampusDialog
+import com.example.campuspocket.core.designsystem.components.CampusMenu
+import com.example.campuspocket.core.designsystem.components.CampusMenuDivider
+import com.example.campuspocket.core.designsystem.components.CampusMenuItem
 import com.example.campuspocket.core.designsystem.components.CampusTextField
 import com.example.campuspocket.core.designsystem.components.EmptyPaymentsState
 import com.example.campuspocket.core.designsystem.components.ShimmerList
@@ -194,9 +199,7 @@ fun LazyListScope.paymentItems(
                 CalendarScreen(
                     onDaySelected = {},
                     embedded = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(520.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -339,6 +342,11 @@ private fun PaymentCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    var menuExpanded by remember(payment.id) { mutableStateOf(false) }
+    val moreActionsDescription = stringResource(
+        R.string.scheduled_payment_more_actions,
+        payment.name
+    )
     BentoCard(
         shape = MaterialTheme.shapes.large,
         contentPadding = PaddingValues(16.dp)
@@ -374,43 +382,66 @@ private fun PaymentCard(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Estado (activo/pausado): informativo, no accionable. La activación
+            // vive en el menú de overflow para que la tarjeta tenga una sola
+            // acción principal y un solo control secundario.
             CampusChip(
                 label = stringResource(
                     if (payment.active) R.string.scheduled_payment_active
                     else R.string.scheduled_payment_paused
                 ),
                 selected = payment.active,
-                onClick = onToggleActive
+                onClick = null
             )
             Spacer(Modifier.weight(1f))
-            Text(
-                text = stringResource(R.string.scheduled_payment_mark_paid),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable(onClick = onMarkPaid)
-                    .padding(horizontal = 6.dp, vertical = 15.dp)
-            )
-            Text(
-                text = stringResource(R.string.edit),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable(onClick = onEdit)
-                    .padding(horizontal = 6.dp, vertical = 15.dp)
-            )
-            Text(
-                text = stringResource(R.string.delete),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier
-                    .clickable(onClick = onDelete)
-                    .padding(horizontal = 6.dp, vertical = 15.dp)
-            )
+            Box {
+                RoundIconButton(
+                    icon = Icons.Filled.MoreVert,
+                    contentDescription = moreActionsDescription,
+                    onClick = { menuExpanded = true }
+                )
+                CampusMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
+                    CampusMenuItem(
+                        text = stringResource(
+                            if (payment.active) R.string.scheduled_payment_pause
+                            else R.string.scheduled_payment_activate
+                        ),
+                        onClick = {
+                            menuExpanded = false
+                            onToggleActive()
+                        }
+                    )
+                    CampusMenuItem(
+                        text = stringResource(R.string.edit),
+                        onClick = {
+                            menuExpanded = false
+                            onEdit()
+                        }
+                    )
+                    CampusMenuDivider()
+                    CampusMenuItem(
+                        text = stringResource(R.string.delete),
+                        destructive = true,
+                        onClick = {
+                            menuExpanded = false
+                            onDelete()
+                        }
+                    )
+                }
+            }
         }
+        Spacer(Modifier.height(12.dp))
+        CampusButton(
+            text = stringResource(R.string.scheduled_payment_mark_paid),
+            onClick = onMarkPaid,
+            style = CampusButtonStyle.SECONDARY,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

@@ -449,7 +449,7 @@ private fun WithdrawalAmountChip(
             .heightIn(min = 48.dp)
             .clip(ShapeChip)
             .background(if (selected) ext.lime else androidx.compose.ui.graphics.Color.Transparent)
-            .border(1.dp, if (selected) ext.ink else ext.controlLine, ShapeChip)
+            .border(1.dp, if (selected) ext.inkIndicator else ext.controlLine, ShapeChip)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = null,
@@ -469,7 +469,7 @@ private fun WithdrawalAmountChip(
                 Icon(
                     imageVector = Icons.Filled.Check,
                     contentDescription = null, // decorativo: el chip tiene etiqueta
-                    tint = ext.ink,
+                    tint = ext.onLime,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(Modifier.width(4.dp))
@@ -477,7 +477,7 @@ private fun WithdrawalAmountChip(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
-                color = if (selected) ext.ink else MaterialTheme.colorScheme.onSurface
+                color = if (selected) ext.onLime else MaterialTheme.colorScheme.onSurface
             )
         }
     }

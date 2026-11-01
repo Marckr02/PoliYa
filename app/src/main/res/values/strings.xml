@@ -250,6 +250,9 @@
     <string name="scheduled_payment_mark_paid">Marcar como pagado</string>
     <string name="scheduled_payment_active">Activo</string>
     <string name="scheduled_payment_paused">Pausado</string>
+    <string name="scheduled_payment_activate">Activar pago</string>
+    <string name="scheduled_payment_pause">Pausar pago</string>
+    <string name="scheduled_payment_more_actions">Más acciones de %1$s</string>
     <string name="scheduled_payment_new">Nuevo pago</string>
     <string name="scheduled_payment_delete_confirm">¿Eliminar este pago programado?</string>
     <string name="payments_count">%1$d pagos</string>
@@ -467,6 +470,7 @@
     <string name="settings_version_code">Código %1$d</string>
     <string name="settings_build_info">Compilación %1$s · %2$s</string>
     <string name="settings_whats_new">Novedades de esta versión</string>
+    <string name="settings_whats_new_open">Abrir novedades</string>
     <string name="settings_open_source_licenses">Licencias de código abierto</string>
     <string name="settings_whats_new_dialog_title">Novedades de la versión %1$s</string>
 

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.campuspocket.feature.notes.domain.MarkdownParser
+import com.example.campuspocket.core.designsystem.ShapeNoteSheet
 
 /** Renderizador propio del subconjunto de Markdown de las notas (AnnotatedString, sin librerías). */
 @Composable
@@ -62,7 +62,7 @@ fun MarkdownPreview(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
-                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant, ShapeNoteSheet)
                         .padding(8.dp)
                 )
                 is MarkdownParser.Checkbox -> Row(

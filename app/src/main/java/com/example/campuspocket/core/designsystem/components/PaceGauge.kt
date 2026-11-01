@@ -38,6 +38,7 @@ import com.example.campuspocket.core.designsystem.CampusNumeralHero
 import com.example.campuspocket.core.designsystem.LocalMotion
 import com.example.campuspocket.core.designsystem.MotionEasing
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.util.CampusFormats
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -104,7 +105,7 @@ fun PaceGauge(
             val arcSize = Size(radius * 2f, radius * 2f)
 
             drawArc(
-                color = Color.White.copy(alpha = 0.15f),
+                color = ext.onInk.copy(alpha = 0.15f),
                 startAngle = 180f,
                 sweepAngle = 180f,
                 useCenter = false,
@@ -130,7 +131,7 @@ fun PaceGauge(
             val inner = radius - stroke / 2f - 5.dp.toPx()
             val outer = radius + stroke / 2f + 5.dp.toPx()
             drawLine(
-                color = Color.White,
+                color = ext.onInk,
                 start = Offset(center.x + inner * cosAngle, center.y - inner * sinAngle),
                 end = Offset(center.x + outer * cosAngle, center.y - outer * sinAngle),
                 strokeWidth = 3.dp.toPx(),
@@ -174,4 +175,4 @@ fun PaceGauge(
 
 /** Etiqueta de porcentaje con coma decimal y un decimal (p. ej. 68,5). */
 fun formatGaugePercent(fraction: Float): String =
-    String.format(java.util.Locale.getDefault(), "%.1f", fraction * 100f).replace('.', ',')
+    CampusFormats.percent(fraction)

@@ -37,16 +37,18 @@ class HistoryViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private val oct5 = LocalDate.of(2026, 10, 5)
-    private val oct10 = LocalDate.of(2026, 10, 10)
+    // v10: fechas relativas al mes actual; el ViewModel carga por defecto el mes
+    // en curso, así que fechas fijas caducaban al cambiar de mes.
+    private val monthStart = LocalDate.now().withDayOfMonth(1)
+    private val monthEnd = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())
 
     @Test
     fun `sin filtros lista todo ordenado por fecha desc`() = runTest(testDispatcher) {
         val all = listOf(
             testExpense(id = 1, accountId = 1, categoryId = 1, amountCents = 500,
-                description = "almuerzo", date = oct5),
-            testIncome(id = 2, accountId = 1, categoryId = 2, amountCents = 2_000, date = oct10),
-            testTransfer(id = 3, accountId = 1, targetAccountId = 2, amountCents = 100, date = oct5)
+                description = "almuerzo", date = monthStart),
+            testIncome(id = 2, accountId = 1, categoryId = 2, amountCents = 2_000, date = monthEnd),
+            testTransfer(id = 3, accountId = 1, targetAccountId = 2, amountCents = 100, date = monthStart)
         )
 
         val vm = HistoryViewModel(newRepo(all))
@@ -58,9 +60,9 @@ class HistoryViewModelTest {
     @Test
     fun `applyFilters combina todos los criterios`() {
         val all = listOf(
-            testExpense(id = 1, accountId = 1, categoryId = 1, description = "almuerzo", date = oct5),
-            testExpense(id = 2, accountId = 1, categoryId = 1, description = "taxi", date = oct10),
-            testIncome(id = 3, accountId = 2, categoryId = 2, date = oct10)
+            testExpense(id = 1, accountId = 1, categoryId = 1, description = "almuerzo", date = monthStart),
+            testExpense(id = 2, accountId = 1, categoryId = 1, description = "taxi", date = monthEnd),
+            testIncome(id = 3, accountId = 2, categoryId = 2, date = monthEnd)
         )
 
         val filtered = HistoryViewModel.applyFilters(
@@ -107,13 +109,13 @@ class HistoryViewModelTest {
     @Test
     fun `rango de fechas deja fuera lo que no toca`() = runTest(testDispatcher) {
         val all = listOf(
-            testExpense(id = 1, date = oct5),
-            testExpense(id = 2, date = oct10)
+            testExpense(id = 1, date = monthStart),
+            testExpense(id = 2, date = monthEnd)
         )
         val vm = HistoryViewModel(newRepo(all))
         advanceUntilIdle()
 
-        vm.setDateRange(oct10, oct10)
+        vm.setDateRange(monthEnd, monthEnd)
         advanceUntilIdle()
 
         assertEquals(listOf(2L), vm.uiState.value.transactions.map { it.id })

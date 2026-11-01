@@ -143,4 +143,107 @@ class CampusPaletteContrastTest {
             3f
         )
     }
+
+    /**
+     * v10 A1: cada estado activo debe leerse en claro y oscuro. Texto ≥ 4,5:1.
+     * Los pares reproducen los colores reales de los componentes:
+     * pestaña, chip, dock, botón primario, botón flotante, tecla Guardar y casilla.
+     */
+    @Test
+    fun `active state text pairs meet AA in both themes`() {
+        val light = CampusPalette.Light
+        val dark = CampusPalette.Dark
+        assertPairs(
+            listOf(
+                Pair("tab activa/Background claro", light.InkContent, light.Background),
+                Pair("tab activa/Surface claro", light.InkContent, light.Surface),
+                Pair("dock activo/Dock claro", light.InkContent, light.Dock),
+                Pair("chip seleccionado/OnLime claro", light.OnLime, light.Lime),
+                Pair("botón primario/Accent claro", light.OnLime, light.Accent),
+                Pair("botón flotante/Lime claro", light.OnLime, light.Lime),
+                Pair("tecla Guardar/Lime claro", light.OnLime, light.Lime),
+                Pair("casilla marcada/Selected claro", light.OnSelected, light.Selected),
+                Pair("tab activa/Background oscuro", dark.InkContent, dark.Background),
+                Pair("tab activa/Surface oscuro", dark.InkContent, dark.Surface),
+                Pair("dock activo/Dock oscuro", dark.InkContent, dark.Dock),
+                Pair("chip seleccionado/OnLime oscuro", dark.OnLime, dark.Lime),
+                Pair("botón primario/Accent oscuro", dark.OnLime, dark.Accent),
+                Pair("botón flotante/Lime oscuro", dark.OnLime, dark.Lime),
+                Pair("tecla Guardar/Lime oscuro", dark.OnLime, dark.Lime),
+                Pair("casilla marcada/Selected oscuro", dark.OnSelected, dark.Selected)
+            ),
+            4.5f
+        )
+    }
+
+    /**
+     * v10 A1/A3: bordes, subrayados y pistas activas ≥ 3:1 contra su superficie
+     * real. El pulgar del interruptor se elige con [ContrastUtil.onColorFor].
+     */
+    @Test
+    fun `active state indicators meet AA in both themes`() {
+        val light = CampusPalette.Light
+        val dark = CampusPalette.Dark
+        assertPairs(
+            listOf(
+                Pair("subrayado pestaña/Background claro", light.InkIndicator, light.Background),
+                Pair("borde chip/Background claro", light.InkIndicator, light.Background),
+                Pair("borde dock/Dock claro", light.InkIndicator, light.Dock),
+                Pair("subrayado dock/Dock claro", light.InkIndicator, light.Dock),
+                Pair("borde y sombra FAB/Background claro", light.InkIndicator, light.Background),
+                Pair("borde Guardar/Surface claro", light.InkIndicator, light.Surface),
+                Pair("pista interruptor on/Background claro", light.InkIndicator, light.Background),
+                Pair(
+                    "pulgar interruptor on/Pista claro",
+                    ContrastUtil.onColorFor(light.InkIndicator),
+                    light.InkIndicator
+                ),
+                Pair("subrayado pestaña/Background oscuro", dark.InkIndicator, dark.Background),
+                Pair("borde chip/Background oscuro", dark.InkIndicator, dark.Background),
+                Pair("borde dock/Dock oscuro", dark.InkIndicator, dark.Dock),
+                Pair("subrayado dock/Dock oscuro", dark.InkIndicator, dark.Dock),
+                Pair("borde y sombra FAB/Background oscuro", dark.InkIndicator, dark.Background),
+                Pair("borde Guardar/Surface oscuro", dark.InkIndicator, dark.Surface),
+                Pair("pista interruptor on/Background oscuro", dark.InkIndicator, dark.Background),
+                Pair(
+                    "pulgar interruptor on/Pista oscuro",
+                    ContrastUtil.onColorFor(dark.InkIndicator),
+                    dark.InkIndicator
+                )
+            ),
+            3f
+        )
+    }
+
+    /** v10 A2: el arco de alerta y el relleno normal deben verse sobre el héroe `Ink`. */
+    @Test
+    fun `gauge alert and fill meet AA against hero ink in both themes`() {
+        val light = CampusPalette.Light
+        val dark = CampusPalette.Dark
+        assertPairs(
+            listOf(
+                Pair("GaugeAlert/Ink claro", light.GaugeAlert, light.Ink),
+                Pair("GaugeFill/Ink claro", light.GaugeFill, light.Ink),
+                Pair("GaugeAlert/Ink oscuro", dark.GaugeAlert, dark.Ink),
+                Pair("GaugeFill/Ink oscuro", dark.GaugeFill, dark.Ink)
+            ),
+            3f
+        )
+    }
+
+    /** v10 A1: `OnLime` es el nombre canónico del contenido sobre Lima y Ámbar. */
+    @Test
+    fun `onLime is readable on lime and accent in both themes`() {
+        val light = CampusPalette.Light
+        val dark = CampusPalette.Dark
+        assertPairs(
+            listOf(
+                Pair("OnLime/Lime claro", light.OnLime, light.Lime),
+                Pair("OnLime/Accent claro", light.OnLime, light.Accent),
+                Pair("OnLime/Lime oscuro", dark.OnLime, dark.Lime),
+                Pair("OnLime/Accent oscuro", dark.OnLime, dark.Accent)
+            ),
+            4.5f
+        )
+    }
 }

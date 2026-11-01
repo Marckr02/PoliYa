@@ -104,6 +104,10 @@ import com.example.campuspocket.feature.notes.data.FolderEntity
 import com.example.campuspocket.feature.notes.data.NoteEntity
 import com.example.campuspocket.feature.notes.domain.MarkdownActions
 import com.example.campuspocket.core.designsystem.components.PastelNoteCard
+import com.example.campuspocket.core.designsystem.ShapeChip
+import com.example.campuspocket.core.designsystem.ShapeHero
+import com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
+import com.example.campuspocket.core.util.CampusFormats
 import java.time.format.DateTimeFormatter
 import java.time.ZoneId
 import java.util.Locale
@@ -134,7 +138,7 @@ fun HeroCard(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = com.example.campuspocket.core.designsystem.ShapeHero,
+        shape = ShapeHero,
         color = ext.ink,
         contentColor = ext.onInk,
         border = BorderStroke(1.dp, ext.onInk.copy(alpha = 0.14f)),
@@ -404,9 +408,12 @@ fun ClassBlock(entry: WeekEntry, onClick: () -> Unit, modifier: Modifier = Modif
     val container = courseColor.copy(alpha = 0.14f)
         .compositeOver(MaterialTheme.colorScheme.surface)
     Card(
-        modifier = modifier.fillMaxWidth().fillMaxHeight().clickable(onClick = onClick),
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .clickable(role = Role.Button, onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = container),
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
+        shape = ShapeChip,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -553,7 +560,7 @@ fun TaskItemCard(
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = null, // decorativo: la acción ya está descrita en la tarjeta
-                    tint = Color.White
+                    tint = MaterialTheme.extended.onDanger
                 )
             }
         }
@@ -601,7 +608,7 @@ fun TaskItemCard(
                             }
                         },
                         contentDescription = stringResource(R.string.task_toggle_complete, task.title),
-                        boxShape = com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
+                        boxShape = ShapeTaskCheckbox
                     )
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
@@ -719,12 +726,13 @@ fun TaskItemCard(
                     }
                 }
             }
-            DropdownMenu(
+            CampusMenu(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false }
             ) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.delete)) },
+                CampusMenuItem(
+                    text = stringResource(R.string.delete),
+                    destructive = true,
                     onClick = {
                         menuExpanded = false
                         onDelete()
@@ -746,8 +754,7 @@ private fun com.example.campuspocket.feature.academic.domain.model.RepeatRule.la
     }
 
 private fun formatDueAt(task: Task): String {
-    val formatter = DateTimeFormatter.ofPattern("EEE d 'de' MMM · HH:mm", Locale.forLanguageTag("es"))
-    return formatter.format(task.dueAt.atZone(ZoneId.systemDefault()))
+    return CampusFormats.dateTime(task.dueAt.atZone(ZoneId.systemDefault()).toLocalDateTime())
 }
 
 @Composable
@@ -1075,10 +1082,10 @@ fun MarkdownToolbar(
             val description = stringResource(descriptions[index])
             Box(
                 modifier = Modifier
-                    .sizeIn(minWidth = 44.dp, minHeight = 44.dp)
-                    .height(44.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .border(1.dp, ext.controlLine, RoundedCornerShape(5.dp))
+                    .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                    .height(48.dp)
+                    .clip(ShapeTaskCheckbox)
+                    .border(1.dp, ext.controlLine, ShapeTaskCheckbox)
                     .background(MaterialTheme.colorScheme.surface)
                     .clickable(role = Role.Button) {
                         val result = action(currentContent, selectionStart, selectionEnd)

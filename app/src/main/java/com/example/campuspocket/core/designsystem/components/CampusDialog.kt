@@ -69,6 +69,9 @@ fun CampusDialog(
                 .clickable(
                     interactionSource = interaction,
                     indication = null,
+                    // Sin rol: es el velo que cierra al tocar fuera. El diálogo
+                    // ya tiene un botón de cierre con etiqueta; anunciar el velo
+                    // como botón sin nombre solo añadiría ruido al lector.
                     onClick = onDismissRequest
                 )
                 .padding(24.dp),
@@ -81,6 +84,8 @@ fun CampusDialog(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
+                        // Sin rol: esta pulsación solo absorbe el toque para que
+                        // no llegue al velo; no ejecuta ninguna acción.
                         onClick = {}
                     ),
                 shape = MaterialTheme.shapes.extraLarge,

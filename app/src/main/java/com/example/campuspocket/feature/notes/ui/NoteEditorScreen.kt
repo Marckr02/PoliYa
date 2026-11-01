@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
@@ -79,6 +80,7 @@ import com.example.campuspocket.core.designsystem.components.EditorModeTab
 import com.example.campuspocket.core.designsystem.components.MarkdownToolbar
 import com.example.campuspocket.core.designsystem.components.RoundIconButton
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeNoteSheet
 import com.example.campuspocket.feature.notes.domain.MarkdownParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -370,7 +372,7 @@ private fun SaveStatus(isSaving: Boolean, lastSavedAt: Long) {
             .heightIn(min = 48.dp)
             .clip(PillShape)
             .background(ext.mint)
-            .border(1.dp, ext.ink, PillShape)
+            .border(1.dp, ext.inkIndicator, PillShape)
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .semantics { liveRegion = LiveRegionMode.Polite },
         verticalAlignment = Alignment.CenterVertically,
@@ -386,13 +388,13 @@ private fun SaveStatus(isSaving: Boolean, lastSavedAt: Long) {
             Icon(
                 imageVector = Icons.Filled.Check,
                 contentDescription = null, // decorativo: el texto contiguo describe el estado
-                tint = ext.ink,
+                tint = ext.inkContent,
                 modifier = Modifier.size(16.dp)
             )
             Text(
                 text = stringResource(R.string.note_saved_status),
                 style = MaterialTheme.typography.labelSmall,
-                color = ext.ink
+                color = ext.inkContent
             )
         }
     }
@@ -404,7 +406,7 @@ private fun ShareMenuRow(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(horizontal = 24.dp, vertical = 12.dp),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -505,8 +507,8 @@ private fun NotePaperPreviewBox(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp))
-            .border(1.dp, ext.notePaperBorder, RoundedCornerShape(4.dp))
+            .clip(ShapeNoteSheet)
+            .border(1.dp, ext.notePaperBorder, ShapeNoteSheet)
             .background(ext.notePaperBg)
             .drawBehind {
                 val numLines = (size.height / lineStepPx).toInt()
@@ -542,8 +544,8 @@ private fun NoteContentField(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp))
-            .border(1.dp, ext.notePaperBorder, RoundedCornerShape(4.dp))
+            .clip(ShapeNoteSheet)
+            .border(1.dp, ext.notePaperBorder, ShapeNoteSheet)
             .background(ext.notePaperBg)
             .drawBehind {
                 val numLines = (size.height / lineStepPx).toInt()

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Notas de la versión actual para el diálogo "Novedades" (v8).
+    <!-- Notas de la versión actual para el diálogo "Novedades" (v10, 0.14.4).
          Texto plano, escrito para el usuario (sin etiquetas ni nombres de clases).
          Se actualiza en cada lanzamiento; el historial completo está en CHANGELOG.md. -->
 
     <string-array name="release_notes_current">
-        <item>Nuevo diseño editorial (CampusPocket 2.0): colores, tipografía, formas y componentes renovados en todas las pantallas.</item>
-        <item>Tema oscuro y claro pulidos: la tinta verde estructura la app, el lima destaca lo importante, el ámbar ya no es el único indicador de estado.</item>
-        <item>Nueva navegación: barra flotante con subrayado en tinta, botón contextual con sombra real, cabecera con línea fina.</item>
-        <item>Finanzas: medidor semicircular del ritmo de gasto (animado, accesible), tarjetas de insight y pestañas subrayadas.</item>
-        <item>Retiro en cajero: validación en vivo, botón "Revisa el monto" si hay error, tarjeta "Después del retiro" siempre visible.</item>
-        <item>Notas: tarjetas con línea de color superior, buscador con foco lima, editor con papel rayado cada 23 dp.</item>
-        <item>Accesibilidad: contraste 4,5:1, objetivos táctiles 48 dp, TalkBack anuncia estado y errores, respeta movimiento reducido.</item>
+        <item>El tema oscuro se lee mejor: las pestañas, las fichas y el interruptor encendido ahora se distinguen de un vistazo, en claro y en oscuro.</item>
+        <item>El medidor de gasto tiene su propio color de alerta, que antes se perdía sobre el fondo oscuro.</item>
+        <item>En Pagos programados, cada pago tiene una acción principal ("Marcar como pagado") y un menú "Más acciones" con Activar, Pausar, Editar y Eliminar. El estado Activo o Pausado ya no es un botón: es solo un indicador. Seguirás pudiendo deshacer una eliminación.</item>
+        <item>Todos los botones y controles tienen al menos 48 dp de área táctil, así que son más fáciles de pulsar.</item>
+        <item>Con el lector de pantalla, los iconos que solo son decorativos ya no se anuncian y las iniciales de los avatares no se repiten.</item>
+        <item>Se corrigieron la navegación de Materias, el guardado del formulario de movimiento, el guardado de las notas y el retiro en cajero, que ya no bloquea la pantalla.</item>
     </string-array>
 </resources>

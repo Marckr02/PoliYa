@@ -42,7 +42,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -90,6 +89,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
@@ -114,6 +114,9 @@ import com.example.campuspocket.core.designsystem.ShapeControl
 import com.example.campuspocket.core.designsystem.ShapeDock
 import com.example.campuspocket.core.designsystem.ShapeRoundButton
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeBadge
+import com.example.campuspocket.core.designsystem.ShapeCard
+import com.example.campuspocket.core.designsystem.ShapeTaskCheckbox
 import com.example.campuspocket.feature.notes.data.NoteEntity
 
 /** Entrada de la barra flotante; se mapea desde TopLevelDestination en navegación. */
@@ -125,11 +128,11 @@ data class DockDestination(
 )
 
 /**
- * Dock v8: superficie sólida con borde 1 dp `Ink`, radio 18, alto 72 y sombra
- * suave. Cuatro celdas iguales con divisor `Line` entre ellas; la activa usa
- * icono relleno, etiqueta en peso 800 y un subrayado de 3 dp `Ink` bajo el
- * icono (desviación obligatoria del prototipo, cuyo subrayado en `Accent` da
- * solo 1,55:1). La acción contextual vive fuera de esta barra.
+ * Dock v8: superficie sólida con borde 1 dp `InkIndicator`, radio 18, alto 72 y
+ * sombra suave. Cuatro celdas iguales con divisor `Line` entre ellas; la activa
+ * usa icono relleno, etiqueta en peso 800 y un subrayado de 3 dp `InkIndicator`
+ * bajo el icono (desviación obligatoria del prototipo, cuyo subrayado en `Accent`
+ * da solo 1,55:1). La acción contextual vive fuera de esta barra.
  */
 @Composable
 fun FloatingDock(
@@ -141,6 +144,7 @@ fun FloatingDock(
     val ext = MaterialTheme.extended
     val haptic = LocalHapticFeedback.current
     val lineColor = MaterialTheme.colorScheme.outlineVariant
+    // Tinte de la sombra suave del dock: no es contenido ni indicador.
     val shadowTint = ext.ink.copy(alpha = 0.12f)
 
     Row(
@@ -155,7 +159,7 @@ fun FloatingDock(
                 ambientColor = shadowTint,
                 spotColor = shadowTint
             )
-            .border(1.dp, ext.ink, ShapeDock)
+            .border(1.dp, ext.inkIndicator, ShapeDock)
             .clip(ShapeDock)
             .background(ext.dock)
             .padding(5.dp),
@@ -193,7 +197,7 @@ private fun DockCell(
 ) {
     val ext = MaterialTheme.extended
     val contentColor by animateColorAsState(
-        targetValue = if (selected) ext.ink else ext.inkMuted,
+        targetValue = if (selected) ext.inkContent else ext.inkMuted,
         animationSpec = tween(180),
         label = "dockContent"
     )
@@ -229,13 +233,13 @@ private fun DockCell(
                 )
             }
             if (selected) {
-                // Subrayado de 3 dp bajo el icono, en `Ink` (no en `Accent`).
+                // Subrayado de 3 dp bajo el icono, en `InkIndicator`.
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .height(3.dp)
-                        .background(ext.ink)
+                        .background(ext.inkIndicator)
                 )
             }
         }
@@ -262,7 +266,7 @@ fun BentoCard(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    shape: Shape = com.example.campuspocket.core.designsystem.ShapeCard,
+    shape: Shape = ShapeCard,
     contentPadding: PaddingValues = PaddingValues(20.dp),
     onClick: (() -> Unit)? = null,
     borderColor: Color? = null,
@@ -417,14 +421,17 @@ fun RoundIconButton(
 
 /**
  * Chip de filtro v8: 40 dp visuales sobre área táctil de 48, radio 10 y borde
- * `ControlLine`. El activo usa `Lime` con borde y texto `Ink`; el check y el
- * `stateDescription` evitan que el estado dependa solo del color.
+ * `ControlLine`. El activo usa `Lime` con borde `InkIndicator` y texto `OnLime`;
+ * el check y el `stateDescription` evitan que el estado dependa solo del color.
+ *
+ * Con [onClick] nulo el chip es solo de estado (no accionable): sirve para
+ * mostrar "Activo"/"Pausado" sin sumar un tercer control a una tarjeta.
  */
 @Composable
 fun CampusChip(
     label: String,
     selected: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
     leading: (@Composable () -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
@@ -441,12 +448,12 @@ fun CampusChip(
         label = "chipContainer"
     )
     val content by animateColorAsState(
-        targetValue = if (selected) ext.ink else MaterialTheme.colorScheme.onSurface,
+        targetValue = if (selected) ext.onLime else MaterialTheme.colorScheme.onSurface,
         animationSpec = tween(150),
         label = "chipContent"
     )
     val border by animateColorAsState(
-        targetValue = if (selected) ext.ink else ext.controlLine,
+        targetValue = if (selected) ext.inkIndicator else ext.controlLine,
         animationSpec = tween(150),
         label = "chipBorder"
     )
@@ -459,11 +466,18 @@ fun CampusChip(
                 stateDescription = if (selected) selectedState else unselectedState
                 if (semanticLabel != null) contentDescription = semanticLabel
             }
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick,
-                onLongClickLabel = onLongClickLabel,
-                role = role
+            .then(
+                if (onClick != null) {
+                    Modifier.combinedClickable(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                        onLongClickLabel = onLongClickLabel,
+                        role = role
+                    )
+                } else {
+                    // Chip de solo estado: sin acción ni rol de control.
+                    Modifier
+                }
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -498,8 +512,8 @@ fun CampusChip(
 
 /**
  * Selector de formulario v8: fila de chips de 40 dp (área táctil 48) con
- * borde `ControlLine`; el activo en `Lime` con borde y texto `Ink`. No es una
- * pestaña de navegación: para eso existe [UnderlinedTabRow].
+ * borde `ControlLine`; el activo en `Lime` con borde `InkIndicator` y texto
+ * `OnLime`. No es una pestaña de navegación: para eso existe [UnderlinedTabRow].
  */
 @Composable
 fun <T> PillSegmentedControl(
@@ -563,12 +577,12 @@ private fun FormSegment(
         label = "segmentContainer"
     )
     val content by animateColorAsState(
-        targetValue = if (isSelected) ext.ink else MaterialTheme.colorScheme.onSurface,
+        targetValue = if (isSelected) ext.onLime else MaterialTheme.colorScheme.onSurface,
         animationSpec = tween(150),
         label = "segmentContent"
     )
     val border by animateColorAsState(
-        targetValue = if (isSelected) ext.ink else ext.controlLine,
+        targetValue = if (isSelected) ext.inkIndicator else ext.controlLine,
         animationSpec = tween(150),
         label = "segmentBorder"
     )
@@ -614,8 +628,9 @@ private fun FormSegment(
 
 /**
  * Pestañas subrayadas de navegación (v8 §6.4): 45 dp visuales con área táctil
- * de 48, fondo transparente, línea inferior `Line` y subrayado de 3 dp `Ink`
- * en la activa. Usa `Role.Tab` y `selectableGroup`.
+ * de 48, fondo transparente, línea inferior `Line` y subrayado de 3 dp
+ * `InkIndicator` en la activa. El texto activo usa `InkContent`. Usa `Role.Tab`
+ * y `selectableGroup`.
  */
 @Composable
 fun <T> UnderlinedTabRow(
@@ -679,7 +694,7 @@ private fun UnderlinedTab(
 ) {
     val ext = MaterialTheme.extended
     val content by animateColorAsState(
-        targetValue = if (isSelected) ext.ink else MaterialTheme.colorScheme.onSurfaceVariant,
+        targetValue = if (isSelected) ext.inkContent else MaterialTheme.colorScheme.onSurfaceVariant,
         animationSpec = tween(150),
         label = "tabContent"
     )
@@ -712,7 +727,7 @@ private fun UnderlinedTab(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(3.dp)
-                .background(if (isSelected) ext.ink else Color.Transparent)
+                .background(if (isSelected) ext.inkIndicator else Color.Transparent)
         )
     }
 }
@@ -726,7 +741,7 @@ fun DayStrip(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
-    val cellShape = androidx.compose.foundation.shape.RoundedCornerShape(5.dp)
+    val cellShape = ShapeTaskCheckbox
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -753,6 +768,8 @@ fun DayStrip(
                     .weight(1f)
                     .height(63.dp)
                     .clip(cellShape)
+                    // Relleno del día seleccionado (no es texto ni indicador):
+                    // se queda `Ink` y el contenido usa `OnInk`.
                     .background(if (selected) ext.ink else Color.Transparent)
                     .semantics { this.selected = selected }
                     .combinedClickable(
@@ -996,14 +1013,15 @@ fun TransactionRow(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(14.dp))
+                .clip(ShapeBadge)
                 .background(iconColor),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = iconText.take(1).uppercase(),
                 style = MaterialTheme.typography.labelLarge,
-                color = onIconColor
+                color = onIconColor,
+                modifier = Modifier.clearAndSetSemantics {}
             )
         }
         Spacer(Modifier.width(12.dp))
@@ -1052,14 +1070,14 @@ fun PastelNoteCard(
     var menuExpanded by remember { mutableStateOf(false) }
     val ext = MaterialTheme.extended
     val topBorderColor = when {
-        noteColor == ext.lavender -> Color(0xFF8D79AD)
-        noteColor == ext.limeSoft -> Color(0xFF9AAB3E)
-        noteColor == ext.peach -> Color(0xFFBF7D55)
-        noteColor == ext.sky -> Color(0xFF6692A0)
-        else -> ext.ink
+        noteColor == ext.lavender -> ext.noteLavenderBorder
+        noteColor == ext.limeSoft -> ext.noteLimeSoftBorder
+        noteColor == ext.peach -> ext.notePeachBorder
+        noteColor == ext.sky -> ext.noteSkyBorder
+        else -> ext.inkIndicator
     }
-    val isDark = isSystemInDarkTheme()
-    val contentColor = if (isDark) Color.White else MaterialTheme.colorScheme.onSurface
+    val isDark = ext.isDark
+    val contentColor = MaterialTheme.colorScheme.onSurface
 
     Box(modifier = modifier) {
         Surface(
@@ -1071,7 +1089,7 @@ fun PastelNoteCard(
                     onLongClick = { menuExpanded = true },
                     role = Role.Button
                 ),
-            shape = com.example.campuspocket.core.designsystem.ShapeCard,
+            shape = ShapeCard,
             color = MaterialTheme.colorScheme.surface,
             contentColor = contentColor,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
@@ -1119,32 +1137,30 @@ fun PastelNoteCard(
                 }
             }
         }
-        DropdownMenu(
+        CampusMenu(
             expanded = menuExpanded,
             onDismissRequest = { menuExpanded = false }
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        stringResource(
-                            if (note.pinned) R.string.note_unpin else R.string.note_pin
-                        )
-                    )
-                },
+            CampusMenuItem(
+                text = stringResource(
+                    if (note.pinned) R.string.note_unpin else R.string.note_pin
+                ),
                 onClick = {
                     menuExpanded = false
                     onPinToggle(!note.pinned)
                 }
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.note_move_to_folder)) },
+            CampusMenuItem(
+                text = stringResource(R.string.note_move_to_folder),
                 onClick = {
                     menuExpanded = false
                     onMove()
                 }
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.delete)) },
+            CampusMenuDivider()
+            CampusMenuItem(
+                text = stringResource(R.string.delete),
+                destructive = true,
                 onClick = {
                     menuExpanded = false
                     onDelete()
@@ -1154,7 +1170,7 @@ fun PastelNoteCard(
     }
 }
 
-/** Buscador en píldora v8: radio 28, borde ControlLine, foco con anillo Lime + borde Ink. */
+/** Buscador en píldora v8: radio 28, borde ControlLine, foco con anillo Lime + borde InkIndicator. */
 @Composable
 fun SearchPill(
     value: String,
@@ -1168,7 +1184,7 @@ fun SearchPill(
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val ext = MaterialTheme.extended
-    val borderColor = if (focused) ext.ink else ext.controlLine
+    val borderColor = if (focused) ext.inkIndicator else ext.controlLine
     val boxColor = MaterialTheme.colorScheme.surface
     BasicTextField(
         value = value,
@@ -1204,7 +1220,7 @@ fun SearchPill(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = null,
+                        contentDescription = null, // decorativo: el campo ya anuncia su función
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
@@ -1240,8 +1256,8 @@ fun SearchPill(
 /**
  * Campo de formulario v8 (§6.6): superficie `Surface`, borde `ControlLine` de
  * 1 dp, radio 7, alto mínimo 50 y etiqueta encima. Al enfocar se añade un anillo
- * `Lime` de 2 dp y el borde pasa a `Ink`; en error el borde es `Danger` y el
- * mensaje se anuncia en una región viva junto a un icono.
+ * `Lime` de 2 dp y el borde pasa a `InkIndicator`; en error el borde es `Danger`
+ * y el mensaje se anuncia en una región viva junto a un icono.
  */
 @Composable
 fun CampusTextField(
@@ -1262,7 +1278,7 @@ fun CampusTextField(
     supportingText: (@Composable () -> Unit)? = null
 ) {
     val ext = MaterialTheme.extended
-    val shape = com.example.campuspocket.core.designsystem.ShapeControl
+    val shape = ShapeControl
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val errorColor = MaterialTheme.colorScheme.error
@@ -1302,7 +1318,7 @@ fun CampusTextField(
                                 style = Stroke(width = ring)
                             )
                             drawRoundRect(
-                                color = ext.ink,
+                                color = ext.inkIndicator,
                                 topLeft = Offset(ring, ring),
                                 size = Size(
                                     (size.width - ring * 2f).coerceAtLeast(0f),

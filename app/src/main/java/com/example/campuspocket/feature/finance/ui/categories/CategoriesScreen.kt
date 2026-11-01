@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -134,7 +135,8 @@ private fun CategoryRow(
             Text(
                 text = category.name.first().uppercase(),
                 style = MaterialTheme.typography.titleSmall,
-                color = ContrastUtil.onColorFor(background)
+                color = ContrastUtil.onColorFor(background),
+                modifier = Modifier.clearAndSetSemantics {}
             )
         }
         Column(Modifier.padding(start = 12.dp)) {

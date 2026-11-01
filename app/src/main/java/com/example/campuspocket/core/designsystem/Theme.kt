@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import com.example.campuspocket.core.designsystem.CampusShapes
 
 /**
  * Esquemas Material 3 completos derivados de la paleta editorial v8.

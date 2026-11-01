@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.campuspocket.core.designsystem.LocalMotion
 import com.example.campuspocket.core.designsystem.MotionTokens
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeCard
 
 /**
  * Esqueleto de carga (Sección 8 v5).
@@ -42,7 +42,7 @@ import com.example.campuspocket.core.designsystem.extended
 @Composable
 fun ShimmerBox(
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(12.dp)
+    shape: Shape = ShapeCard
 ) {
     val motion = LocalMotion.current
     val base = MaterialTheme.extended.track

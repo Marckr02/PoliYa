@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +33,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.example.campuspocket.core.designsystem.ShapeBottomSheet
 import com.example.campuspocket.core.designsystem.extended
+import com.example.campuspocket.core.designsystem.ShapeSheetOption
 
 /**
  * Hoja inferior v8: superficie `Surface`, radio superior 16, borde superior de
@@ -104,7 +104,7 @@ fun CampusSheetOption(
     subtitle: String? = null,
     leading: (@Composable () -> Unit)? = null
 ) {
-    val shape = RoundedCornerShape(14.dp)
+    val shape = ShapeSheetOption
     Row(
         modifier = modifier
             .fillMaxWidth()

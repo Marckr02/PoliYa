@@ -87,6 +87,8 @@ import com.example.campuspocket.core.designsystem.components.TransactionTypeSele
 import com.example.campuspocket.core.designsystem.components.rememberDiscardChangesGuard
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
+import com.example.campuspocket.core.designsystem.ShapeIconTile
+import com.example.campuspocket.core.designsystem.ShapeImpactCard
 import com.example.campuspocket.core.navigation.LocalSnackbarHost
 import com.example.campuspocket.core.navigation.showUndoSnackbar
 import com.example.campuspocket.core.util.Haptics
@@ -578,7 +580,7 @@ private fun TransactionImpactCard(
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .heightIn(min = 58.dp)
-            .clip(RoundedCornerShape(6.dp))
+            .clip(ShapeImpactCard)
             .background(ext.limeSoft)
             .semantics { liveRegion = LiveRegionMode.Polite }
     ) {
@@ -586,7 +588,7 @@ private fun TransactionImpactCard(
             modifier = Modifier
                 .width(4.dp)
                 .fillMaxHeight()
-                .background(ext.ink)
+                .background(ext.inkIndicator)
         )
         Row(
             modifier = Modifier
@@ -597,7 +599,7 @@ private fun TransactionImpactCard(
         ) {
             Icon(
                 imageVector = if (over) Icons.Filled.Warning else Icons.Filled.CheckCircle,
-                contentDescription = null, // el texto contiguo describe el estado
+                contentDescription = null, // decorativo: el texto contiguo describe el estado
                 tint = if (over) ext.danger else ext.onLimeSoft,
                 modifier = Modifier.size(16.dp)
             )
@@ -616,7 +618,7 @@ private fun TransactionImpactCard(
                     )
                     if (spentFraction > 0f) {
                         drawRoundRect(
-                            color = ext.ink,
+                            color = ext.inkIndicator,
                             size = Size(size.width * spentFraction.coerceIn(0f, 1f), size.height),
                             cornerRadius = radius
                         )
@@ -624,7 +626,7 @@ private fun TransactionImpactCard(
                     val markerX = (size.width * expectedFraction.coerceIn(0f, 1f))
                         .coerceIn(2.dp.toPx(), size.width - 2.dp.toPx())
                     drawLine(
-                        color = ext.ink,
+                        color = ext.inkIndicator,
                         start = androidx.compose.ui.geometry.Offset(markerX, 0f),
                         end = androidx.compose.ui.geometry.Offset(markerX, size.height),
                         strokeWidth = 2.dp.toPx(),
@@ -996,7 +998,7 @@ private fun CategorySheet(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = 52.dp)
-                                .clip(RoundedCornerShape(16.dp))
+                                .clip(ShapeIconTile)
                                 .background(MaterialTheme.extended.accentMuted)
                                 .clickable(role = Role.Button) { onCreate(cleanQuery) }
                                 .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -1035,7 +1037,7 @@ private fun CategorySheetRow(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 52.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(ShapeIconTile)
             .clickable(role = Role.RadioButton, onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -1098,7 +1100,7 @@ private fun AccountSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 56.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(ShapeIconTile)
                             .clickable(role = Role.RadioButton) {
                                 account.id?.let(onSelect)
                             }

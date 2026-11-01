@@ -290,9 +290,7 @@ class FinanceUiTest {
 
         composeRule.waitUntil(5_000) { repo.withdrawals.size == 1 }
         assertEquals(2L to 1_000L, repo.withdrawals.single())
-        composeRule.onNodeWithText("Retiro registrado").assertIsDisplayed()
-
-        composeRule.onNodeWithText("Aceptar").performClick()
+        // Desde 61855bd el retiro cierra al guardar y no muestra diálogo de éxito.
         composeRule.waitUntil(5_000) { done }
     }
 

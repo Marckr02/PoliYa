@@ -90,7 +90,7 @@ fun keypadNextDigits(current: String, key: String): String {
  * Rejilla 4 × 4 de 244 dp con separación de 7 dp: fila 1 con 1-3 y borrar;
  * filas 2-4 con los dígitos y, en la cuarta columna, un botón Guardar que ocupa
  * esas tres filas. Bordes `ControlLine`, radio 10, Guardar en `Lime` con borde
- * `Ink`. Vibra en cada tecla y en el guardado.
+ * `InkIndicator` y texto `OnLime`. Vibra en cada tecla y en el guardado.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -252,7 +252,7 @@ private fun KeypadKey(
         label = "keypadContainer"
     )
     val content by animateColorAsState(
-        targetValue = if (pressed) ext.inkContent else contentColor,
+        targetValue = if (pressed) ext.onLime else contentColor,
         animationSpec = tween(motion.ms(MotionTokens.Short)),
         label = "keypadContent"
     )
@@ -314,7 +314,7 @@ private fun SaveKeypadKey(
         label = "saveKeyScale"
     )
     val container = if (enabled) ext.lime else ext.track
-    val content = if (enabled) ext.inkContent else ext.inkMuted
+    val content = if (enabled) ext.onLime else ext.inkMuted
     val border = if (enabled) ext.inkIndicator else ext.controlLine
     Box(
         modifier = modifier

@@ -1,7 +1,6 @@
 package com.example.campuspocket.feature.finance.ui.summary
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Warning
@@ -41,6 +39,7 @@ import com.example.campuspocket.core.designsystem.components.PaceGauge
 import com.example.campuspocket.core.designsystem.components.formatGaugePercent
 import com.example.campuspocket.core.designsystem.extended
 import com.example.campuspocket.core.designsystem.formatMoneyOrHidden
+import com.example.campuspocket.core.designsystem.ShapeCard
 import com.example.campuspocket.feature.finance.domain.MonthPace
 import java.time.format.TextStyle
 import java.util.Locale
@@ -57,14 +56,14 @@ internal fun PaceGaugeCard(
     modifier: Modifier = Modifier
 ) {
     val ext = MaterialTheme.extended
-    val dark = isSystemInDarkTheme()
+    val dark = ext.isDark
     val monthName = pace.date.month
         .getDisplayName(TextStyle.FULL, Locale.getDefault())
         .replaceFirstChar { it.titlecase(Locale.getDefault()) }
     val exhausted = pace.isBudgetExhausted
     val over = pace.isOver
     val fillColor = when {
-        exhausted || over -> ext.dangerSoft
+        exhausted || over -> ext.gaugeAlert
         dark -> ext.gaugeFill
         else -> ext.mint
     }
@@ -153,8 +152,8 @@ internal fun PaceGaugeCard(
                 .fillMaxWidth()
                 .heightIn(min = 38.dp)
                 .background(
-                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f),
-                    shape = RoundedCornerShape(12.dp)
+                    color = ext.onInk.copy(alpha = 0.08f),
+                    shape = ShapeCard
                 )
                 .padding(horizontal = 10.dp, vertical = 8.dp)
                 .semantics { liveRegion = LiveRegionMode.Polite },
@@ -163,7 +162,7 @@ internal fun PaceGaugeCard(
         ) {
             Icon(
                 imageVector = if (over || exhausted) Icons.Filled.Warning else Icons.Filled.Check,
-                contentDescription = null, // el texto contiguo describe el estado
+                contentDescription = null, // decorativo: el texto contiguo describe el estado
                 tint = if (over || exhausted) ext.onInk else ext.lime,
                 modifier = Modifier.size(17.dp)
             )

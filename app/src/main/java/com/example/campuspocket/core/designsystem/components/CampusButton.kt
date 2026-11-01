@@ -22,12 +22,9 @@ import com.example.campuspocket.core.designsystem.extended
 
 enum class CampusButtonStyle { PRIMARY, SECONDARY, DESTRUCTIVE, INK }
 
-/** Borde del primario: un paso más oscuro que `Accent` para delimitar el control. */
-private val AccentBorder = Color(0xFFD9A92D)
-
 /**
  * Botón único de la app (v8 §6.3): 52 dp de alto, radio 7 y etiqueta de 14 en
- * peso 800. El primario va en ámbar con borde propio y texto tinta; el
+ * peso 800. El primario va en ámbar con borde propio y texto `OnLime`; el
  * secundario y el de peligro son transparentes con borde. El deshabilitado usa
  * `Track`/`InkMuted` sin opacidad: el motivo se comunica en el texto contiguo.
  */
@@ -47,21 +44,23 @@ fun CampusButton(
         CampusButtonStyle.PRIMARY -> ext.accent
         CampusButtonStyle.SECONDARY -> Color.Transparent
         CampusButtonStyle.DESTRUCTIVE -> Color.Transparent
+        // Relleno del botón INK: el token de tinta se queda (texto `onInk`).
         CampusButtonStyle.INK -> ext.ink
     }
     val content = when (style) {
-        CampusButtonStyle.PRIMARY -> ext.ink
+        CampusButtonStyle.PRIMARY -> ext.onLime
         CampusButtonStyle.SECONDARY -> MaterialTheme.colorScheme.onSurface
         CampusButtonStyle.DESTRUCTIVE -> ext.danger
         CampusButtonStyle.INK -> ext.onInk
     }
     val border = when {
         disabled -> ext.controlLine
-        style == CampusButtonStyle.PRIMARY -> AccentBorder
+        style == CampusButtonStyle.PRIMARY -> ext.accentBorder
         style == CampusButtonStyle.SECONDARY -> ext.controlLine
         style == CampusButtonStyle.DESTRUCTIVE -> ext.danger
             .copy(alpha = 0.5f)
             .compositeOver(MaterialTheme.colorScheme.outlineVariant)
+        // Borde del botón INK: mismo relleno, no es un indicador sobre Surface.
         else -> ext.ink
     }
     // Sin opacidad: los colores deshabilitados son tokens opacos.

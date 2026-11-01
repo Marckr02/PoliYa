@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +37,8 @@ import com.example.campuspocket.R
 import com.example.campuspocket.core.designsystem.LocalPrivacyMode
 import com.example.campuspocket.core.designsystem.MoneyText
 import com.example.campuspocket.core.designsystem.components.BentoCard
+import com.example.campuspocket.core.designsystem.ShapeLegend
+import com.example.campuspocket.core.designsystem.ShapePanel
 import com.example.campuspocket.core.util.Money
 import com.example.campuspocket.feature.finance.domain.MonthPace
 import kotlin.math.max
@@ -56,7 +57,7 @@ internal fun SpendingPaceSection(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         BentoCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
+            shape = ShapePanel,
             contentPadding = PaddingValues(18.dp)
         ) {
             Text(
@@ -350,7 +351,7 @@ private fun PaceMiniCard(
 ) {
     BentoCard(
         modifier = modifier,
-        shape = RoundedCornerShape(18.dp),
+        shape = ShapeLegend,
         contentPadding = PaddingValues(12.dp)
     ) {
         Text(

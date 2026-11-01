@@ -21,8 +21,8 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import com.example.campuspocket.core.designsystem.components.CampusMenu
+import com.example.campuspocket.core.designsystem.components.CampusMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -459,13 +459,13 @@ private fun <T> FilterPill(
                 modifier = Modifier.size(18.dp)
             )
         }
-        DropdownMenu(
+        CampusMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
             options.forEach { (value, text) ->
-                DropdownMenuItem(
-                    text = { Text(text) },
+                CampusMenuItem(
+                    text = text,
                     onClick = {
                         onSelect(value)
                         expanded = false

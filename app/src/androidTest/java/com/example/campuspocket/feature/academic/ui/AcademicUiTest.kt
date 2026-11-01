@@ -66,6 +66,7 @@ class AcademicUiTest {
                     onAddCourse = {},
                     onOpenCourse = { clickedId = it },
                     onImport = {},
+                    onBack = {},
                     viewModel = CoursesViewModel(FakeCourseRepository(listOf(course)))
                 )
             }

@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -169,7 +170,8 @@ private fun AccountRow(
                 Text(
                     text = balance.account.name.first().uppercase(),
                     style = MaterialTheme.typography.titleSmall,
-                    color = ContrastUtil.onColorFor(Color(balance.account.colorArgb))
+                    color = ContrastUtil.onColorFor(Color(balance.account.colorArgb)),
+                    modifier = Modifier.clearAndSetSemantics {}
                 )
             }
             Spacer(Modifier.width(12.dp))
